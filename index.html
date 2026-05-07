@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PREGÓN 95.7 FM - La voz que te acompaña</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React y ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Reproductor HLS para transmisión de TV -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body class="bg-slate-950 m-0 p-0 text-slate-100 overflow-hidden">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect, useCallback } = React;
+
+        // ==========================================
+        // COMPONENTES DE ÍCONOS
+        // ==========================================
+        const Icon = ({ children, size = 24, className = "", fill = "none" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const Play = (props) => <Icon {...props}><polygon points="6 3 20 12 6 21 6 3"/></Icon>;
+        const Pause = (props) => <Icon {...props}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></Icon>;
+        const Volume2 = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></Icon>;
+        const VolumeX = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></Icon>;
+        const Radio = (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></Icon>;
+        const MonitorPlay = (props) => <Icon {...props}><path d="m10 7 5 3-5 3Z"/><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/></Icon>;
+        const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
+        const Banknote = (props) => <Icon {...props}><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></Icon>;
+        const Youtube = (props) => <Icon {...props}><path d="M2.5 7.1c.1-1.3 1.2-2.3 2.5-2.4C8.2 4.5 12 4.5 12 4.5s3.8 0 7 .2c1.3.1 2.4 1.1 2.5 2.4.2 1.6.2 4.9.2 4.9s0 3.3-.2 4.9c-.1 1.3-1.2 2.3-2.5 2.4-3.2.2-7 .2-7 .2s-3.8 0-7-.2c-1.3-.1-2.4-1.1-2.5-2.4-.2-1.6-.2-4.9-.2-4.9s0-3.3.2-4.9z"/><path d="M10 12.5l5-3-5-3v6z"/></Icon>;
+        const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
+        const Instagram = (props) => <Icon {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></Icon>;
+        const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
+        const Tv = (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>;
+        const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
+
+        // ==========================================
+        // MOTOR AVANZADO DE DETECCIÓN Y LIMPIEZA MUSICAL
+        // ==========================================
+        const fetchAdvancedSongData = async (rawArtist, rawTitle) => {
+          // 1. Algoritmo de Sanitización: Limpiamos basura de la radio
+          const cleanStr = (str) => {
+            return str
+              .replace(/\[.*?\]|\(.*?\)/g, '') // Elimina (Oficial Video), [Remix], etc
+              .replace(/official( music)? video|audio|remix|feat\.?|ft\.?|lyric( video)?/gi, '') // Quita tags
+              .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, ' ') // Quita caracteres raros
+              .replace(/\s+/g, ' ') // Quita espacios múltiples
+              .trim();
+          };
+
+          const cleanArtist = cleanStr(rawArtist);
+          const cleanTitle = cleanStr(rawTitle);
+          
+          // 2. Patrones de búsqueda (del más puro al más sucio para garantizar un acierto)
+          const queries = [
+            `${cleanArtist} ${cleanTitle}`,
+            cleanTitle,
+            `${rawArtist} ${rawTitle}`
+          ];
+
+          for (let q of queries) {
+            if (!q || q.trim() === '') continue;
+            
+            // Intento A: iTunes API (Apple Music) - Excelente para carátulas HD
+            try {
+              const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=3`);
+              if (itunesRes.ok) {
+                const data = await itunesRes.json();
+                if (data.results && data.results.length > 0) {
+                  const track = data.results[0];
+                  return {
+                    coverUrl: track.artworkUrl100.replace('100x100bb', '800x800bb'), // Forzar 800x800 HD
+                    title: track.trackName,
+                    artist: track.artistName
+                  };
+                }
+              }
+            } catch (e) {}
+
+            // Intento B: Deezer API (vía AllOrigins para saltar CORS) - Base de datos inmensa para lo latino
+            try {
+              const deezerRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://api.deezer.com/search?q=' + q + '&limit=1')}`);
+              if (deezerRes.ok) {
+                const data = await deezerRes.json();
+                if (data.data && data.data.length > 0) {
+                  const track = data.data[0];
+                  return {
+                    coverUrl: track.album.cover_xl,
+                    title: track.title,
+                    artist: track.artist.name
+                  };
+                }
+              }
+            } catch (e) {}
+          }
+          
+          return null; // Si no lo conoce ni Apple ni Deezer, asumimos que no es canción
+        };
+
+        // ==========================================
+        // APLICACIÓN PRINCIPAL
+        // ==========================================
+        const App = () => {
+          const [isPlaying, setIsPlaying] = useState(false);
+          const [volume, setVolume] = useState(0.8);
+          const [isMuted, setIsMuted] = useState(false);
+          const [status, setStatus] = useState('Detenido');
+          const [viewMode, setViewMode] = useState('radio'); 
+          
+          const [songInfo, setSongInfo] = useState({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+          const [coverUrl, setCoverUrl] = useState(null);
+          const [audioBars, setAudioBars] = useState(new Array(32).fill(0.05));
+          const [beatScale, setBeatScale] = useState(1); 
+
+          // Estados para Deportes
+          const [matches, setMatches] = useState([]);
+          const [loadingSports, setLoadingSports] = useState(false);
+          
+          // Estados para TV
+          const [tvError, setTvError] = useState(false);
+
+          const audioRef = useRef(null);
+          const tvVideoRef = useRef(null); 
+          const audioCtxRef = useRef(null);
+          const analyserRef = useRef(null);
+          const sourceRef = useRef(null);
+          const dataArrayRef = useRef(null);
+          const animationRef = useRef(null);
+
+          const streamUrl = "https://stream.zeno.fm/2dcuqasrykauv";
+          const zenoMetadataUrl = "https://api.zeno.fm/mounts/metadata/subscribe/2dcuqasrykauv";
+          const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
+          const venevisionUrl = "https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8";
+
+          // Cargar script hls.js dinámicamente
+          useEffect(() => {
+            if (!window.Hls) {
+              const script = document.createElement('script');
+              script.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+              script.async = true;
+              document.body.appendChild(script);
+            }
+          }, []);
+
+          // ================== REPRODUCTOR DE TV HLS ==================
+          useEffect(() => {
+            if (viewMode === 'tv' && tvVideoRef.current) {
+              setTvError(false);
+              const video = tvVideoRef.current;
+              let hls;
+              
+              const currentTvUrl = venevisionUrl;
+
+              const initPlayer = () => {
+                if (window.Hls && window.Hls.isSupported()) {
+                  hls = new window.Hls();
+                  hls.loadSource(currentTvUrl);
+                  hls.attachMedia(video);
+                  
+                  hls.on(window.Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                      setTvError(true);
+                      hls.destroy();
+                    }
+                  });
+
+                  hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
+                    video.play().catch(e => console.log("Autoplay prevent: ", e));
+                  });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                  video.src = currentTvUrl;
+                  video.onerror = () => setTvError(true);
+                  video.addEventListener('loadedmetadata', function () {
+                    video.play().catch(e => console.log("Autoplay prevent: ", e));
+                  });
+                }
+              };
+
+              if (window.Hls) {
+                initPlayer();
+              } else {
+                setTimeout(initPlayer, 500);
+              }
+
+              return () => {
+                if (hls) {
+                  hls.destroy();
+                }
+              };
+            }
+          }, [viewMode]);
+
+          // ================== FETCH DEPORTES ==================
+          useEffect(() => {
+            if (viewMode === 'sports' && matches.length === 0) {
+              fetchSports();
+            }
+          }, [viewMode]);
+
+          const fetchSports = async () => {
+            setLoadingSports(true);
+            try {
+              const leaguesToFetch = ['eng.1', 'esp.1', 'ita.1', 'uefa.champions', 'conmebol.libertadores'];
+              let allMatches = [];
+              
+              await Promise.all(leaguesToFetch.map(async (league) => {
+                  try {
+                      const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`);
+                      const data = await res.json();
+                      if(data.events && data.events.length > 0) {
+                          const leagueName = data.leagues[0].name;
+                          data.events.forEach(ev => {
+                              const comp = ev.competitions[0];
+                              allMatches.push({
+                                  id: ev.id,
+                                  league: leagueName,
+                                  home: comp.competitors.find(c => c.homeAway === 'home'),
+                                  away: comp.competitors.find(c => c.homeAway === 'away'),
+                                  status: ev.status.type.state, 
+                                  detail: ev.status.type.shortDetail, 
+                                  date: ev.date
+                              });
+                          });
+                      }
+                  } catch(e) {} 
+              }));
+              
+              allMatches.sort((a, b) => {
+                  const order = { 'in': 1, 'pre': 2, 'post': 3 };
+                  if (order[a.status] !== order[b.status]) {
+                      return order[a.status] - order[b.status];
+                  }
+                  return new Date(a.date) - new Date(b.date);
+              });
+
+              setMatches(allMatches);
+            } catch (err) {
+              console.error("Error obteniendo deportes", err);
+            }
+            setLoadingSports(false);
+          };
+
+          // ================== METADATOS MUSICALES CON API INTELIGENTE ==================
+          useEffect(() => {
+            if (audioRef.current) {
+              audioRef.current.volume = volume;
+            }
+
+            const eventSource = new EventSource(zenoMetadataUrl);
+            eventSource.onmessage = async (event) => {
+              try {
+                if (!event.data || typeof event.data !== 'string' || event.data.trim().startsWith('<')) {
+                  return;
+                }
+
+                const data = JSON.parse(event.data);
+                
+                // Validar que streamTitle exista, incluso si está vacío (lo que indica corte o micrófono abierto)
+                if (data && typeof data.streamTitle !== 'undefined') {
+                  const streamTitle = data.streamTitle;
+                  let title = 'Programación en vivo';
+                  let artist = 'La voz que te acompaña';
+                  
+                  if (streamTitle && streamTitle.trim() !== '') {
+                    const parts = streamTitle.split(' - ');
+                    if (parts.length > 1) {
+                      artist = parts[0].trim();
+                      title = parts.slice(1).join(' - ').trim();
+                    } else {
+                      title = streamTitle;
+                      artist = 'PREGÓN 95.7';
+                    }
+                  }
+                  
+                  // Filtro estricto: ¿Es esto un jingle, publicidad o ID de estación?
+                  const isGeneric = title.toLowerCase().includes('pregon') || 
+                                    title.toLowerCase().includes('pregón') ||
+                                    artist.toLowerCase().includes('pregon') ||
+                                    artist.toLowerCase().includes('pregón') ||
+                                    title.toLowerCase().includes('programación en vivo') ||
+                                    title.toLowerCase().includes('publicidad') ||
+                                    title.toLowerCase().includes('locucion') ||
+                                    title.toLowerCase().includes('cuña') ||
+                                    artist.toLowerCase().includes('en vivo');
+
+                  if (!isGeneric && title !== 'Programación en vivo') {
+                    // LLAMADA AL MOTOR INTELIGENTE
+                    const songData = await fetchAdvancedSongData(artist, title);
+                    
+                    if (songData) {
+                        // SI SE CONFIRMA QUE ES UNA CANCIÓN MUNDIAL, ACTUALIZAMOS CON EL DATO OFICIAL Y CARÁTULA
+                        setCoverUrl(songData.coverUrl);
+                        setSongInfo({ title: songData.title, artist: songData.artist });
+                    } else {
+                        // SI NO LO RECONOCE (Programa hablado, error, etc), BORRA Y PONE "PROGRAMACIÓN EN VIVO"
+                        setCoverUrl(null);
+                        setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                    }
+                  } else {
+                    // SI ES GENÉRICO, BORRA Y PONE "PROGRAMACIÓN EN VIVO"
+                    setCoverUrl(null);
+                    setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                  }
+                }
+              } catch (err) {
+                if (!(err instanceof SyntaxError)) {
+                  console.error("Error procesando metadatos:", err);
+                }
+              }
+            };
+
+            return () => {
+              eventSource.close();
+              if (animationRef.current) cancelAnimationFrame(animationRef.current);
+              if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+                 audioCtxRef.current.close();
+              }
+            };
+          }, []);
+
+          // Visualizador de Audio
+          const updateVisualizer = useCallback(() => {
+            if (!analyserRef.current) return;
+            
+            animationRef.current = requestAnimationFrame(updateVisualizer);
+            analyserRef.current.getByteFrequencyData(dataArrayRef.current);
+            
+            let bassSum = 0;
+            const bassCount = 5; 
+            for (let i = 0; i < bassCount; i++) {
+              bassSum += dataArrayRef.current[i] || 0;
+            }
+            const bassAvg = bassSum / bassCount;
+            const normalizedBass = Math.pow(bassAvg / 255, 1.5);
+            setBeatScale(1 + normalizedBass * 0.15); 
+
+            const NUM_BARS = 32; 
+            const bufferLength = analyserRef.current.frequencyBinCount;
+            const step = Math.floor(bufferLength / NUM_BARS); 
+            const newBars = [];
+            
+            for (let i = 0; i < NUM_BARS; i++) {
+              let sum = 0;
+              let count = 0;
+              for (let j = 0; j < step; j++) {
+                const index = i * step + j;
+                if (index < bufferLength) {
+                  sum += dataArrayRef.current[index];
+                  count++;
+                }
+              }
+              let value = count > 0 ? sum / count : 0;
+              const boost = 1 + (i / NUM_BARS) * 3.5; 
+              let normalized = (value / 255) * boost;
+              normalized = Math.pow(normalized, 1.1); 
+              newBars.push(Math.min(normalized, 1)); 
+            }
+            setAudioBars(newBars);
+          }, []);
+
+          const setupAudioContext = () => {
+            if (!audioCtxRef.current) {
+              const AudioContext = window.AudioContext || window.webkitAudioContext;
+              audioCtxRef.current = new AudioContext();
+              analyserRef.current = audioCtxRef.current.createAnalyser();
+              analyserRef.current.fftSize = 128; 
+              
+              sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
+              sourceRef.current.connect(analyserRef.current);
+              analyserRef.current.connect(audioCtxRef.current.destination);
+              
+              const bufferLength = analyserRef.current.frequencyBinCount;
+              dataArrayRef.current = new Uint8Array(bufferLength);
+            }
+            
+            if (audioCtxRef.current.state === 'suspended') {
+              audioCtxRef.current.resume();
+            }
+          };
+
+          const togglePlay = () => {
+            if (isPlaying) {
+              audioRef.current.pause();
+              setIsPlaying(false);
+              setStatus('Detenido');
+              if (animationRef.current) cancelAnimationFrame(animationRef.current);
+            } else {
+              setStatus('Conectando...');
+              audioRef.current.load();
+              
+              setupAudioContext();
+
+              audioRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                  setStatus('En vivo');
+                  updateVisualizer();
+                })
+                .catch((err) => {
+                  console.error("Error reproduciendo el audio:", err);
+                  setStatus('Error de conexión');
+                  setIsPlaying(false);
+                });
+            }
+          };
+
+          const handleViewModeChange = (mode) => {
+            setViewMode(mode);
+            if (mode === 'tv' && isPlaying) {
+              togglePlay(); 
+            }
+          };
+
+          const handleVolumeChange = (e) => {
+            const val = parseFloat(e.target.value);
+            setVolume(val);
+            if (audioRef.current) {
+              audioRef.current.volume = val;
+            }
+            if (val > 0 && isMuted) {
+              setIsMuted(false);
+              if (audioRef.current) audioRef.current.muted = false;
+            }
+          };
+
+          const toggleMute = () => {
+            const newMutedState = !isMuted;
+            setIsMuted(newMutedState);
+            if (audioRef.current) {
+              audioRef.current.muted = newMutedState;
+            }
+          };
+
+          return (
+            <React.Fragment>
+              {/* FONDO FIJO COMPLETO */}
+              <div className="fixed inset-0 bg-slate-950 z-0 overflow-hidden flex items-center justify-center pointer-events-none">
+                <div className="absolute inset-0 z-0 opacity-20">
+                  <img 
+                    src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1920&q=80" 
+                    alt="Fondo de micrófono de radio" 
+                    className="w-full h-full object-cover filter grayscale"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-slate-950/70 to-slate-950/90 mix-blend-multiply"></div>
+                </div>
+
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/40 blur-[120px] mix-blend-screen animate-pulse z-10"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/40 blur-[120px] mix-blend-screen animate-pulse z-10" style={{ animationDelay: '2s' }}></div>
+              </div>
+
+              {/* CONTENIDO PRINCIPAL */}
+              <div className="relative z-10 h-[100dvh] w-full flex flex-col items-center p-4 font-sans overflow-hidden">
+                
+                <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
+
+                {/* --- BOTONERA LIQUID GLASS --- */}
+                <div className="w-full max-w-md flex justify-between bg-white/5 backdrop-blur-xl p-1.5 rounded-full mb-4 shadow-[inset_0_0_10px_rgba(255,255,255,0.05),_0_4px_10px_rgba(0,0,0,0.3)] border border-white/10 shrink-0 overflow-x-auto custom-scrollbar">
+                  <button onClick={() => handleViewModeChange('radio')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'radio' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
+                    <Radio size={14} /> <span className="hidden sm:block">Radio</span>
+                  </button>
+                  <button onClick={() => handleViewModeChange('tv')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'tv' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
+                    <MonitorPlay size={14} /> <span className="hidden sm:block">TV</span>
+                  </button>
+                  <button onClick={() => handleViewModeChange('sports')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'sports' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
+                    <Trophy size={14} /> <span className="hidden sm:block">Fútbol</span>
+                  </button>
+                  <button onClick={() => handleViewModeChange('nasa')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'nasa' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
+                    <Globe size={14} /> <span className="hidden sm:block">Satélite</span>
+                  </button>
+                </div>
+
+                {/* --- TARJETA PRINCIPAL DINÁMICA --- */}
+                <div className="w-full max-w-md bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] flex flex-col overflow-hidden flex-1 mb-4">
+                  
+                  {/* Encabezado con Animación */}
+                  <div className="p-5 pb-3 shrink-0 border-b border-white/5 flex justify-center">
+                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-white to-indigo-300 drop-shadow-lg text-center hover:scale-105 hover:from-cyan-300 hover:via-white hover:to-blue-400 transition-all duration-300 cursor-pointer hover:drop-shadow-[0_0_25px_rgba(147,197,253,0.6)] active:scale-95 select-none inline-block">
+                      PREGÓN 95.7 FM
+                    </h1>
+                  </div>
+
+                  {/* ZONA DE CONTENIDO VARIABLE */}
+                  <div className="flex-1 flex flex-col p-5 overflow-y-auto custom-scrollbar relative">
+                    
+                    {/* ===================== VISTA DE RADIO ===================== */}
+                    {viewMode === 'radio' && (
+                      <div className="flex flex-col items-center justify-between h-full w-full gap-3 animate-in fade-in duration-500">
+                        
+                        <div className="w-full flex justify-between items-center px-2 shrink-0">
+                          <span className="text-xs font-bold tracking-wider text-blue-300/80 uppercase">Transmisión</span>
+                          <div className="flex items-center gap-2">
+                            {isPlaying && (
+                              <span className="relative flex h-2.5 w-2.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
+                              </span>
+                            )}
+                            <span className={`text-xs font-bold uppercase tracking-wider ${isPlaying ? 'text-red-400' : 'text-slate-400'}`}>
+                              {status}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Carátula ajustada */}
+                        <div 
+                          className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-2xl bg-gradient-to-tr from-blue-600/50 to-indigo-500/50 p-[2px] shadow-2xl shadow-cyan-900/40 overflow-hidden group shrink-0 mt-2"
+                          style={{ transform: `scale(${isPlaying ? beatScale : 1})`, transition: isPlaying ? 'transform 0.05s ease-out' : 'transform 0.5s ease-out' }}
+                        >
+                          {coverUrl ? (
+                            <img src={coverUrl} alt="Carátula" className={`w-full h-full object-cover rounded-xl transition-all duration-700 ${isPlaying ? 'grayscale-0' : 'grayscale-[40%]'}`} />
+                          ) : (
+                            <div className="relative w-full h-full rounded-xl overflow-hidden bg-slate-900">
+                              <img src="https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=600&q=80" alt="Estudio de Radio" className={`w-full h-full object-cover transition-all duration-700 ${isPlaying ? 'opacity-90 grayscale-0' : 'opacity-50 grayscale-[60%]'}`} />
+                              <div className="absolute inset-0 bg-blue-600/30 mix-blend-color pointer-events-none"></div>
+                              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent pointer-events-none"></div>
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
+                        </div>
+
+                        {/* Texto de Canción */}
+                        <div className="text-center w-full px-2 mt-2 shrink-0">
+                          <h2 className={`text-xl sm:text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-cyan-200 truncate w-full transition-all duration-300 ${isPlaying && songInfo.title !== 'Programación en vivo' ? 'animate-pulse' : ''}`}>
+                            {songInfo.title}
+                          </h2>
+                          <p className="text-cyan-400/80 font-medium tracking-wide text-sm sm:text-base truncate w-full mt-1">
+                            {songInfo.artist}
+                          </p>
+                        </div>
+
+                        {/* Ondas Neón */}
+                        <div className="flex-1 flex items-center justify-center gap-[4px] min-h-[30px] w-full px-2 shrink-0">
+                          {audioBars.map((val, idx) => {
+                            const NUM_BARS = 32;
+                            const distanceFromCenter = Math.abs((idx - (NUM_BARS / 2)) / (NUM_BARS / 2));
+                            const edgeDampening = Math.max(0.2, 1 - Math.pow(distanceFromCenter, 2));
+                            const finalVal = val * edgeDampening;
+                            return (
+                              <div key={idx} className="w-[4px] rounded-full transition-all duration-[75ms] ease-out" style={{ height: isPlaying ? `${Math.max(4, finalVal * 40)}px` : '4px', background: isPlaying ? 'linear-gradient(to top, #3b82f6, #22d3ee)' : 'rgba(255,255,255,0.1)', boxShadow: isPlaying ? `0 0 ${finalVal * 12}px rgba(34, 211, 238, 0.7)` : 'none' }}></div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Botón Play */}
+                        <button onClick={togglePlay} className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-full bg-white text-slate-900 hover:scale-105 shadow-[0_0_25px_rgba(34,211,238,0.4)] transition-all duration-300 active:scale-95 shrink-0 mt-2">
+                          {isPlaying ? <Pause size={30} fill="currentColor" /> : <Play size={30} fill="currentColor" className="ml-1" />}
+                        </button>
+
+                        {/* Barra de Volumen */}
+                        <div className="w-full flex items-center gap-4 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)] mt-2 shrink-0">
+                          <button onClick={toggleMute} className="text-slate-400 hover:text-cyan-400 transition-colors drop-shadow-md">
+                            {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                          </button>
+                          <div className="relative w-full h-1.5 flex items-center">
+                            <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="custom-volume-slider w-full h-1.5 bg-transparent rounded-full appearance-none cursor-pointer z-10" style={{ background: `linear-gradient(to right, #06b6d4 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.1) ${(isMuted ? 0 : volume) * 100}%)` }} />
+                          </div>
+                        </div>
+
+                      </div>
+                    )}
+
+                    {/* ===================== VISTA DE TV ===================== */}
+                    {viewMode === 'tv' && (
+                      <div className="flex flex-col h-full w-full animate-in fade-in duration-500 gap-4 mb-2 overflow-y-auto custom-scrollbar pr-1 pb-2">
+                        
+                        {/* REPRODUCTOR DE TV */}
+                        <div className="w-full bg-black rounded-xl overflow-hidden shadow-2xl relative shrink-0 border border-white/10 group">
+                          <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md z-10 flex items-center gap-2 shadow-lg">
+                            <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>
+                            EN VIVO
+                          </div>
+                          
+                          {/* Capa de Error */}
+                          {tvError && (
+                            <div className="absolute inset-0 bg-slate-950/95 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm animate-in fade-in">
+                               <AlertCircle size={36} className="text-red-400 mb-3 opacity-80" />
+                               <h3 className="text-sm font-bold text-white mb-2">Señal no disponible</h3>
+                               <p className="text-[10px] text-slate-300 mb-4 leading-relaxed">
+                                 El enlace de transmisión se encuentra inactivo, bloqueado o ha expirado.
+                               </p>
+                            </div>
+                          )}
+
+                          <video 
+                            ref={tvVideoRef}
+                            className={`w-full aspect-video object-cover ${tvError ? 'hidden' : 'block'}`}
+                            controls 
+                            autoPlay 
+                            playsInline
+                          ></video>
+                          <div className="p-3 bg-slate-900 border-t border-white/5 flex flex-col gap-0.5">
+                            <h3 className="text-sm font-bold text-white">Venevisión</h3>
+                            <p className="text-[10px] text-slate-400">Señal Nacional 24/7</p>
+                          </div>
+                        </div>
+
+                        {/* YOUTUBE */}
+                        <a 
+                          href={tvLiveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full bg-gradient-to-br from-slate-900 to-black rounded-xl overflow-hidden border border-red-500/30 relative shadow-lg shadow-red-900/20 group flex items-center p-3 hover:border-red-500/60 transition-all duration-300 cursor-pointer shrink-0 mt-2"
+                        >
+                          <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/40 group-hover:scale-110 group-hover:bg-red-500 transition-all duration-500 shrink-0">
+                            <Youtube size={24} className="text-white ml-0.5" />
+                          </div>
+                          <div className="ml-4 z-10 flex-1">
+                            <h3 className="text-sm font-bold text-white mb-1">Señal de YouTube</h3>
+                            <p className="text-slate-300 text-[11px] font-medium">@MucutuyVe</p>
+                          </div>
+                          <ExternalLink size={16} className="text-red-400 mr-3" />
+                          <div className="absolute inset-0 bg-red-600/5 mix-blend-color pointer-events-none"></div>
+                        </a>
+                      </div>
+                    )}
+
+                    {/* ===================== VISTA DE DEPORTES ===================== */}
+                    {viewMode === 'sports' && (
+                      <div className="flex flex-col h-full w-full animate-in fade-in duration-500 gap-4">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-3 pr-1 pb-2">
+                          <h3 className="text-sm font-bold tracking-widest text-blue-300/80 uppercase sticky top-0 bg-slate-900/90 backdrop-blur-md py-2 z-10 flex items-center gap-2">
+                            <Trophy size={16} className="text-blue-400" /> Partidos del Día
+                          </h3>
+                          
+                          {loadingSports ? (
+                            <div className="flex flex-col items-center justify-center py-8">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-3"></div>
+                              <p className="text-sm text-slate-400">Buscando resultados...</p>
+                            </div>
+                          ) : matches.length > 0 ? (
+                            matches.map((match, i) => (
+                              <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-4 flex flex-col gap-3">
+                                <div className="flex justify-between items-center mb-1">
+                                    <p className="text-[10px] sm:text-xs text-blue-300 uppercase tracking-widest truncate">{match.league}</p>
+                                    <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide">
+                                        {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                                    </p>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col gap-1.5 w-[40%]">
+                                        <span className="text-sm font-bold truncate text-slate-200">{match.home.team.shortDisplayName || match.home.team.name}</span>
+                                        <span className="text-sm font-bold truncate text-slate-200">{match.away.team.shortDisplayName || match.away.team.name}</span>
+                                    </div>
+                                    <div className="flex flex-col gap-1.5 items-center w-[20%]">
+                                        <span className="text-base sm:text-lg font-black text-white">{match.status !== 'pre' ? match.home.score : '-'}</span>
+                                        <span className="text-base sm:text-lg font-black text-white">{match.status !== 'pre' ? match.away.score : '-'}</span>
+                                    </div>
+                                    <div className="flex flex-col items-end w-[40%] text-right">
+                                        {match.status === 'pre' ? (
+                                            <span className="text-xs sm:text-sm font-bold text-blue-300">
+                                                {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
+                                            </span>
+                                        ) : (
+                                            <span className={`text-xs sm:text-sm font-bold ${match.status === 'in' ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>{match.detail}</span>
+                                        )}
+                                        {match.status === 'in' && (<span className="text-[10px] font-bold bg-red-500/20 text-red-300 px-2 py-0.5 rounded mt-1 border border-red-500/30">EN VIVO</span>)}
+                                    </div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center py-8 text-sm text-slate-400">
+                              <Trophy size={32} className="mx-auto mb-3 opacity-50" />
+                              <p>No hay partidos destacados hoy.</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ===================== VISTA DE SATÉLITE (GOOGLE MAPS) ===================== */}
+                    {viewMode === 'nasa' && (
+                      <div className="flex flex-col h-full w-full animate-in fade-in duration-500 gap-3">
+                         {/* Encabezado Satélite */}
+                         <div className="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-xl p-3 flex flex-col shadow-lg shrink-0">
+                             <div className="flex items-center gap-2 mb-1.5">
+                                 <Globe size={18} className="text-blue-400"/>
+                                 <span className="text-xs sm:text-sm font-bold text-blue-300 uppercase tracking-widest">Satélite en Vivo</span>
+                             </div>
+                             <p className="text-[10px] sm:text-xs font-semibold text-blue-200/90 tracking-wide mt-1">📍 Coordenadas: 8.2456° N, -71.2864° W</p>
+                             <p className="text-[9px] sm:text-[10px] text-slate-400 mt-1 leading-tight">Vista satelital interactiva de alta resolución sobre Mucutuy, Mérida. Provisto por Google Maps.</p>
+                         </div>
+                         
+                         {/* Contenedor de la Imagen Satelital Interactiva */}
+                         <div className="flex-1 w-full bg-slate-900 rounded-xl border border-white/10 overflow-hidden relative shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-center group">
+                             
+                             <iframe 
+                                src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" 
+                                className="w-full h-full border-0 opacity-90 group-hover:opacity-100 transition-opacity duration-700"
+                                allowFullScreen=""
+                                loading="lazy"
+                                referrerPolicy="no-referrer-when-downgrade"
+                             ></iframe>
+                             
+                             {/* Retícula de Radar / Ping en el centro exacto (Mucutuy) */}
+                             {/* pointer-events-none permite que el usuario mueva el mapa interactivo que está por debajo */}
+                             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                <div className="w-2.5 h-2.5 bg-red-500 rounded-full z-10 shadow-[0_0_15px_#f00]"></div>
+                                <div className="absolute w-[40px] h-[40px] border border-red-500/80 rounded-full animate-ripple"></div>
+                                <div className="absolute w-[80px] h-[80px] border border-red-500/50 rounded-full animate-ripple" style={{ animationDelay: '1.5s' }}></div>
+                                {/* Mirilla central */}
+                                <div className="absolute w-8 h-[1px] bg-red-500/80"></div>
+                                <div className="absolute h-8 w-[1px] bg-red-500/80"></div>
+                             </div>
+
+                             {/* Etiqueta flotante */}
+                             <div className="absolute bottom-6 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 z-20 pointer-events-none">
+                                 <span className="text-[9px] text-white font-bold tracking-wider">Mucutuy</span>
+                             </div>
+                         </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* --- FOOTER: REDES SOCIALES Y UBICACIÓN --- */}
+                <div className="w-full max-w-md shrink-0 flex flex-col gap-3">
+                  <div className="flex justify-center gap-3 w-full">
+                    <a href="https://www.instagram.com/mucutuymerida/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-pink-500/20 hover:border-pink-500/50 hover:text-pink-300 transition-all duration-300 flex-1 justify-center">
+                      <Instagram size={16} /> <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">Instagram</span>
+                    </a>
+                    <a href="https://wa.me/584165755857" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-green-500/20 hover:border-green-500/50 hover:text-green-300 transition-all duration-300 flex-1 justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg> <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">WhatsApp</span>
+                    </a>
+                  </div>
+
+                  <div className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 flex items-center justify-center shadow-[0_4px_15px_0_rgba(0,0,0,0.3)]">
+                    <p className="text-[10px] sm:text-xs font-bold tracking-[0.25em] text-blue-200/90 uppercase text-center flex items-center gap-2">
+                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
+                      Mucutuy, Mérida - Venezuela
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* ESTILOS DE ANIMACIONES Y LIQUID GLASS */}
+              <style dangerouslySetInnerHTML={{__html: `
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+                .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); }
+
+                /* ANIMACIÓN RADAR NASA */
+                @keyframes rippleExpansivo {
+                  0% { transform: scale(0); opacity: 1; }
+                  100% { transform: scale(1); opacity: 0; }
+                }
+                .animate-ripple {
+                  animation: rippleExpansivo 3s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+                }
+
+                /* EFECTO LIQUID GLASS BOTONES NAVEGACIÓN */
+                .glass-btn-hover:hover {
+                  background: rgba(255, 255, 255, 0.08);
+                  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0, 0, 0, 0.2);
+                }
+                .glass-btn-active {
+                  background: rgba(59, 130, 246, 0.25);
+                  border: 1px solid rgba(59, 130, 246, 0.5);
+                  box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.4), 0 4px 15px rgba(0, 0, 0, 0.3);
+                  color: white;
+                  text-shadow: 0 0 5px rgba(255,255,255,0.5);
+                }
+
+                /* ESTILO DESLIZADOR DE VOLUMEN */
+                .custom-volume-slider::-webkit-slider-thumb {
+                  -webkit-appearance: none;
+                  appearance: none;
+                  width: 12px;
+                  height: 12px;
+                  background: white;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  box-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 4px rgba(255, 255, 255, 0.8);
+                  transition: transform 0.1s ease;
+                }
+                .custom-volume-slider::-webkit-slider-thumb:hover {
+                  transform: scale(1.3);
+                }
+                .custom-volume-slider::-moz-range-thumb {
+                  width: 12px;
+                  height: 12px;
+                  background: white;
+                  border-radius: 50%;
+                  cursor: pointer;
+                  border: none;
+                  box-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 4px rgba(255, 255, 255, 0.8);
+                  transition: transform 0.1s ease;
+                }
+                .custom-volume-slider::-moz-range-thumb:hover {
+                  transform: scale(1.3);
+                }
+              `}} />
+            </React.Fragment>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
