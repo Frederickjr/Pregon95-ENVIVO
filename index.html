@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7">
-    <meta name="application-name" content="PREGÓN 95.7">
+    <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7 - EN VIVO">
+    <meta name="application-name" content="PREGÓN 95.7 - EN VIVO">
     <meta name="theme-color" content="#09090b">
     
     <!-- Íconos para la pantalla de inicio (iOS y Android) -->
-    <link rel="icon" type="image/jpeg" href="./logo.jpg">
-    <link rel="apple-touch-icon" href="./logo.jpg">
+    <link rel="icon" type="image/png" href="./logo.png">
+    <link rel="apple-touch-icon" href="./logo.png">
     
     <!-- Manifiesto de la aplicación web -->
     <link rel="manifest" href="./manifest.json">
@@ -250,7 +250,7 @@
                   lastRawTitle.current = streamTitle;
 
                   if (!streamTitle || streamTitle.trim() === '') {
-                     setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                     setSongInfo({ title: 'Programación en vivo', artist: 'Desde Los Pueblos de Sur' });
                      return;
                   }
 
@@ -275,7 +275,7 @@
                                     artist.toLowerCase().includes('en vivo');
 
                   if (isGeneric) {
-                    setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                    setSongInfo({ title: 'Programación en vivo', artist: 'Desde Los Pueblos del Sur' });
                   } else {
                     setSongInfo({ title, artist });
                   }
