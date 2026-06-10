@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7 - EN VIVO">
-    <meta name="application-name" content="PREGÓN 95.7 - EN VIVO">
+    <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7">
+    <meta name="application-name" content="PREGÓN 95.7">
     <meta name="theme-color" content="#09090b">
     
     <!-- Íconos para la pantalla de inicio (iOS y Android) -->
-    <link rel="icon" type="image/png" href="./logo.png">
-    <link rel="apple-touch-icon" href="./logo.png">
+    <link rel="icon" type="image/jpeg" href="./logo.jpg">
+    <link rel="apple-touch-icon" href="./logo.jpg">
     
     <!-- Manifiesto de la aplicación web -->
     <link rel="manifest" href="./manifest.json">
@@ -102,8 +102,11 @@
           const lastRawTitle = useRef(""); 
 
           const [matches, setMatches] = useState([]);
+          const [standings, setStandings] = useState([]); // Nuevo estado para los Grupos
+          const [sportsTab, setSportsTab] = useState('matches'); // Pestaña interna (matches | groups)
           const [loadingSports, setLoadingSports] = useState(false);
           const [tvError, setTvError] = useState(false);
+          const [activeTvChannel, setActiveTvChannel] = useState('venevision');
 
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
@@ -119,6 +122,7 @@
           const zenoMetadataUrl = "https://api.zeno.fm/mounts/metadata/subscribe/2dcuqasrykauv";
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
           const venevisionUrl = "https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8";
+          const televenUrl = "https://mediablocks-ve.global.ssl.fastly.net/10255/live/hls/televen/index.m3u8?hdnts=data=ip=190.153.80.162,id=TLV-GUEST,pid=255,did=N/A,sid=WBS~acl=/10255/live/hls/televen/*~exp=1781077490~hmac=1a69d999e9014d9205cac917e18421961d67e612b34428d97769f51e3745b3cb";
           
           // Imagen de Logo (Archivo local simplificado)
           const logoUrl = "./logo.jpg";
@@ -139,11 +143,13 @@
               setTvError(false);
               const video = tvVideoRef.current;
               let hls;
+              
+              const currentTvUrl = activeTvChannel === 'televen' ? televenUrl : venevisionUrl;
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
                   hls = new window.Hls();
-                  hls.loadSource(venevisionUrl);
+                  hls.loadSource(currentTvUrl);
                   hls.attachMedia(video);
                   hls.on(window.Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
@@ -155,7 +161,7 @@
                     video.play().catch(e => console.log("Autoplay prevent: ", e));
                   });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                  video.src = venevisionUrl;
+                  video.src = currentTvUrl;
                   video.onerror = () => setTvError(true);
                   video.addEventListener('loadedmetadata', function () {
                     video.play().catch(e => console.log("Autoplay prevent: ", e));
@@ -173,14 +179,15 @@
                 if (hls) hls.destroy();
               };
             }
-          }, [viewMode]);
+          }, [viewMode, activeTvChannel]);
 
-          // ================== FETCH DEPORTES (MUNDIAL FIFA 2026) ==================
+          // ================== FETCH DEPORTES ==================
           useEffect(() => {
-            if (viewMode === 'sports' && matches.length === 0) {
+            if (viewMode === 'sports' && matches.length === 0 && standings.length === 0) {
               const fetchSports = async () => {
                 setLoadingSports(true);
                 try {
+                  // 1. OBTENER PARTIDOS (CALENDARIO)
                   const leaguesToFetch = ['fifa.world', 'conmebol.libertadores', 'uefa.champions', 'ven.1'];
                   let allMatches = [];
                   await Promise.all(leaguesToFetch.map(async (league) => {
@@ -223,12 +230,40 @@
                       return new Date(a.date) - new Date(b.date);
                   });
                   setMatches(allMatches);
+
+                  // 2. OBTENER TABLAS DE POSICIONES (GRUPOS DEL MUNDIAL)
+                  try {
+                      const stRes = await fetch(`https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings`);
+                      const stData = await stRes.json();
+                      if (stData && stData.children) {
+                          const groups = stData.children.map(group => {
+                              return {
+                                  name: group.name,
+                                  teams: group.standings?.entries?.map(entry => {
+                                      const stats = entry.stats;
+                                      const getStat = (abbrev) => stats.find(s => s.abbreviation === abbrev)?.value || 0;
+                                      return {
+                                          name: entry.team.shortDisplayName || entry.team.name,
+                                          logo: entry.team.logos?.[0]?.href || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
+                                          pts: getStat('P'), // Puntos
+                                          gp: getStat('GP'), // Partidos Jugados
+                                          w: getStat('W'),   // Victorias
+                                          d: getStat('D'),   // Empates
+                                          l: getStat('L')    // Derrotas
+                                      };
+                                  }) || []
+                              };
+                          });
+                          setStandings(groups);
+                      }
+                  } catch (err) { console.log(err); }
+
                 } catch (err) {}
                 setLoadingSports(false);
               };
               fetchSports();
             }
-          }, [viewMode, matches.length]);
+          }, [viewMode, matches.length, standings.length]);
 
           // ================== METADATOS MUSICALES ==================
           useEffect(() => {
@@ -250,7 +285,7 @@
                   lastRawTitle.current = streamTitle;
 
                   if (!streamTitle || streamTitle.trim() === '') {
-                     setSongInfo({ title: 'Programación en vivo', artist: 'Desde Los Pueblos de Sur' });
+                     setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
                      return;
                   }
 
@@ -275,7 +310,7 @@
                                     artist.toLowerCase().includes('en vivo');
 
                   if (isGeneric) {
-                    setSongInfo({ title: 'Programación en vivo', artist: 'Desde Los Pueblos del Sur' });
+                    setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
                   } else {
                     setSongInfo({ title, artist });
                   }
@@ -615,7 +650,24 @@
 
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'tv' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          <div className="w-full bg-white/10 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0">
+                          
+                          {/* SELECTOR DE CANALES */}
+                          <div className="flex bg-white/5 p-1 rounded-[16px] border border-white/10 w-full shrink-0 mt-2 z-10">
+                              <button
+                                onClick={() => setActiveTvChannel('venevision')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-xs font-bold transition-all duration-300 ${activeTvChannel === 'venevision' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                              >
+                                <Tv size={16} /> Venevisión
+                              </button>
+                              <button
+                                onClick={() => setActiveTvChannel('televen')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-xs font-bold transition-all duration-300 ${activeTvChannel === 'televen' ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                              >
+                                <Tv size={16} /> Televen
+                              </button>
+                          </div>
+
+                          <div className="w-full bg-white/10 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0 z-10">
                               <div className="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10 flex items-center gap-1.5 shadow-md backdrop-blur-md bg-opacity-80">
                                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                                   EN VIVO
@@ -625,18 +677,28 @@
                                 <div className="absolute inset-0 bg-black/80 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
                                    <AlertCircle size={40} className="text-white/40 mb-3" />
                                    <h3 className="text-base font-semibold text-white mb-1">Señal Expirada</h3>
-                                   <p className="text-xs text-white/50">El servidor cerró la conexión.</p>
+                                   <p className="text-xs text-white/50 mb-4">El enlace temporal de seguridad caducó o fue bloqueado.</p>
+                                   {activeTvChannel === 'televen' && (
+                                     <a 
+                                       href="https://app.televen.com/" 
+                                       target="_blank" 
+                                       rel="noopener noreferrer"
+                                       className="bg-red-600 hover:bg-red-500 text-white text-[11px] font-bold px-4 py-2.5 rounded-full transition-colors flex items-center gap-2 shadow-lg"
+                                     >
+                                       <Play size={16} className="ml-1" /> Abrir Televen App
+                                     </a>
+                                   )}
                                 </div>
                               )}
 
                               <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
                               <div className="p-5 flex flex-col gap-1">
-                                  <h3 className="text-lg font-bold text-white tracking-tight">Venevisión</h3>
+                                  <h3 className="text-lg font-bold text-white tracking-tight">{activeTvChannel === 'televen' ? 'Televen HD' : 'Venevisión'}</h3>
                                   <p className="text-[13px] text-white/60">Señal Nacional Continua</p>
                               </div>
                           </div>
 
-                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2">
+                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10">
                               <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center shrink-0">
                                   <Youtube size={26} />
                               </div>
@@ -650,81 +712,134 @@
 
                       {/* --- VISTA DEPORTES --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-3 ${viewMode === 'sports' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          <h3 className="text-[13px] font-semibold tracking-wide text-white/50 uppercase px-2 mb-2 shrink-0 flex items-center gap-2">
-                              <Globe size={16} className="text-blue-500" /> Fútbol Destacado
-                          </h3>
+                          
+                          {/* SELECTOR PARTIDOS / GRUPOS */}
+                          <div className="flex bg-white/5 p-1 rounded-[16px] border border-white/10 w-full shrink-0 mb-2 mt-2 z-10">
+                              <button
+                                onClick={() => setSportsTab('matches')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[12px] text-xs font-bold transition-all duration-300 ${sportsTab === 'matches' ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                              >
+                                Calendario
+                              </button>
+                              <button
+                                onClick={() => setSportsTab('groups')}
+                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[12px] text-xs font-bold transition-all duration-300 ${sportsTab === 'groups' ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                              >
+                                Grupos
+                              </button>
+                          </div>
                           
                           {loadingSports ? (
-                              <div className="flex flex-col items-center justify-center py-12 shrink-0">
+                              <div className="flex flex-col items-center justify-center py-12 shrink-0 z-10">
                                   <div className="animate-spin rounded-full h-8 w-8 border-2 border-transparent border-t-white mb-4"></div>
-                                  <p className="text-[13px] text-white/50">Cargando resultados...</p>
+                                  <p className="text-[13px] text-white/50">Cargando datos deportivos...</p>
                               </div>
-                          ) : matches.length > 0 ? (
-                              matches.map((match, i) => (
-                                  <div key={i} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col gap-4 shrink-0 shadow-lg relative overflow-hidden">
-                                      {match.status === 'in' && <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>}
-                                      
-                                      <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                                          <p className="text-[11px] text-white/70 font-semibold uppercase tracking-wider truncate flex items-center gap-1">
-                                              {match.league}
-                                          </p>
-                                          <p className="text-[11px] text-white/40 font-medium">
-                                              {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}
-                                          </p>
-                                      </div>
-                                      
-                                      <div className="flex justify-between items-center">
-                                          <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                              <img src={match.home.logo} alt={match.home.name} className="w-12 h-12 object-contain" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
-                                              <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.home.name}</span>
+                          ) : sportsTab === 'matches' ? (
+                              matches.length > 0 ? (
+                                  matches.map((match, i) => (
+                                      <div key={i} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col gap-4 shrink-0 shadow-lg relative overflow-hidden z-10">
+                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>}
+                                          
+                                          <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                                              <p className="text-[11px] text-white/70 font-semibold uppercase tracking-wider truncate flex items-center gap-1">
+                                                  {match.league}
+                                              </p>
+                                              <p className="text-[11px] text-white/40 font-medium">
+                                                  {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}
+                                              </p>
                                           </div>
                                           
-                                          <div className="flex flex-col items-center justify-center w-[30%] text-center">
-                                              {match.status === 'pre' ? (
-                                                  <div className="flex flex-col items-center">
-                                                      <span className="text-[13px] font-semibold text-white/90 bg-white/10 px-3 py-1.5 rounded-full mb-1">
-                                                          {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
-                                                      </span>
-                                                  </div>
-                                              ) : (
-                                                  <div className="flex flex-col items-center">
-                                                      <div className="flex items-center gap-2">
-                                                          <span className="text-3xl font-bold text-white tracking-tighter">{match.home.score}</span>
-                                                          <span className="text-lg font-bold text-white/30">-</span>
-                                                          <span className="text-3xl font-bold text-white tracking-tighter">{match.away.score}</span>
+                                          <div className="flex justify-between items-center">
+                                              <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                                                  <img src={match.home.logo} alt={match.home.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
+                                                  <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.home.name}</span>
+                                              </div>
+                                              
+                                              <div className="flex flex-col items-center justify-center w-[30%] text-center">
+                                                  {match.status === 'pre' ? (
+                                                      <div className="flex flex-col items-center">
+                                                          <span className="text-[13px] font-semibold text-white/90 bg-white/10 px-3 py-1.5 rounded-full mb-1">
+                                                              {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                          </span>
                                                       </div>
-                                                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full mt-2 ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/10 text-white/50'}`}>
-                                                          {match.detail}
-                                                      </span>
-                                                  </div>
-                                              )}
-                                          </div>
+                                                  ) : (
+                                                      <div className="flex flex-col items-center">
+                                                          <div className="flex items-center gap-2">
+                                                              <span className="text-3xl font-bold text-white tracking-tighter">{match.home.score}</span>
+                                                              <span className="text-lg font-bold text-white/30">-</span>
+                                                              <span className="text-3xl font-bold text-white tracking-tighter">{match.away.score}</span>
+                                                          </div>
+                                                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full mt-2 ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/10 text-white/50'}`}>
+                                                              {match.detail}
+                                                          </span>
+                                                      </div>
+                                                  )}
+                                              </div>
 
-                                          <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                              <img src={match.away.logo} alt={match.away.name} className="w-12 h-12 object-contain" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
-                                              <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.away.name}</span>
+                                              <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                                                  <img src={match.away.logo} alt={match.away.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
+                                                  <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.away.name}</span>
+                                              </div>
                                           </div>
+                                          
+                                          {match.league.toLowerCase().includes('fifa') && (
+                                              <div className="mt-1 pt-3 border-t border-white/10 flex justify-center items-center">
+                                                  <p className="text-[10px] text-white/50 font-medium flex items-center gap-1.5">
+                                                      <Tv size={12} className="text-white/40" />
+                                                      Transmite: <span className="text-white/90 font-bold">Televen / DSports</span>
+                                                  </p>
+                                              </div>
+                                          )}
                                       </div>
-                                      
-                                      <div className="mt-1 pt-3 border-t border-white/10 flex justify-center items-center">
-                                          <p className="text-[10px] text-white/50 font-medium flex items-center gap-1.5">
-                                              <Tv size={12} className="text-white/40" />
-                                              Transmite: <span className="text-white/90 font-bold">Televen / DSports</span>
-                                          </p>
-                                      </div>
+                                  ))
+                              ) : (
+                                  <div className="text-center py-12 flex flex-col items-center shrink-0 z-10">
+                                      <Trophy size={48} className="text-white/20 mb-4" />
+                                      <p className="text-[13px] text-white/50">No hay partidos destacados hoy.</p>
                                   </div>
-                              ))
+                              )
                           ) : (
-                              <div className="text-center py-12 flex flex-col items-center shrink-0">
-                                  <Trophy size={48} className="text-white/20 mb-4" />
-                                  <p className="text-[13px] text-white/50">No hay partidos destacados hoy.</p>
-                              </div>
+                              /* --- VISTA DE GRUPOS --- */
+                              standings.length > 0 ? (
+                                  standings.map((group, idx) => (
+                                      <div key={idx} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-4 flex flex-col gap-2 shrink-0 shadow-lg mb-2 z-10">
+                                          <h4 className="text-white font-bold text-[15px] tracking-tight ml-2 mt-1">{group.name}</h4>
+                                          <div className="flex text-[10px] text-white/50 border-b border-white/10 pb-2 uppercase font-bold tracking-wider mt-2">
+                                              <div className="flex-1 ml-2">Selección</div>
+                                              <div className="w-6 text-center" title="Partidos Jugados">PJ</div>
+                                              <div className="w-6 text-center" title="Victorias">G</div>
+                                              <div className="w-6 text-center" title="Empates">E</div>
+                                              <div className="w-6 text-center" title="Derrotas">P</div>
+                                              <div className="w-8 text-center text-white/80">Pts</div>
+                                          </div>
+                                          {group.teams.map((team, tIdx) => (
+                                              <div key={tIdx} className="flex items-center text-[11px] text-white py-2.5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors rounded-lg px-2 -mx-2">
+                                                  <div className="flex-1 flex items-center gap-2">
+                                                      <span className="text-white/30 font-bold w-3 text-right">{tIdx + 1}</span>
+                                                      <img src={team.logo} alt={team.name} className="w-5 h-5 object-contain" />
+                                                      <span className="font-semibold truncate">{team.name}</span>
+                                                  </div>
+                                                  <div className="w-6 text-center text-white/60">{team.gp}</div>
+                                                  <div className="w-6 text-center text-white/60">{team.w}</div>
+                                                  <div className="w-6 text-center text-white/60">{team.d}</div>
+                                                  <div className="w-6 text-center text-white/60">{team.l}</div>
+                                                  <div className="w-8 text-center font-bold text-red-400 text-xs">{team.pts}</div>
+                                              </div>
+                                          ))}
+                                      </div>
+                                  ))
+                              ) : (
+                                  <div className="text-center py-12 flex flex-col items-center shrink-0 z-10">
+                                      <Globe size={48} className="text-white/20 mb-4" />
+                                      <p className="text-[13px] text-white/50">Los grupos aún no están disponibles.</p>
+                                  </div>
+                              )
                           )}
                       </div>
 
                       {/* --- VISTA SATÉLITE --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'nasa' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col shrink-0">
+                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col shrink-0 z-10">
                               <div className="flex items-center gap-2 mb-1">
                                   <Globe size={18} className="text-white/80"/>
                                   <span className="text-[13px] font-semibold text-white tracking-wide">Satélite Mucutuy</span>
@@ -732,7 +847,7 @@
                               <p className="text-[11px] text-white/50 mt-1">8.2456° N, -71.2864° W</p>
                           </div>
                           
-                          <div className="flex-1 w-full bg-black rounded-[24px] border border-white/10 overflow-hidden relative min-h-[300px] shadow-2xl shrink-0">
+                          <div className="flex-1 w-full bg-black rounded-[24px] border border-white/10 overflow-hidden relative min-h-[300px] shadow-2xl shrink-0 z-10">
                               <iframe 
                                   src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" 
                                   className="w-full h-full border-0 opacity-90 transition-opacity duration-700"
