@@ -1,0 +1,18 @@
+{
+  "name": "PREGÓN 95.7 FM",
+  "short_name": "PREGÓN 95.7",
+  "description": "La voz que te acompaña. Radio, TV y Deportes en vivo.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#09090b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./logo.jpg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
