@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7">
+    <meta name="application-name" content="PREGÓN 95.7">
+    <meta name="theme-color" content="#09090b">
+    
+    <!-- Íconos para la pantalla de inicio (iOS y Android) -->
+    <link rel="icon" type="image/jpeg" href="./logo.jpg">
+    <link rel="apple-touch-icon" href="./logo.jpg">
+    
+    <!-- Manifiesto de la aplicación web -->
+    <link rel="manifest" href="./manifest.json">
+
     <title>PREGÓN 95.7 FM - Experiencia iOS</title>
     
     <!-- Tailwind CSS -->
@@ -109,8 +120,8 @@
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
           const venevisionUrl = "https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8";
           
-          // Enlace directo de Google Drive arreglado para visualización web
-          const logoUrl = "https://lh3.googleusercontent.com/d/1XErHY3TjOCTLtAZQJAL1gSNGZtP7QcMA";
+          // Imagen de Logo (Archivo local simplificado)
+          const logoUrl = "./logo.jpg";
 
           // Cargar script hls.js dinámicamente
           useEffect(() => {
@@ -170,8 +181,7 @@
               const fetchSports = async () => {
                 setLoadingSports(true);
                 try {
-                  // 'fifa.world' es el endpoint oficial de ESPN para el Mundial 2026
-                  const leaguesToFetch = ['fifa.world'];
+                  const leaguesToFetch = ['fifa.world', 'conmebol.libertadores', 'uefa.champions', 'ven.1'];
                   let allMatches = [];
                   await Promise.all(leaguesToFetch.map(async (league) => {
                       try {
@@ -258,7 +268,6 @@
                   const isGeneric = title.toLowerCase().includes('pregon') || 
                                     title.toLowerCase().includes('pregón') ||
                                     artist.toLowerCase().includes('pregon') ||
-                                    artist.toLowerCase().includes('pregón') ||
                                     title.toLowerCase().includes('programación') ||
                                     title.toLowerCase().includes('publicidad') ||
                                     title.toLowerCase().includes('locucion') ||
@@ -563,7 +572,7 @@
                           </div>
 
                           {/* Título y Artista */}
-                          <div className="flex flex-col items-start w-full mt-8 mb-auto shrink-0">
+                          <div className="flex flex-col items-start w-full mt-8 mb-auto shrink-0 z-10">
                             <h2 className={`text-[26px] font-bold tracking-tight text-white w-full truncate ${isTuning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}>
                               {isTuning ? 'Buscando señal...' : songInfo.title}
                             </h2>
@@ -573,7 +582,7 @@
                           </div>
 
                           {/* Controles de Reproducción y Volumen */}
-                          <div className="w-full flex flex-col gap-8 shrink-0 mt-4">
+                          <div className="w-full flex flex-col gap-8 shrink-0 mt-4 px-2 z-10">
                               
                               {/* Deslizador de Volumen iOS Style */}
                               <div className="flex items-center gap-3 w-full">
@@ -642,7 +651,7 @@
                       {/* --- VISTA DEPORTES --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-3 ${viewMode === 'sports' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
                           <h3 className="text-[13px] font-semibold tracking-wide text-white/50 uppercase px-2 mb-2 shrink-0 flex items-center gap-2">
-                              <Globe size={16} className="text-blue-500" /> Mundial FIFA 2026
+                              <Globe size={16} className="text-blue-500" /> Fútbol Destacado
                           </h3>
                           
                           {loadingSports ? (
@@ -697,7 +706,6 @@
                                           </div>
                                       </div>
                                       
-                                      {/* Indicador de Transmisión TV (Canales para Venezuela) */}
                                       <div className="mt-1 pt-3 border-t border-white/10 flex justify-center items-center">
                                           <p className="text-[10px] text-white/50 font-medium flex items-center gap-1.5">
                                               <Tv size={12} className="text-white/40" />
