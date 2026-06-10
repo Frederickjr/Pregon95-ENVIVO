@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PREGÓN 95.7 FM - La voz que te acompaña</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>PREGÓN 95.7 FM - Experiencia iOS</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +20,7 @@
     <!-- Reproductor HLS para transmisión de TV -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
-<body class="bg-slate-950 m-0 p-0 text-slate-100 overflow-hidden">
+<body class="bg-black m-0 p-0 text-white overflow-hidden font-sans antialiased selection:bg-red-500/30">
 
     <div id="root"></div>
 
@@ -26,90 +28,51 @@
         const { useState, useRef, useEffect, useCallback } = React;
 
         // ==========================================
-        // COMPONENTES DE ÍCONOS
+        // COMPONENTES DE ÍCONOS (Estilo iOS SF Symbols)
         // ==========================================
-        const Icon = ({ children, size = 24, className = "", fill = "none" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        const Icon = ({ children, size = 28, className = "", fill = "none" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 {children}
             </svg>
         );
 
-        const Play = (props) => <Icon {...props}><polygon points="6 3 20 12 6 21 6 3"/></Icon>;
-        const Pause = (props) => <Icon {...props}><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></Icon>;
-        const Volume2 = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></Icon>;
-        const VolumeX = (props) => <Icon {...props}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></Icon>;
+        const Play = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></Icon>;
+        const Pause = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></Icon>;
+        const Volume2 = (props) => <Icon {...props} size={20}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></Icon>;
+        const VolumeX = (props) => <Icon {...props} size={20}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></Icon>;
         const Radio = (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></Icon>;
-        const MonitorPlay = (props) => <Icon {...props}><path d="m10 7 5 3-5 3Z"/><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/></Icon>;
-        const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
-        const Banknote = (props) => <Icon {...props}><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></Icon>;
-        const Youtube = (props) => <Icon {...props}><path d="M2.5 7.1c.1-1.3 1.2-2.3 2.5-2.4C8.2 4.5 12 4.5 12 4.5s3.8 0 7 .2c1.3.1 2.4 1.1 2.5 2.4.2 1.6.2 4.9.2 4.9s0 3.3-.2 4.9c-.1 1.3-1.2 2.3-2.5 2.4-3.2.2-7 .2-7 .2s-3.8 0-7-.2c-1.3-.1-2.4-1.1-2.5-2.4-.2-1.6-.2-4.9-.2-4.9s0-3.3.2-4.9z"/><path d="M10 12.5l5-3-5-3v6z"/></Icon>;
-        const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
-        const Instagram = (props) => <Icon {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></Icon>;
-        const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
         const Tv = (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>;
+        const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
+        const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
+        const Youtube = (props) => <Icon {...props}><path d="M2.5 7.1c.1-1.3 1.2-2.3 2.5-2.4C8.2 4.5 12 4.5 12 4.5s3.8 0 7 .2c1.3.1 2.4 1.1 2.5 2.4-3.2.2-7 .2-7 .2s-3.8 0-7-.2c-1.3-.1-2.4-1.1-2.5-2.4-.2-1.6-.2-4.9-.2-4.9s0-3.3.2-4.9z"/><path d="M10 12.5l5-3-5-3v6z"/></Icon>;
         const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
+        const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
+        const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
 
         // ==========================================
-        // MOTOR AVANZADO DE DETECCIÓN Y LIMPIEZA MUSICAL
+        // EFECTO DE AUDIO "SINTONIZANDO"
         // ==========================================
-        const fetchAdvancedSongData = async (rawArtist, rawTitle) => {
-          // 1. Algoritmo de Sanitización: Limpiamos basura de la radio
-          const cleanStr = (str) => {
-            return str
-              .replace(/\[.*?\]|\(.*?\)/g, '') // Elimina (Oficial Video), [Remix], etc
-              .replace(/official( music)? video|audio|remix|feat\.?|ft\.?|lyric( video)?/gi, '') // Quita tags
-              .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]/g, ' ') // Quita caracteres raros
-              .replace(/\s+/g, ' ') // Quita espacios múltiples
-              .trim();
-          };
-
-          const cleanArtist = cleanStr(rawArtist);
-          const cleanTitle = cleanStr(rawTitle);
-          
-          // 2. Patrones de búsqueda (del más puro al más sucio para garantizar un acierto)
-          const queries = [
-            `${cleanArtist} ${cleanTitle}`,
-            cleanTitle,
-            `${rawArtist} ${rawTitle}`
-          ];
-
-          for (let q of queries) {
-            if (!q || q.trim() === '') continue;
-            
-            // Intento A: iTunes API (Apple Music) - Excelente para carátulas HD
-            try {
-              const itunesRes = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&media=music&limit=3`);
-              if (itunesRes.ok) {
-                const data = await itunesRes.json();
-                if (data.results && data.results.length > 0) {
-                  const track = data.results[0];
-                  return {
-                    coverUrl: track.artworkUrl100.replace('100x100bb', '800x800bb'), // Forzar 800x800 HD
-                    title: track.trackName,
-                    artist: track.artistName
-                  };
-                }
-              }
-            } catch (e) {}
-
-            // Intento B: Deezer API (vía AllOrigins para saltar CORS) - Base de datos inmensa para lo latino
-            try {
-              const deezerRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://api.deezer.com/search?q=' + q + '&limit=1')}`);
-              if (deezerRes.ok) {
-                const data = await deezerRes.json();
-                if (data.data && data.data.length > 0) {
-                  const track = data.data[0];
-                  return {
-                    coverUrl: track.album.cover_xl,
-                    title: track.title,
-                    artist: track.artist.name
-                  };
-                }
-              }
-            } catch (e) {}
-          }
-          
-          return null; // Si no lo conoce ni Apple ni Deezer, asumimos que no es canción
+        const playTuningSound = (audioCtx) => {
+            const bufferSize = audioCtx.sampleRate * 1.2; 
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const bandpass = audioCtx.createBiquadFilter();
+            bandpass.type = 'bandpass';
+            bandpass.frequency.setValueAtTime(400, audioCtx.currentTime);
+            bandpass.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 1.2);
+            bandpass.Q.value = 5;
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.1); 
+            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime + 1.0);
+            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
+            noise.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
+            noise.start();
         };
 
         // ==========================================
@@ -117,35 +80,37 @@
         // ==========================================
         const App = () => {
           const [isPlaying, setIsPlaying] = useState(false);
+          const [isTuning, setIsTuning] = useState(false);
           const [volume, setVolume] = useState(0.8);
           const [isMuted, setIsMuted] = useState(false);
-          const [status, setStatus] = useState('Detenido');
+          const [status, setStatus] = useState('Radio Apagada');
           const [viewMode, setViewMode] = useState('radio'); 
           
           const [songInfo, setSongInfo] = useState({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
-          const [coverUrl, setCoverUrl] = useState(null);
-          const [audioBars, setAudioBars] = useState(new Array(32).fill(0.05));
           const [beatScale, setBeatScale] = useState(1); 
+          const lastRawTitle = useRef(""); 
 
-          // Estados para Deportes
           const [matches, setMatches] = useState([]);
           const [loadingSports, setLoadingSports] = useState(false);
-          
-          // Estados para TV
           const [tvError, setTvError] = useState(false);
 
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
+          const canvasRef = useRef(null); 
           const audioCtxRef = useRef(null);
           const analyserRef = useRef(null);
           const sourceRef = useRef(null);
           const dataArrayRef = useRef(null);
           const animationRef = useRef(null);
+          const tuningTimeoutRef = useRef(null);
 
           const streamUrl = "https://stream.zeno.fm/2dcuqasrykauv";
           const zenoMetadataUrl = "https://api.zeno.fm/mounts/metadata/subscribe/2dcuqasrykauv";
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
           const venevisionUrl = "https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8";
+          
+          // Enlace directo de Google Drive arreglado para visualización web
+          const logoUrl = "https://lh3.googleusercontent.com/d/1XErHY3TjOCTLtAZQJAL1gSNGZtP7QcMA";
 
           // Cargar script hls.js dinámicamente
           useEffect(() => {
@@ -163,27 +128,23 @@
               setTvError(false);
               const video = tvVideoRef.current;
               let hls;
-              
-              const currentTvUrl = venevisionUrl;
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
                   hls = new window.Hls();
-                  hls.loadSource(currentTvUrl);
+                  hls.loadSource(venevisionUrl);
                   hls.attachMedia(video);
-                  
                   hls.on(window.Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
                       setTvError(true);
                       hls.destroy();
                     }
                   });
-
                   hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
                     video.play().catch(e => console.log("Autoplay prevent: ", e));
                   });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                  video.src = currentTvUrl;
+                  video.src = venevisionUrl;
                   video.onerror = () => setTvError(true);
                   video.addEventListener('loadedmetadata', function () {
                     video.play().catch(e => console.log("Autoplay prevent: ", e));
@@ -198,64 +159,68 @@
               }
 
               return () => {
-                if (hls) {
-                  hls.destroy();
-                }
+                if (hls) hls.destroy();
               };
             }
           }, [viewMode]);
 
-          // ================== FETCH DEPORTES ==================
+          // ================== FETCH DEPORTES (MUNDIAL FIFA 2026) ==================
           useEffect(() => {
             if (viewMode === 'sports' && matches.length === 0) {
+              const fetchSports = async () => {
+                setLoadingSports(true);
+                try {
+                  // 'fifa.world' es el endpoint oficial de ESPN para el Mundial 2026
+                  const leaguesToFetch = ['fifa.world'];
+                  let allMatches = [];
+                  await Promise.all(leaguesToFetch.map(async (league) => {
+                      try {
+                          const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`);
+                          const data = await res.json();
+                          if(data.events && data.events.length > 0) {
+                              const leagueName = data.leagues[0].name;
+                              data.events.forEach(ev => {
+                                  const comp = ev.competitions[0];
+                                  const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
+                                  const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
+                                  
+                                  allMatches.push({
+                                      id: ev.id,
+                                      league: leagueName,
+                                      home: {
+                                          name: homeTeam.team.shortDisplayName || homeTeam.team.name,
+                                          score: homeTeam.score,
+                                          logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
+                                      },
+                                      away: {
+                                          name: awayTeam.team.shortDisplayName || awayTeam.team.name,
+                                          score: awayTeam.score,
+                                          logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
+                                      },
+                                      status: ev.status.type.state, 
+                                      detail: ev.status.type.shortDetail, 
+                                      date: ev.date
+                                  });
+                              });
+                          }
+                      } catch(e) {} 
+                  }));
+                  allMatches.sort((a, b) => {
+                      const order = { 'in': 1, 'pre': 2, 'post': 3 };
+                      if (order[a.status] !== order[b.status]) {
+                          return order[a.status] - order[b.status];
+                      }
+                      return new Date(a.date) - new Date(b.date);
+                  });
+                  setMatches(allMatches);
+                } catch (err) {}
+                setLoadingSports(false);
+              };
               fetchSports();
             }
-          }, [viewMode]);
+          }, [viewMode, matches.length]);
 
-          const fetchSports = async () => {
-            setLoadingSports(true);
-            try {
-              const leaguesToFetch = ['eng.1', 'esp.1', 'ita.1', 'uefa.champions', 'conmebol.libertadores'];
-              let allMatches = [];
-              
-              await Promise.all(leaguesToFetch.map(async (league) => {
-                  try {
-                      const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`);
-                      const data = await res.json();
-                      if(data.events && data.events.length > 0) {
-                          const leagueName = data.leagues[0].name;
-                          data.events.forEach(ev => {
-                              const comp = ev.competitions[0];
-                              allMatches.push({
-                                  id: ev.id,
-                                  league: leagueName,
-                                  home: comp.competitors.find(c => c.homeAway === 'home'),
-                                  away: comp.competitors.find(c => c.homeAway === 'away'),
-                                  status: ev.status.type.state, 
-                                  detail: ev.status.type.shortDetail, 
-                                  date: ev.date
-                              });
-                          });
-                      }
-                  } catch(e) {} 
-              }));
-              
-              allMatches.sort((a, b) => {
-                  const order = { 'in': 1, 'pre': 2, 'post': 3 };
-                  if (order[a.status] !== order[b.status]) {
-                      return order[a.status] - order[b.status];
-                  }
-                  return new Date(a.date) - new Date(b.date);
-              });
-
-              setMatches(allMatches);
-            } catch (err) {
-              console.error("Error obteniendo deportes", err);
-            }
-            setLoadingSports(false);
-          };
-
-          // ================== METADATOS MUSICALES CON API INTELIGENTE ==================
+          // ================== METADATOS MUSICALES ==================
           useEffect(() => {
             if (audioRef.current) {
               audioRef.current.volume = volume;
@@ -264,113 +229,160 @@
             const eventSource = new EventSource(zenoMetadataUrl);
             eventSource.onmessage = async (event) => {
               try {
-                if (!event.data || typeof event.data !== 'string' || event.data.trim().startsWith('<')) {
-                  return;
-                }
+                if (!event.data || typeof event.data !== 'string' || event.data.trim().startsWith('<')) return;
 
                 const data = JSON.parse(event.data);
                 
-                // Validar que streamTitle exista, incluso si está vacío (lo que indica corte o micrófono abierto)
                 if (data && typeof data.streamTitle !== 'undefined') {
                   const streamTitle = data.streamTitle;
-                  let title = 'Programación en vivo';
-                  let artist = 'La voz que te acompaña';
                   
-                  if (streamTitle && streamTitle.trim() !== '') {
-                    const parts = streamTitle.split(' - ');
-                    if (parts.length > 1) {
-                      artist = parts[0].trim();
-                      title = parts.slice(1).join(' - ').trim();
-                    } else {
-                      title = streamTitle;
-                      artist = 'PREGÓN 95.7';
-                    }
+                  if (streamTitle === lastRawTitle.current) return;
+                  lastRawTitle.current = streamTitle;
+
+                  if (!streamTitle || streamTitle.trim() === '') {
+                     setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                     return;
+                  }
+
+                  let title = 'Programación en vivo';
+                  let artist = 'PREGÓN 95.7';
+                  
+                  const parts = streamTitle.split(' - ');
+                  if (parts.length > 1) {
+                    artist = parts[0].trim();
+                    title = parts.slice(1).join(' - ').trim();
+                  } else {
+                    title = streamTitle;
                   }
                   
-                  // Filtro estricto: ¿Es esto un jingle, publicidad o ID de estación?
                   const isGeneric = title.toLowerCase().includes('pregon') || 
                                     title.toLowerCase().includes('pregón') ||
                                     artist.toLowerCase().includes('pregon') ||
                                     artist.toLowerCase().includes('pregón') ||
-                                    title.toLowerCase().includes('programación en vivo') ||
+                                    title.toLowerCase().includes('programación') ||
                                     title.toLowerCase().includes('publicidad') ||
                                     title.toLowerCase().includes('locucion') ||
                                     title.toLowerCase().includes('cuña') ||
                                     artist.toLowerCase().includes('en vivo');
 
-                  if (!isGeneric && title !== 'Programación en vivo') {
-                    // LLAMADA AL MOTOR INTELIGENTE
-                    const songData = await fetchAdvancedSongData(artist, title);
-                    
-                    if (songData) {
-                        // SI SE CONFIRMA QUE ES UNA CANCIÓN MUNDIAL, ACTUALIZAMOS CON EL DATO OFICIAL Y CARÁTULA
-                        setCoverUrl(songData.coverUrl);
-                        setSongInfo({ title: songData.title, artist: songData.artist });
-                    } else {
-                        // SI NO LO RECONOCE (Programa hablado, error, etc), BORRA Y PONE "PROGRAMACIÓN EN VIVO"
-                        setCoverUrl(null);
-                        setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
-                    }
-                  } else {
-                    // SI ES GENÉRICO, BORRA Y PONE "PROGRAMACIÓN EN VIVO"
-                    setCoverUrl(null);
+                  if (isGeneric) {
                     setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                  } else {
+                    setSongInfo({ title, artist });
                   }
                 }
-              } catch (err) {
-                if (!(err instanceof SyntaxError)) {
-                  console.error("Error procesando metadatos:", err);
-                }
-              }
+              } catch (err) {}
             };
 
             return () => {
               eventSource.close();
-              if (animationRef.current) cancelAnimationFrame(animationRef.current);
-              if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
-                 audioCtxRef.current.close();
-              }
             };
           }, []);
 
-          // Visualizador de Audio
+          // ================== CANVAS: ONDAS ANIMADAS ==================
+          useEffect(() => {
+            if (isPlaying) return; 
+            
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let idleAnim;
+            
+            const drawIdle = () => {
+                idleAnim = requestAnimationFrame(drawIdle);
+                
+                const dpr = window.devicePixelRatio || 1;
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+                const width = rect.width;
+                const height = rect.height;
+
+                ctx.clearRect(0, 0, width, height);
+                
+                const time = Date.now() / 1000;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.beginPath();
+                ctx.moveTo(0, height);
+                for (let x = 0; x < width; x++) {
+                    const y = height - 30 + Math.sin(x * 0.01 + time) * 15;
+                    ctx.lineTo(x, y);
+                }
+                ctx.lineTo(width, height);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const y = height - 30 + Math.sin(x * 0.01 + time) * 15;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            };
+            
+            drawIdle();
+            return () => cancelAnimationFrame(idleAnim);
+          }, [isPlaying]);
+
+          // Visualizador Activo
           const updateVisualizer = useCallback(() => {
             if (!analyserRef.current) return;
-            
             animationRef.current = requestAnimationFrame(updateVisualizer);
-            analyserRef.current.getByteFrequencyData(dataArrayRef.current);
+            
+            const analyser = analyserRef.current;
+            analyser.getByteFrequencyData(dataArrayRef.current);
             
             let bassSum = 0;
-            const bassCount = 5; 
-            for (let i = 0; i < bassCount; i++) {
+            for (let i = 0; i < 5; i++) {
               bassSum += dataArrayRef.current[i] || 0;
             }
-            const bassAvg = bassSum / bassCount;
+            const bassAvg = bassSum / 5;
             const normalizedBass = Math.pow(bassAvg / 255, 1.5);
-            setBeatScale(1 + normalizedBass * 0.15); 
+            setBeatScale(1 + normalizedBass * 0.1); 
 
-            const NUM_BARS = 32; 
-            const bufferLength = analyserRef.current.frequencyBinCount;
-            const step = Math.floor(bufferLength / NUM_BARS); 
-            const newBars = [];
-            
-            for (let i = 0; i < NUM_BARS; i++) {
-              let sum = 0;
-              let count = 0;
-              for (let j = 0; j < step; j++) {
-                const index = i * step + j;
-                if (index < bufferLength) {
-                  sum += dataArrayRef.current[index];
-                  count++;
+            if (canvasRef.current) {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                const bufferLength = analyser.frequencyBinCount;
+                
+                const dpr = window.devicePixelRatio || 1;
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.scale(dpr, dpr);
+                const width = rect.width;
+                const height = rect.height;
+
+                ctx.clearRect(0, 0, width, height);
+                const sliceWidth = width / bufferLength;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; 
+                ctx.beginPath();
+                ctx.moveTo(0, height);
+                
+                let x = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArrayRef.current[i] / 255.0;
+                    const y = height - (v * v * height * 0.8) - 10; 
+                    
+                    ctx.lineTo(x, y);
+                    x += sliceWidth;
                 }
-              }
-              let value = count > 0 ? sum / count : 0;
-              const boost = 1 + (i / NUM_BARS) * 3.5; 
-              let normalized = (value / 255) * boost;
-              normalized = Math.pow(normalized, 1.1); 
-              newBars.push(Math.min(normalized, 1)); 
+                
+                ctx.lineTo(width, height);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; 
+                ctx.lineWidth = 2;
+                ctx.stroke();
             }
-            setAudioBars(newBars);
+
           }, []);
 
           const setupAudioContext = () => {
@@ -378,60 +390,64 @@
               const AudioContext = window.AudioContext || window.webkitAudioContext;
               audioCtxRef.current = new AudioContext();
               analyserRef.current = audioCtxRef.current.createAnalyser();
-              analyserRef.current.fftSize = 128; 
-              
+              analyserRef.current.fftSize = 256; 
+              analyserRef.current.smoothingTimeConstant = 0.85; 
+
               sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
               sourceRef.current.connect(analyserRef.current);
               analyserRef.current.connect(audioCtxRef.current.destination);
-              
-              const bufferLength = analyserRef.current.frequencyBinCount;
-              dataArrayRef.current = new Uint8Array(bufferLength);
+              dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
             }
-            
             if (audioCtxRef.current.state === 'suspended') {
               audioCtxRef.current.resume();
             }
           };
 
-          const togglePlay = () => {
+          const handlePlayToggle = async () => {
             if (isPlaying) {
               audioRef.current.pause();
               setIsPlaying(false);
-              setStatus('Detenido');
+              setStatus('Radio en pausa');
               if (animationRef.current) cancelAnimationFrame(animationRef.current);
+              if (tuningTimeoutRef.current) clearTimeout(tuningTimeoutRef.current);
+              setIsTuning(false);
+              setBeatScale(1);
             } else {
-              setStatus('Conectando...');
-              audioRef.current.load();
+              setStatus('Sintonizando...');
+              setIsTuning(true);
               
-              setupAudioContext();
+              if (!audioCtxRef.current) {
+                 const AudioContext = window.AudioContext || window.webkitAudioContext;
+                 audioCtxRef.current = new AudioContext();
+              }
+              if (audioCtxRef.current.state === 'suspended') {
+                 await audioCtxRef.current.resume();
+              }
 
-              audioRef.current.play()
-                .then(() => {
-                  setIsPlaying(true);
-                  setStatus('En vivo');
-                  updateVisualizer();
-                })
-                .catch((err) => {
-                  console.error("Error reproduciendo el audio:", err);
-                  setStatus('Error de conexión');
-                  setIsPlaying(false);
-                });
-            }
-          };
+              playTuningSound(audioCtxRef.current);
 
-          const handleViewModeChange = (mode) => {
-            setViewMode(mode);
-            if (mode === 'tv' && isPlaying) {
-              togglePlay(); 
+              tuningTimeoutRef.current = setTimeout(() => {
+                  setIsTuning(false);
+                  audioRef.current.load();
+                  setupAudioContext();
+                  audioRef.current.play()
+                    .then(() => {
+                      setIsPlaying(true);
+                      setStatus('Al Aire');
+                      updateVisualizer();
+                    })
+                    .catch((err) => {
+                      setStatus('Error de Señal');
+                      setIsPlaying(false);
+                    });
+              }, 1200);
             }
           };
 
           const handleVolumeChange = (e) => {
             const val = parseFloat(e.target.value);
             setVolume(val);
-            if (audioRef.current) {
-              audioRef.current.volume = val;
-            }
+            if (audioRef.current) audioRef.current.volume = val;
             if (val > 0 && isMuted) {
               setIsMuted(false);
               if (audioRef.current) audioRef.current.muted = false;
@@ -441,372 +457,320 @@
           const toggleMute = () => {
             const newMutedState = !isMuted;
             setIsMuted(newMutedState);
-            if (audioRef.current) {
-              audioRef.current.muted = newMutedState;
+            if (audioRef.current) audioRef.current.muted = newMutedState;
+          };
+
+          const handleViewModeChange = (mode) => {
+            setViewMode(mode);
+            if (mode === 'tv' && isPlaying && audioRef.current) {
+               audioRef.current.pause();
+               setIsPlaying(false);
+               setStatus('Radio en pausa');
+               setIsTuning(false);
+               setBeatScale(1);
             }
           };
 
           return (
-            <React.Fragment>
-              {/* FONDO FIJO COMPLETO */}
-              <div className="fixed inset-0 bg-slate-950 z-0 overflow-hidden flex items-center justify-center pointer-events-none">
-                <div className="absolute inset-0 z-0 opacity-20">
-                  <img 
-                    src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1920&q=80" 
-                    alt="Fondo de micrófono de radio" 
-                    className="w-full h-full object-cover filter grayscale"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-blue-950/40 via-slate-950/70 to-slate-950/90 mix-blend-multiply"></div>
-                </div>
+            <div className="flex flex-col h-[100dvh] w-full bg-black font-sans selection:bg-red-500/30">
+              
+              {/* === FONDO DINÁMICO === */}
+              <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-zinc-950">
+                  <div 
+                    className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out"
+                    style={{ 
+                        backgroundColor: isPlaying && !isTuning ? '#dc2626' : '#27272a',
+                        filter: 'blur(160px)',
+                        transform: `scale(${isPlaying && !isTuning ? 1 + (beatScale - 1) * 1.5 : 1})`,
+                        opacity: isPlaying && !isTuning ? Math.min(0.6, 0.3 + (beatScale - 1) * 1.2) : 0.2
+                    }}
+                  ></div>
+                  <div 
+                    className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out"
+                    style={{ 
+                        backgroundColor: isPlaying && !isTuning ? '#16a34a' : '#18181b',
+                        filter: 'blur(160px)',
+                        transform: `scale(${isPlaying && !isTuning ? 1 + (beatScale - 1) * 1.8 : 1})`,
+                        opacity: isPlaying && !isTuning ? Math.min(0.5, 0.2 + (beatScale - 1) * 1.2) : 0.15
+                    }}
+                  ></div>
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[60px]"></div>
 
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/40 blur-[120px] mix-blend-screen animate-pulse z-10"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/40 blur-[120px] mix-blend-screen animate-pulse z-10" style={{ animationDelay: '2s' }}></div>
+                  {/* Canvas de Ondas Absolutamente Visible */}
+                  <canvas 
+                    ref={canvasRef} 
+                    className="absolute bottom-[60px] left-0 w-full h-[40%] opacity-100 z-0 pointer-events-none"
+                  ></canvas>
               </div>
 
-              {/* CONTENIDO PRINCIPAL */}
-              <div className="relative z-10 h-[100dvh] w-full flex flex-col items-center p-4 font-sans overflow-hidden">
-                
-                <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
-
-                {/* --- BOTONERA LIQUID GLASS --- */}
-                <div className="w-full max-w-md flex justify-between bg-white/5 backdrop-blur-xl p-1.5 rounded-full mb-4 shadow-[inset_0_0_10px_rgba(255,255,255,0.05),_0_4px_10px_rgba(0,0,0,0.3)] border border-white/10 shrink-0 overflow-x-auto custom-scrollbar">
-                  <button onClick={() => handleViewModeChange('radio')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'radio' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
-                    <Radio size={14} /> <span className="hidden sm:block">Radio</span>
-                  </button>
-                  <button onClick={() => handleViewModeChange('tv')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'tv' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
-                    <MonitorPlay size={14} /> <span className="hidden sm:block">TV</span>
-                  </button>
-                  <button onClick={() => handleViewModeChange('sports')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'sports' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
-                    <Trophy size={14} /> <span className="hidden sm:block">Fútbol</span>
-                  </button>
-                  <button onClick={() => handleViewModeChange('nasa')} className={`flex-1 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-3 px-2 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 ${viewMode === 'nasa' ? 'glass-btn-active' : 'text-slate-400 hover:text-white glass-btn-hover'}`}>
-                    <Globe size={14} /> <span className="hidden sm:block">Satélite</span>
-                  </button>
-                </div>
-
-                {/* --- TARJETA PRINCIPAL DINÁMICA --- */}
-                <div className="w-full max-w-md bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] flex flex-col overflow-hidden flex-1 mb-4">
+              {/* === ÁREA PRINCIPAL === */}
+              <main className="flex-1 relative z-10 w-full max-w-md mx-auto flex flex-col pt-safe overflow-hidden">
                   
-                  {/* Encabezado con Animación */}
-                  <div className="p-5 pb-3 shrink-0 border-b border-white/5 flex justify-center">
-                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-white to-indigo-300 drop-shadow-lg text-center hover:scale-105 hover:from-cyan-300 hover:via-white hover:to-blue-400 transition-all duration-300 cursor-pointer hover:drop-shadow-[0_0_25px_rgba(147,197,253,0.6)] active:scale-95 select-none inline-block">
-                      PREGÓN 95.7 FM
-                    </h1>
-                  </div>
-
-                  {/* ZONA DE CONTENIDO VARIABLE */}
-                  <div className="flex-1 flex flex-col p-5 overflow-y-auto custom-scrollbar relative">
-                    
-                    {/* ===================== VISTA DE RADIO ===================== */}
-                    {viewMode === 'radio' && (
-                      <div className="flex flex-col items-center justify-between h-full w-full gap-3 animate-in fade-in duration-500">
-                        
-                        <div className="w-full flex justify-between items-center px-2 shrink-0">
-                          <span className="text-xs font-bold tracking-wider text-blue-300/80 uppercase">Transmisión</span>
-                          <div className="flex items-center gap-2">
-                            {isPlaying && (
-                              <span className="relative flex h-2.5 w-2.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
-                              </span>
-                            )}
-                            <span className={`text-xs font-bold uppercase tracking-wider ${isPlaying ? 'text-red-400' : 'text-slate-400'}`}>
-                              {status}
-                            </span>
+                  {/* === ENCABEZADO MINIMALISTA iOS === */}
+                  <header className="flex justify-between items-center py-6 px-6 shrink-0 z-20">
+                      <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-[12px] overflow-hidden bg-white shadow-sm shrink-0 flex items-center justify-center p-1">
+                              <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
                           </div>
-                        </div>
-
-                        {/* Carátula ajustada */}
-                        <div 
-                          className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-2xl bg-gradient-to-tr from-blue-600/50 to-indigo-500/50 p-[2px] shadow-2xl shadow-cyan-900/40 overflow-hidden group shrink-0 mt-2"
-                          style={{ transform: `scale(${isPlaying ? beatScale : 1})`, transition: isPlaying ? 'transform 0.05s ease-out' : 'transform 0.5s ease-out' }}
-                        >
-                          {coverUrl ? (
-                            <img src={coverUrl} alt="Carátula" className={`w-full h-full object-cover rounded-xl transition-all duration-700 ${isPlaying ? 'grayscale-0' : 'grayscale-[40%]'}`} />
-                          ) : (
-                            <div className="relative w-full h-full rounded-xl overflow-hidden bg-slate-900">
-                              <img src="https://images.unsplash.com/photo-1589903308904-1010c2294adc?auto=format&fit=crop&w=600&q=80" alt="Estudio de Radio" className={`w-full h-full object-cover transition-all duration-700 ${isPlaying ? 'opacity-90 grayscale-0' : 'opacity-50 grayscale-[60%]'}`} />
-                              <div className="absolute inset-0 bg-blue-600/30 mix-blend-color pointer-events-none"></div>
-                              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent pointer-events-none"></div>
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-white/10 rounded-xl pointer-events-none"></div>
-                        </div>
-
-                        {/* Texto de Canción */}
-                        <div className="text-center w-full px-2 mt-2 shrink-0">
-                          <h2 className={`text-xl sm:text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-cyan-200 truncate w-full transition-all duration-300 ${isPlaying && songInfo.title !== 'Programación en vivo' ? 'animate-pulse' : ''}`}>
-                            {songInfo.title}
-                          </h2>
-                          <p className="text-cyan-400/80 font-medium tracking-wide text-sm sm:text-base truncate w-full mt-1">
-                            {songInfo.artist}
-                          </p>
-                        </div>
-
-                        {/* Ondas Neón */}
-                        <div className="flex-1 flex items-center justify-center gap-[4px] min-h-[30px] w-full px-2 shrink-0">
-                          {audioBars.map((val, idx) => {
-                            const NUM_BARS = 32;
-                            const distanceFromCenter = Math.abs((idx - (NUM_BARS / 2)) / (NUM_BARS / 2));
-                            const edgeDampening = Math.max(0.2, 1 - Math.pow(distanceFromCenter, 2));
-                            const finalVal = val * edgeDampening;
-                            return (
-                              <div key={idx} className="w-[4px] rounded-full transition-all duration-[75ms] ease-out" style={{ height: isPlaying ? `${Math.max(4, finalVal * 40)}px` : '4px', background: isPlaying ? 'linear-gradient(to top, #3b82f6, #22d3ee)' : 'rgba(255,255,255,0.1)', boxShadow: isPlaying ? `0 0 ${finalVal * 12}px rgba(34, 211, 238, 0.7)` : 'none' }}></div>
-                            );
-                          })}
-                        </div>
-
-                        {/* Botón Play */}
-                        <button onClick={togglePlay} className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-full bg-white text-slate-900 hover:scale-105 shadow-[0_0_25px_rgba(34,211,238,0.4)] transition-all duration-300 active:scale-95 shrink-0 mt-2">
-                          {isPlaying ? <Pause size={30} fill="currentColor" /> : <Play size={30} fill="currentColor" className="ml-1" />}
-                        </button>
-
-                        {/* Barra de Volumen */}
-                        <div className="w-full flex items-center gap-4 bg-white/5 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-[inset_0_0_10px_rgba(255,255,255,0.02)] mt-2 shrink-0">
-                          <button onClick={toggleMute} className="text-slate-400 hover:text-cyan-400 transition-colors drop-shadow-md">
-                            {isMuted || volume === 0 ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                          </button>
-                          <div className="relative w-full h-1.5 flex items-center">
-                            <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="custom-volume-slider w-full h-1.5 bg-transparent rounded-full appearance-none cursor-pointer z-10" style={{ background: `linear-gradient(to right, #06b6d4 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.1) ${(isMuted ? 0 : volume) * 100}%)` }} />
+                          <div className="flex flex-col">
+                              <h1 className="text-xl font-bold tracking-tight text-white/90 leading-tight">
+                                  PREGÓN <span className="text-red-500">95.7</span>
+                              </h1>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                  {isPlaying && !isTuning ? (
+                                      <span className="relative flex h-1.5 w-1.5">
+                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+                                      </span>
+                                  ) : (
+                                      <span className="h-1.5 w-1.5 rounded-full bg-white/30"></span>
+                                  )}
+                                  <span className="text-[11px] font-medium tracking-wide text-white/60">
+                                      {status}
+                                  </span>
+                              </div>
                           </div>
-                        </div>
-
                       </div>
-                    )}
+                  </header>
 
-                    {/* ===================== VISTA DE TV ===================== */}
-                    {viewMode === 'tv' && (
-                      <div className="flex flex-col h-full w-full animate-in fade-in duration-500 gap-4 mb-2 overflow-y-auto custom-scrollbar pr-1 pb-2">
-                        
-                        {/* REPRODUCTOR DE TV */}
-                        <div className="w-full bg-black rounded-xl overflow-hidden shadow-2xl relative shrink-0 border border-white/10 group">
-                          <div className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-md z-10 flex items-center gap-2 shadow-lg">
-                            <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>
-                            EN VIVO
-                          </div>
+                  {/* === CONTENEDOR DE VISTAS (SCROLL SEGURO) === */}
+                  <div className="flex-1 w-full relative">
+                      
+                      {/* --- VISTA REPRODUCTOR RADIO --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col items-center justify-between ${viewMode === 'radio' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
                           
-                          {/* Capa de Error */}
-                          {tvError && (
-                            <div className="absolute inset-0 bg-slate-950/95 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm animate-in fade-in">
-                               <AlertCircle size={36} className="text-red-400 mb-3 opacity-80" />
-                               <h3 className="text-sm font-bold text-white mb-2">Señal no disponible</h3>
-                               <p className="text-[10px] text-slate-300 mb-4 leading-relaxed">
-                                 El enlace de transmisión se encuentra inactivo, bloqueado o ha expirado.
-                               </p>
-                            </div>
-                          )}
+                          <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
 
-                          <video 
-                            ref={tvVideoRef}
-                            className={`w-full aspect-video object-cover ${tvError ? 'hidden' : 'block'}`}
-                            controls 
-                            autoPlay 
-                            playsInline
-                          ></video>
-                          <div className="p-3 bg-slate-900 border-t border-white/5 flex flex-col gap-0.5">
-                            <h3 className="text-sm font-bold text-white">Venevisión</h3>
-                            <p className="text-[10px] text-slate-400">Señal Nacional 24/7</p>
+                          {/* Carátula Cuadrada Central iOS */}
+                          <div className="w-full mt-2 shrink-0 flex justify-center">
+                              <div 
+                                className="relative w-full aspect-square max-w-[320px] rounded-[32px] shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden bg-zinc-900 border border-white/5"
+                                style={{ 
+                                    transform: `scale(${isPlaying && !isTuning ? beatScale : 1})`, 
+                                    transition: isPlaying && !isTuning ? 'transform 0.05s ease-out' : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' 
+                                }}
+                              >
+                                <img 
+                                    src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" 
+                                    alt="Estudio" 
+                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1500ms] ${isPlaying && !isTuning ? 'scale-100 opacity-90' : 'scale-110 opacity-30 grayscale-[50%]'}`} 
+                                />
+                                <div className="absolute inset-0 bg-black/40"></div>
+                                <div className="absolute inset-0 flex items-center justify-center p-8">
+                                    <img src={logoUrl} alt="Logo Central" className={`w-full h-full object-contain drop-shadow-2xl transition-all duration-700 ${isPlaying && !isTuning ? 'opacity-100 scale-100' : 'opacity-60 scale-95'}`} />
+                                </div>
+                              </div>
                           </div>
-                        </div>
 
-                        {/* YOUTUBE */}
-                        <a 
-                          href={tvLiveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full bg-gradient-to-br from-slate-900 to-black rounded-xl overflow-hidden border border-red-500/30 relative shadow-lg shadow-red-900/20 group flex items-center p-3 hover:border-red-500/60 transition-all duration-300 cursor-pointer shrink-0 mt-2"
-                        >
-                          <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/40 group-hover:scale-110 group-hover:bg-red-500 transition-all duration-500 shrink-0">
-                            <Youtube size={24} className="text-white ml-0.5" />
+                          {/* Título y Artista */}
+                          <div className="flex flex-col items-start w-full mt-8 mb-auto shrink-0">
+                            <h2 className={`text-[26px] font-bold tracking-tight text-white w-full truncate ${isTuning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}>
+                              {isTuning ? 'Buscando señal...' : songInfo.title}
+                            </h2>
+                            <p className="text-[17px] text-white/60 font-medium tracking-tight truncate w-full mt-0.5">
+                              {isTuning ? 'Sintonizando FM' : songInfo.artist}
+                            </p>
                           </div>
-                          <div className="ml-4 z-10 flex-1">
-                            <h3 className="text-sm font-bold text-white mb-1">Señal de YouTube</h3>
-                            <p className="text-slate-300 text-[11px] font-medium">@MucutuyVe</p>
+
+                          {/* Controles de Reproducción y Volumen */}
+                          <div className="w-full flex flex-col gap-8 shrink-0 mt-4">
+                              
+                              {/* Deslizador de Volumen iOS Style */}
+                              <div className="flex items-center gap-3 w-full">
+                                  <button onClick={toggleMute} className="text-white/50 hover:text-white transition-colors active:scale-90">
+                                      {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                                  </button>
+                                  <div className="relative w-full h-1.5 flex items-center bg-white/20 rounded-full group cursor-pointer">
+                                      <div className="absolute left-0 h-full bg-white/90 rounded-full" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
+                                      <input 
+                                          type="range" min="0" max="1" step="0.01" 
+                                          value={isMuted ? 0 : volume} onChange={handleVolumeChange} 
+                                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                                      />
+                                  </div>
+                                  <Volume2 size={20} className="text-white/50" />
+                              </div>
+
+                              {/* BOTÓN PLAY GIGANTE CENTRAL */}
+                              <div className="flex items-center justify-center w-full pb-4">
+                                  <button 
+                                      onClick={handlePlayToggle} 
+                                      disabled={isTuning}
+                                      className={`relative flex items-center justify-center rounded-full transition-all duration-[400ms] ${isPlaying || isTuning ? 'w-[80px] h-[80px] bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'w-[90px] h-[90px] bg-white text-black shadow-xl'} ${isTuning ? 'opacity-50 cursor-wait scale-90' : 'active:scale-90'}`}
+                                  >
+                                      {isPlaying || isTuning ? <Pause size={36} /> : <Play size={40} className="ml-1.5" />}
+                                  </button>
+                              </div>
                           </div>
-                          <ExternalLink size={16} className="text-red-400 mr-3" />
-                          <div className="absolute inset-0 bg-red-600/5 mix-blend-color pointer-events-none"></div>
-                        </a>
                       </div>
-                    )}
 
-                    {/* ===================== VISTA DE DEPORTES ===================== */}
-                    {viewMode === 'sports' && (
-                      <div className="flex flex-col h-full w-full animate-in fade-in duration-500 gap-4">
-                        <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-3 pr-1 pb-2">
-                          <h3 className="text-sm font-bold tracking-widest text-blue-300/80 uppercase sticky top-0 bg-slate-900/90 backdrop-blur-md py-2 z-10 flex items-center gap-2">
-                            <Trophy size={16} className="text-blue-400" /> Partidos del Día
+                      {/* --- VISTA TV --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'tv' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
+                          <div className="w-full bg-white/10 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0">
+                              <div className="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10 flex items-center gap-1.5 shadow-md backdrop-blur-md bg-opacity-80">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                                  EN VIVO
+                              </div>
+                              
+                              {tvError && (
+                                <div className="absolute inset-0 bg-black/80 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
+                                   <AlertCircle size={40} className="text-white/40 mb-3" />
+                                   <h3 className="text-base font-semibold text-white mb-1">Señal Expirada</h3>
+                                   <p className="text-xs text-white/50">El servidor cerró la conexión.</p>
+                                </div>
+                              )}
+
+                              <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
+                              <div className="p-5 flex flex-col gap-1">
+                                  <h3 className="text-lg font-bold text-white tracking-tight">Venevisión</h3>
+                                  <p className="text-[13px] text-white/60">Señal Nacional Continua</p>
+                              </div>
+                          </div>
+
+                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2">
+                              <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center shrink-0">
+                                  <Youtube size={26} />
+                              </div>
+                              <div className="ml-4 flex-1">
+                                  <h3 className="text-[15px] font-semibold text-white tracking-tight">Canal YouTube</h3>
+                                  <p className="text-white/50 text-[13px] mt-0.5">@MucutuyVe</p>
+                              </div>
+                              <ExternalLink size={20} className="text-white/30" />
+                          </a>
+                      </div>
+
+                      {/* --- VISTA DEPORTES --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-3 ${viewMode === 'sports' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
+                          <h3 className="text-[13px] font-semibold tracking-wide text-white/50 uppercase px-2 mb-2 shrink-0 flex items-center gap-2">
+                              <Globe size={16} className="text-blue-500" /> Mundial FIFA 2026
                           </h3>
                           
                           {loadingSports ? (
-                            <div className="flex flex-col items-center justify-center py-8">
-                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-3"></div>
-                              <p className="text-sm text-slate-400">Buscando resultados...</p>
-                            </div>
-                          ) : matches.length > 0 ? (
-                            matches.map((match, i) => (
-                              <div key={i} className="bg-white/5 border border-white/5 rounded-xl p-4 flex flex-col gap-3">
-                                <div className="flex justify-between items-center mb-1">
-                                    <p className="text-[10px] sm:text-xs text-blue-300 uppercase tracking-widest truncate">{match.league}</p>
-                                    <p className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide">
-                                        {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                    </p>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <div className="flex flex-col gap-1.5 w-[40%]">
-                                        <span className="text-sm font-bold truncate text-slate-200">{match.home.team.shortDisplayName || match.home.team.name}</span>
-                                        <span className="text-sm font-bold truncate text-slate-200">{match.away.team.shortDisplayName || match.away.team.name}</span>
-                                    </div>
-                                    <div className="flex flex-col gap-1.5 items-center w-[20%]">
-                                        <span className="text-base sm:text-lg font-black text-white">{match.status !== 'pre' ? match.home.score : '-'}</span>
-                                        <span className="text-base sm:text-lg font-black text-white">{match.status !== 'pre' ? match.away.score : '-'}</span>
-                                    </div>
-                                    <div className="flex flex-col items-end w-[40%] text-right">
-                                        {match.status === 'pre' ? (
-                                            <span className="text-xs sm:text-sm font-bold text-blue-300">
-                                                {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
-                                            </span>
-                                        ) : (
-                                            <span className={`text-xs sm:text-sm font-bold ${match.status === 'in' ? 'text-red-400 animate-pulse' : 'text-slate-400'}`}>{match.detail}</span>
-                                        )}
-                                        {match.status === 'in' && (<span className="text-[10px] font-bold bg-red-500/20 text-red-300 px-2 py-0.5 rounded mt-1 border border-red-500/30">EN VIVO</span>)}
-                                    </div>
-                                </div>
+                              <div className="flex flex-col items-center justify-center py-12 shrink-0">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-transparent border-t-white mb-4"></div>
+                                  <p className="text-[13px] text-white/50">Cargando resultados...</p>
                               </div>
-                            ))
+                          ) : matches.length > 0 ? (
+                              matches.map((match, i) => (
+                                  <div key={i} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col gap-4 shrink-0 shadow-lg relative overflow-hidden">
+                                      {match.status === 'in' && <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>}
+                                      
+                                      <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                                          <p className="text-[11px] text-white/70 font-semibold uppercase tracking-wider truncate flex items-center gap-1">
+                                              {match.league}
+                                          </p>
+                                          <p className="text-[11px] text-white/40 font-medium">
+                                              {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}
+                                          </p>
+                                      </div>
+                                      
+                                      <div className="flex justify-between items-center">
+                                          <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                                              <img src={match.home.logo} alt={match.home.name} className="w-12 h-12 object-contain" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
+                                              <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.home.name}</span>
+                                          </div>
+                                          
+                                          <div className="flex flex-col items-center justify-center w-[30%] text-center">
+                                              {match.status === 'pre' ? (
+                                                  <div className="flex flex-col items-center">
+                                                      <span className="text-[13px] font-semibold text-white/90 bg-white/10 px-3 py-1.5 rounded-full mb-1">
+                                                          {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                      </span>
+                                                  </div>
+                                              ) : (
+                                                  <div className="flex flex-col items-center">
+                                                      <div className="flex items-center gap-2">
+                                                          <span className="text-3xl font-bold text-white tracking-tighter">{match.home.score}</span>
+                                                          <span className="text-lg font-bold text-white/30">-</span>
+                                                          <span className="text-3xl font-bold text-white tracking-tighter">{match.away.score}</span>
+                                                      </div>
+                                                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full mt-2 ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/10 text-white/50'}`}>
+                                                          {match.detail}
+                                                      </span>
+                                                  </div>
+                                              )}
+                                          </div>
+
+                                          <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                                              <img src={match.away.logo} alt={match.away.name} className="w-12 h-12 object-contain" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
+                                              <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.away.name}</span>
+                                          </div>
+                                      </div>
+                                      
+                                      {/* Indicador de Transmisión TV (Canales para Venezuela) */}
+                                      <div className="mt-1 pt-3 border-t border-white/10 flex justify-center items-center">
+                                          <p className="text-[10px] text-white/50 font-medium flex items-center gap-1.5">
+                                              <Tv size={12} className="text-white/40" />
+                                              Transmite: <span className="text-white/90 font-bold">Televen / DSports</span>
+                                          </p>
+                                      </div>
+                                  </div>
+                              ))
                           ) : (
-                            <div className="text-center py-8 text-sm text-slate-400">
-                              <Trophy size={32} className="mx-auto mb-3 opacity-50" />
-                              <p>No hay partidos destacados hoy.</p>
-                            </div>
+                              <div className="text-center py-12 flex flex-col items-center shrink-0">
+                                  <Trophy size={48} className="text-white/20 mb-4" />
+                                  <p className="text-[13px] text-white/50">No hay partidos destacados hoy.</p>
+                              </div>
                           )}
-                        </div>
                       </div>
-                    )}
 
-                    {/* ===================== VISTA DE SATÉLITE (GOOGLE MAPS) ===================== */}
-                    {viewMode === 'nasa' && (
-                      <div className="flex flex-col h-full w-full animate-in fade-in duration-500 gap-3">
-                         {/* Encabezado Satélite */}
-                         <div className="bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/30 rounded-xl p-3 flex flex-col shadow-lg shrink-0">
-                             <div className="flex items-center gap-2 mb-1.5">
-                                 <Globe size={18} className="text-blue-400"/>
-                                 <span className="text-xs sm:text-sm font-bold text-blue-300 uppercase tracking-widest">Satélite en Vivo</span>
-                             </div>
-                             <p className="text-[10px] sm:text-xs font-semibold text-blue-200/90 tracking-wide mt-1">📍 Coordenadas: 8.2456° N, -71.2864° W</p>
-                             <p className="text-[9px] sm:text-[10px] text-slate-400 mt-1 leading-tight">Vista satelital interactiva de alta resolución sobre Mucutuy, Mérida. Provisto por Google Maps.</p>
-                         </div>
-                         
-                         {/* Contenedor de la Imagen Satelital Interactiva */}
-                         <div className="flex-1 w-full bg-slate-900 rounded-xl border border-white/10 overflow-hidden relative shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] flex items-center justify-center group">
-                             
-                             <iframe 
-                                src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" 
-                                className="w-full h-full border-0 opacity-90 group-hover:opacity-100 transition-opacity duration-700"
-                                allowFullScreen=""
-                                loading="lazy"
-                                referrerPolicy="no-referrer-when-downgrade"
-                             ></iframe>
-                             
-                             {/* Retícula de Radar / Ping en el centro exacto (Mucutuy) */}
-                             {/* pointer-events-none permite que el usuario mueva el mapa interactivo que está por debajo */}
-                             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                                <div className="w-2.5 h-2.5 bg-red-500 rounded-full z-10 shadow-[0_0_15px_#f00]"></div>
-                                <div className="absolute w-[40px] h-[40px] border border-red-500/80 rounded-full animate-ripple"></div>
-                                <div className="absolute w-[80px] h-[80px] border border-red-500/50 rounded-full animate-ripple" style={{ animationDelay: '1.5s' }}></div>
-                                {/* Mirilla central */}
-                                <div className="absolute w-8 h-[1px] bg-red-500/80"></div>
-                                <div className="absolute h-8 w-[1px] bg-red-500/80"></div>
-                             </div>
-
-                             {/* Etiqueta flotante */}
-                             <div className="absolute bottom-6 right-3 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10 z-20 pointer-events-none">
-                                 <span className="text-[9px] text-white font-bold tracking-wider">Mucutuy</span>
-                             </div>
-                         </div>
+                      {/* --- VISTA SATÉLITE --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'nasa' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
+                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col shrink-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                  <Globe size={18} className="text-white/80"/>
+                                  <span className="text-[13px] font-semibold text-white tracking-wide">Satélite Mucutuy</span>
+                              </div>
+                              <p className="text-[11px] text-white/50 mt-1">8.2456° N, -71.2864° W</p>
+                          </div>
+                          
+                          <div className="flex-1 w-full bg-black rounded-[24px] border border-white/10 overflow-hidden relative min-h-[300px] shadow-2xl shrink-0">
+                              <iframe 
+                                  src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" 
+                                  className="w-full h-full border-0 opacity-90 transition-opacity duration-700"
+                                  allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                              ></iframe>
+                              
+                              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-full z-10 shadow-[0_0_15px_rgba(59,130,246,0.8)] border border-white/50"></div>
+                                  <div className="absolute w-[40px] h-[40px] bg-blue-500/20 rounded-full animate-ping"></div>
+                              </div>
+                          </div>
                       </div>
-                    )}
+
                   </div>
-                </div>
+              </main>
 
-                {/* --- FOOTER: REDES SOCIALES Y UBICACIÓN --- */}
-                <div className="w-full max-w-md shrink-0 flex flex-col gap-3">
-                  <div className="flex justify-center gap-3 w-full">
-                    <a href="https://www.instagram.com/mucutuymerida/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-pink-500/20 hover:border-pink-500/50 hover:text-pink-300 transition-all duration-300 flex-1 justify-center">
-                      <Instagram size={16} /> <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">Instagram</span>
-                    </a>
-                    <a href="https://wa.me/584165755857" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-green-500/20 hover:border-green-500/50 hover:text-green-300 transition-all duration-300 flex-1 justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg> <span className="text-xs sm:text-sm font-bold uppercase tracking-wider">WhatsApp</span>
-                    </a>
+              {/* === BARRA DE NAVEGACIÓN INFERIOR (TAB BAR iOS 17) === */}
+              <nav className="w-full bg-black/60 backdrop-blur-[40px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
+                  <div className="flex justify-around items-center max-w-md mx-auto h-[60px]">
+                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'radio' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
+                          <Radio size={26} />
+                          <span className="text-[10px] font-medium tracking-wide">Radio</span>
+                      </button>
+                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'tv' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
+                          <Tv size={26} />
+                          <span className="text-[10px] font-medium tracking-wide">TV</span>
+                      </button>
+                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'sports' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
+                          <Trophy size={26} />
+                          <span className="text-[10px] font-medium tracking-wide">Deportes</span>
+                      </button>
+                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'nasa' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
+                          <MapPin size={26} />
+                          <span className="text-[10px] font-medium tracking-wide">Ubicación</span>
+                      </button>
                   </div>
+              </nav>
 
-                  <div className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl py-3 px-4 flex items-center justify-center shadow-[0_4px_15px_0_rgba(0,0,0,0.3)]">
-                    <p className="text-[10px] sm:text-xs font-bold tracking-[0.25em] text-blue-200/90 uppercase text-center flex items-center gap-2">
-                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>
-                      Mucutuy, Mérida - Venezuela
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* ESTILOS DE ANIMACIONES Y LIQUID GLASS */}
+              {/* ESTILOS CSS ADICIONALES */}
               <style dangerouslySetInnerHTML={{__html: `
-                .custom-scrollbar::-webkit-scrollbar { width: 4px; background: transparent; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-                .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); }
-
-                /* ANIMACIÓN RADAR NASA */
-                @keyframes rippleExpansivo {
-                  0% { transform: scale(0); opacity: 1; }
-                  100% { transform: scale(1); opacity: 0; }
-                }
-                .animate-ripple {
-                  animation: rippleExpansivo 3s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
-                }
-
-                /* EFECTO LIQUID GLASS BOTONES NAVEGACIÓN */
-                .glass-btn-hover:hover {
-                  background: rgba(255, 255, 255, 0.08);
-                  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0, 0, 0, 0.2);
-                }
-                .glass-btn-active {
-                  background: rgba(59, 130, 246, 0.25);
-                  border: 1px solid rgba(59, 130, 246, 0.5);
-                  box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.4), 0 4px 15px rgba(0, 0, 0, 0.3);
-                  color: white;
-                  text-shadow: 0 0 5px rgba(255,255,255,0.5);
-                }
-
-                /* ESTILO DESLIZADOR DE VOLUMEN */
-                .custom-volume-slider::-webkit-slider-thumb {
-                  -webkit-appearance: none;
-                  appearance: none;
-                  width: 12px;
-                  height: 12px;
-                  background: white;
-                  border-radius: 50%;
-                  cursor: pointer;
-                  box-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 4px rgba(255, 255, 255, 0.8);
-                  transition: transform 0.1s ease;
-                }
-                .custom-volume-slider::-webkit-slider-thumb:hover {
-                  transform: scale(1.3);
-                }
-                .custom-volume-slider::-moz-range-thumb {
-                  width: 12px;
-                  height: 12px;
-                  background: white;
-                  border-radius: 50%;
-                  cursor: pointer;
-                  border: none;
-                  box-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 4px rgba(255, 255, 255, 0.8);
-                  transition: transform 0.1s ease;
-                }
-                .custom-volume-slider::-moz-range-thumb:hover {
-                  transform: scale(1.3);
-                }
+                .pt-safe { padding-top: env(safe-area-inset-top, 1rem); }
+                .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1.5rem); }
+                .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
+                .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
               `}} />
-            </React.Fragment>
+            </div>
           );
         };
 
