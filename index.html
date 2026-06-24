@@ -5,33 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7">
-    <meta name="application-name" content="PREGÓN 95.7">
-    <meta name="theme-color" content="#09090b">
-    
-    <!-- Íconos para la pantalla de inicio (iOS y Android) -->
-    <link rel="icon" type="image/jpeg" href="./logo.jpg">
-    <link rel="apple-touch-icon" href="./logo.jpg">
-    
-    <!-- Manifiesto de la aplicación web -->
-    <link rel="manifest" href="./manifest.json">
-
     <title>PREGÓN 95.7 FM - Experiencia iOS</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- React y ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
     
     <!-- Babel -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.0/babel.min.js"></script>
 
     <!-- Reproductor HLS para transmisión de TV -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.8/hls.min.js"></script>
 </head>
-<body class="bg-black m-0 p-0 text-white overflow-hidden font-sans antialiased selection:bg-red-500/30">
+<body class="bg-black m-0 p-0 text-white overflow-hidden font-sans antialiased selection:bg-red-500/30" style="background-color: #000000; color: #ffffff; margin: 0;">
 
     <div id="root"></div>
 
@@ -60,35 +49,84 @@
         const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
         const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
 
-        // ==========================================
-        // EFECTO DE AUDIO "SINTONIZANDO"
-        // ==========================================
         const playTuningSound = (audioCtx) => {
-            const bufferSize = audioCtx.sampleRate * 1.2; 
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
+            try {
+                const bufferSize = audioCtx.sampleRate * 1.2; 
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const bandpass = audioCtx.createBiquadFilter();
+                bandpass.type = 'bandpass';
+                bandpass.frequency.setValueAtTime(400, audioCtx.currentTime);
+                bandpass.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 1.2);
+                bandpass.Q.value = 5;
+                const gainNode = audioCtx.createGain();
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.1); 
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime + 1.0);
+                gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
+                noise.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
+                noise.start();
+            } catch (e) {
+                console.warn("No se pudo reproducir el sonido de sintonización", e);
             }
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-            const bandpass = audioCtx.createBiquadFilter();
-            bandpass.type = 'bandpass';
-            bandpass.frequency.setValueAtTime(400, audioCtx.currentTime);
-            bandpass.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 1.2);
-            bandpass.Q.value = 5;
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.1); 
-            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime + 1.0);
-            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
-            noise.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
-            noise.start();
         };
 
-        // ==========================================
-        // APLICACIÓN PRINCIPAL
-        // ==========================================
+        const MatchCard = ({ match }) => (
+            <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col gap-4 shrink-0 shadow-lg relative overflow-hidden mb-3">
+                {match.status === 'in' && <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500 animate-pulse"></div>}
+                
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                    <p className="text-[11px] text-white/70 font-semibold uppercase tracking-wider truncate flex items-center gap-1">
+                        {match.league || 'Mundial FIFA'}
+                    </p>
+                    <p className="text-[11px] text-white/40 font-medium">
+                        {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })} - {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
+                    </p>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                    <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                        <img src={match.home.logo} alt={match.home.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
+                        <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.home.name}</span>
+                    </div>
+                    
+                    <div className="flex flex-col items-center justify-center w-[30%] text-center">
+                        {match.status === 'pre' ? (
+                            <span className="text-[13px] font-bold text-white/50 bg-white/5 px-3 py-1.5 rounded-full">VS</span>
+                        ) : (
+                            <div className="flex flex-col items-center">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-3xl font-bold text-white tracking-tighter">{match.home.score}</span>
+                                    <span className="text-lg font-bold text-white/30">-</span>
+                                    <span className="text-3xl font-bold text-white tracking-tighter">{match.away.score}</span>
+                                </div>
+                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full mt-2 ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/10 text-white/50'}`}>
+                                    {match.detail}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                        <img src={match.away.logo} alt={match.away.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
+                        <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.away.name}</span>
+                    </div>
+                </div>
+                
+                <div className="mt-1 pt-3 border-t border-white/10 flex justify-center items-center">
+                    <p className="text-[10px] text-white/50 font-medium flex items-center gap-1.5">
+                        <Tv size={12} className="text-white/40" />
+                        Transmite: <span className="text-white/90 font-bold">Televen / DSports</span>
+                    </p>
+                </div>
+            </div>
+        );
+
         const App = () => {
           const [isPlaying, setIsPlaying] = useState(false);
           const [isTuning, setIsTuning] = useState(false);
@@ -101,12 +139,14 @@
           const [beatScale, setBeatScale] = useState(1); 
           const lastRawTitle = useRef(""); 
 
+          // ESTADOS PARA DEPORTES
+          const [sportsTab, setSportsTab] = useState('matches'); // 'matches', 'groups', 'bracket'
           const [matches, setMatches] = useState([]);
-          const [standings, setStandings] = useState([]); // Nuevo estado para los Grupos
-          const [sportsTab, setSportsTab] = useState('matches'); // Pestaña interna (matches | groups)
+          const [standings, setStandings] = useState([]);
+          const [bracket, setBracket] = useState([]);
           const [loadingSports, setLoadingSports] = useState(false);
+          
           const [tvError, setTvError] = useState(false);
-          const [activeTvChannel, setActiveTvChannel] = useState('venevision');
 
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
@@ -122,34 +162,29 @@
           const zenoMetadataUrl = "https://api.zeno.fm/mounts/metadata/subscribe/2dcuqasrykauv";
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
           const venevisionUrl = "https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8";
-          const televenUrl = "https://mediablocks-ve.global.ssl.fastly.net/10255/live/hls/televen/index.m3u8?hdnts=data=ip=190.153.80.162,id=TLV-GUEST,pid=255,did=N/A,sid=WBS~acl=/10255/live/hls/televen/*~exp=1781077490~hmac=1a69d999e9014d9205cac917e18421961d67e612b34428d97769f51e3745b3cb";
           
-          // Imagen de Logo (Archivo local simplificado)
-          const logoUrl = "./logo.jpg";
+          const logoUrl = "https://lh3.googleusercontent.com/d/1XErHY3TjOCTLtAZQJAL1gSNGZtP7QcMA";
 
-          // Cargar script hls.js dinámicamente
           useEffect(() => {
             if (!window.Hls) {
               const script = document.createElement('script');
-              script.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+              script.src = 'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.8/hls.min.js';
               script.async = true;
               document.body.appendChild(script);
             }
           }, []);
 
-          // ================== REPRODUCTOR DE TV HLS ==================
+          // Reproductor TV
           useEffect(() => {
             if (viewMode === 'tv' && tvVideoRef.current) {
               setTvError(false);
               const video = tvVideoRef.current;
               let hls;
-              
-              const currentTvUrl = activeTvChannel === 'televen' ? televenUrl : venevisionUrl;
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
                   hls = new window.Hls();
-                  hls.loadSource(currentTvUrl);
+                  hls.loadSource(venevisionUrl);
                   hls.attachMedia(video);
                   hls.on(window.Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
@@ -161,7 +196,7 @@
                     video.play().catch(e => console.log("Autoplay prevent: ", e));
                   });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                  video.src = currentTvUrl;
+                  video.src = venevisionUrl;
                   video.onerror = () => setTvError(true);
                   video.addEventListener('loadedmetadata', function () {
                     video.play().catch(e => console.log("Autoplay prevent: ", e));
@@ -179,91 +214,155 @@
                 if (hls) hls.destroy();
               };
             }
-          }, [viewMode, activeTvChannel]);
+          }, [viewMode]);
 
-          // ================== FETCH DEPORTES ==================
+          // ================== FETCH DEPORTES (MUNDIAL FIFA 2026) ==================
           useEffect(() => {
-            if (viewMode === 'sports' && matches.length === 0 && standings.length === 0) {
-              const fetchSports = async () => {
-                setLoadingSports(true);
+            let liveInterval;
+
+            const fetchLiveMatches = async (showLoading = false) => {
+                if (showLoading) setLoadingSports(true);
                 try {
-                  // 1. OBTENER PARTIDOS (CALENDARIO)
-                  const leaguesToFetch = ['fifa.world', 'conmebol.libertadores', 'uefa.champions', 'ven.1'];
-                  let allMatches = [];
-                  await Promise.all(leaguesToFetch.map(async (league) => {
-                      try {
-                          const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`);
-                          const data = await res.json();
-                          if(data.events && data.events.length > 0) {
-                              const leagueName = data.leagues[0].name;
-                              data.events.forEach(ev => {
-                                  const comp = ev.competitions[0];
-                                  const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
-                                  const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
-                                  
-                                  allMatches.push({
-                                      id: ev.id,
-                                      league: leagueName,
-                                      home: {
-                                          name: homeTeam.team.shortDisplayName || homeTeam.team.name,
-                                          score: homeTeam.score,
-                                          logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
-                                      },
-                                      away: {
-                                          name: awayTeam.team.shortDisplayName || awayTeam.team.name,
-                                          score: awayTeam.score,
-                                          logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
-                                      },
-                                      status: ev.status.type.state, 
-                                      detail: ev.status.type.shortDetail, 
-                                      date: ev.date
-                                  });
-                              });
-                          }
-                      } catch(e) {} 
-                  }));
-                  allMatches.sort((a, b) => {
-                      const order = { 'in': 1, 'pre': 2, 'post': 3 };
-                      if (order[a.status] !== order[b.status]) {
-                          return order[a.status] - order[b.status];
-                      }
-                      return new Date(a.date) - new Date(b.date);
-                  });
-                  setMatches(allMatches);
+                    const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard`);
+                    const data = await res.json();
+                    let allMatches = [];
+                    if(data.events && data.events.length > 0) {
+                        const leagueName = data.leagues[0].name;
+                        data.events.forEach(ev => {
+                            const comp = ev.competitions[0];
+                            const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
+                            const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
+                            allMatches.push({
+                                id: ev.id,
+                                league: leagueName,
+                                home: {
+                                    name: homeTeam.team.shortDisplayName || homeTeam.team.name,
+                                    score: homeTeam.score,
+                                    logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
+                                },
+                                away: {
+                                    name: awayTeam.team.shortDisplayName || awayTeam.team.name,
+                                    score: awayTeam.score,
+                                    logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
+                                },
+                                status: ev.status.type.state, 
+                                detail: ev.status.type.shortDetail, 
+                                date: ev.date
+                            });
+                        });
+                    }
+                    allMatches.sort((a, b) => {
+                        const order = { 'in': 1, 'pre': 2, 'post': 3 };
+                        if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+                        return new Date(a.date) - new Date(b.date);
+                    });
+                    setMatches(allMatches);
+                } catch(e) {}
+                if (showLoading) setLoadingSports(false);
+            };
 
-                  // 2. OBTENER TABLAS DE POSICIONES (GRUPOS DEL MUNDIAL)
-                  try {
-                      const stRes = await fetch(`https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings`);
-                      const stData = await stRes.json();
-                      if (stData && stData.children) {
-                          const groups = stData.children.map(group => {
-                              return {
-                                  name: group.name,
-                                  teams: group.standings?.entries?.map(entry => {
-                                      const stats = entry.stats;
-                                      const getStat = (abbrev) => stats.find(s => s.abbreviation === abbrev)?.value || 0;
-                                      return {
-                                          name: entry.team.shortDisplayName || entry.team.name,
-                                          logo: entry.team.logos?.[0]?.href || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
-                                          pts: getStat('P'), // Puntos
-                                          gp: getStat('GP'), // Partidos Jugados
-                                          w: getStat('W'),   // Victorias
-                                          d: getStat('D'),   // Empates
-                                          l: getStat('L')    // Derrotas
-                                      };
-                                  }) || []
-                              };
-                          });
-                          setStandings(groups);
-                      }
-                  } catch (err) { console.log(err); }
+            const fetchStandings = async () => {
+                try {
+                    const res = await fetch(`https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings`);
+                    const data = await res.json();
+                    if (data && data.children) {
+                        const groups = data.children.map(group => {
+                            return {
+                                name: group.name,
+                                teams: group.standings?.entries?.map(entry => {
+                                    const stats = entry.stats;
+                                    const getStat = (abbrev) => stats.find(s => s.abbreviation === abbrev)?.value || 0;
+                                    return {
+                                        name: entry.team.shortDisplayName || entry.team.name,
+                                        logo: entry.team.logos?.[0]?.href || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
+                                        pts: getStat('P'), gp: getStat('GP'), w: getStat('W'), d: getStat('D'), l: getStat('L')
+                                    };
+                                }) || []
+                            };
+                        });
+                        setStandings(groups);
+                    }
+                } catch(e) {}
+            };
 
-                } catch (err) {}
-                setLoadingSports(false);
-              };
-              fetchSports();
+            const fetchBracket = async () => {
+                try {
+                    // Consultar eventos filtrados para el rango de fechas de eliminatorias
+                    const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20260628-20260719&limit=100`);
+                    const data = await res.json();
+                    const phaseOrder = ['Final', 'Tercer Lugar', 'Semifinales', 'Cuartos de Final', 'Octavos de Final', '16avos de Final', 'Fase Final'];
+                    const grouped = {};
+
+                    if(data.events) {
+                        data.events.forEach(ev => {
+                            const comp = ev.competitions[0];
+                            let phase = "Fase Final";
+                            
+                            // Determinar fase basado en las notas del evento de ESPN
+                            if (comp.notes && comp.notes.length > 0) {
+                                const hl = comp.notes[0].headline.toLowerCase();
+                                if (hl.includes('32')) phase = '16avos de Final';
+                                else if (hl.includes('16')) phase = 'Octavos de Final';
+                                else if (hl.includes('quarter') || hl.includes('cuarto')) phase = 'Cuartos de Final';
+                                else if (hl.includes('semi')) phase = 'Semifinales';
+                                else if (hl.includes('3rd') || hl.includes('tercer')) phase = 'Tercer Lugar';
+                                else if (hl.includes('final')) phase = 'Final';
+                            }
+                            
+                            const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
+                            const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
+                            
+                            const matchData = {
+                                id: ev.id,
+                                league: data.leagues[0].name,
+                                home: {
+                                    name: homeTeam?.team?.shortDisplayName || homeTeam?.team?.name || 'Por Definir',
+                                    score: homeTeam?.score || '0',
+                                    logo: homeTeam?.team?.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
+                                },
+                                away: {
+                                    name: awayTeam?.team?.shortDisplayName || awayTeam?.team?.name || 'Por Definir',
+                                    score: awayTeam?.score || '0',
+                                    logo: awayTeam?.team?.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
+                                },
+                                status: ev.status.type.state,
+                                detail: ev.status.type.shortDetail,
+                                date: ev.date
+                            };
+                            
+                            if (!grouped[phase]) grouped[phase] = [];
+                            grouped[phase].push(matchData);
+                        });
+                    }
+                    
+                    const sortedGrouped = [];
+                    phaseOrder.forEach(p => {
+                        if(grouped[p] && grouped[p].length > 0) {
+                            grouped[p].sort((a,b) => new Date(a.date) - new Date(b.date));
+                            sortedGrouped.push({ phase: p, matches: grouped[p] });
+                        }
+                    });
+                    setBracket(sortedGrouped);
+                } catch(e) {}
+            };
+
+            // Iniciar ciclo de recarga silenciosa cada 30 segundos si la vista de deportes está activa
+            if (viewMode === 'sports') {
+                if (matches.length === 0) fetchLiveMatches(true);
+                else fetchLiveMatches(false); // Refresco silencioso
+                
+                if (standings.length === 0) fetchStandings();
+                if (bracket.length === 0) fetchBracket();
+
+                liveInterval = setInterval(() => {
+                    fetchLiveMatches(false); 
+                }, 30000); 
             }
-          }, [viewMode, matches.length, standings.length]);
+
+            return () => {
+                if(liveInterval) clearInterval(liveInterval);
+            };
+          }, [viewMode]);
 
           // ================== METADATOS MUSICALES ==================
           useEffect(() => {
@@ -303,6 +402,7 @@
                   const isGeneric = title.toLowerCase().includes('pregon') || 
                                     title.toLowerCase().includes('pregón') ||
                                     artist.toLowerCase().includes('pregon') ||
+                                    artist.toLowerCase().includes('pregón') ||
                                     title.toLowerCase().includes('programación') ||
                                     title.toLowerCase().includes('publicidad') ||
                                     title.toLowerCase().includes('locucion') ||
@@ -379,6 +479,8 @@
             animationRef.current = requestAnimationFrame(updateVisualizer);
             
             const analyser = analyserRef.current;
+            if (!dataArrayRef.current) return;
+
             analyser.getByteFrequencyData(dataArrayRef.current);
             
             let bassSum = 0;
@@ -430,20 +532,24 @@
           }, []);
 
           const setupAudioContext = () => {
-            if (!audioCtxRef.current) {
-              const AudioContext = window.AudioContext || window.webkitAudioContext;
-              audioCtxRef.current = new AudioContext();
-              analyserRef.current = audioCtxRef.current.createAnalyser();
-              analyserRef.current.fftSize = 256; 
-              analyserRef.current.smoothingTimeConstant = 0.85; 
+            try {
+                if (!audioCtxRef.current) {
+                  const AudioContext = window.AudioContext || window.webkitAudioContext;
+                  audioCtxRef.current = new AudioContext();
+                  analyserRef.current = audioCtxRef.current.createAnalyser();
+                  analyserRef.current.fftSize = 256; 
+                  analyserRef.current.smoothingTimeConstant = 0.85; 
 
-              sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
-              sourceRef.current.connect(analyserRef.current);
-              analyserRef.current.connect(audioCtxRef.current.destination);
-              dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
-            }
-            if (audioCtxRef.current.state === 'suspended') {
-              audioCtxRef.current.resume();
+                  sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
+                  sourceRef.current.connect(analyserRef.current);
+                  analyserRef.current.connect(audioCtxRef.current.destination);
+                  dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
+                }
+                if (audioCtxRef.current.state === 'suspended') {
+                  audioCtxRef.current.resume();
+                }
+            } catch (error) {
+                console.warn("Visualizador de audio restringido por CORS/Seguridad:", error);
             }
           };
 
@@ -460,30 +566,35 @@
               setStatus('Sintonizando...');
               setIsTuning(true);
               
-              if (!audioCtxRef.current) {
-                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                 audioCtxRef.current = new AudioContext();
+              try {
+                  if (!audioCtxRef.current) {
+                     const AudioContext = window.AudioContext || window.webkitAudioContext;
+                     audioCtxRef.current = new AudioContext();
+                  }
+                  if (audioCtxRef.current.state === 'suspended') {
+                     await audioCtxRef.current.resume();
+                  }
+                  playTuningSound(audioCtxRef.current);
+              } catch(e) {
+                  console.warn("Contexto de audio no disponible para sonido de sintonización", e);
               }
-              if (audioCtxRef.current.state === 'suspended') {
-                 await audioCtxRef.current.resume();
-              }
-
-              playTuningSound(audioCtxRef.current);
 
               tuningTimeoutRef.current = setTimeout(() => {
                   setIsTuning(false);
                   audioRef.current.load();
-                  setupAudioContext();
+                  setupAudioContext(); // Inicia visualizador seguro
+                  
                   audioRef.current.play()
-                    .then(() => {
-                      setIsPlaying(true);
-                      setStatus('Al Aire');
-                      updateVisualizer();
-                    })
-                    .catch((err) => {
-                      setStatus('Error de Señal');
-                      setIsPlaying(false);
-                    });
+                      .then(() => {
+                        setIsPlaying(true);
+                        setStatus('Al Aire');
+                        updateVisualizer();
+                      })
+                      .catch((err) => {
+                        console.error("Error al reproducir audio:", err);
+                        setStatus('Error de Señal');
+                        setIsPlaying(false);
+                      });
               }, 1200);
             }
           };
@@ -516,7 +627,7 @@
           };
 
           return (
-            <div className="flex flex-col h-[100dvh] w-full bg-black font-sans selection:bg-red-500/30">
+            <div className="flex flex-col h-[100dvh] w-full font-sans selection:bg-red-500/30" style={{ backgroundColor: '#09090b' }}>
               
               {/* === FONDO DINÁMICO === */}
               <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-zinc-950">
@@ -554,7 +665,7 @@
                   <header className="flex justify-between items-center py-6 px-6 shrink-0 z-20">
                       <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-[12px] overflow-hidden bg-white shadow-sm shrink-0 flex items-center justify-center p-1">
-                              <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                              <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" onError={(e) => { e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjMzMzIj5Mb2dvPC90ZXh0Pjwvc3ZnPg=='}} />
                           </div>
                           <div className="flex flex-col">
                               <h1 className="text-xl font-bold tracking-tight text-white/90 leading-tight">
@@ -601,13 +712,13 @@
                                 />
                                 <div className="absolute inset-0 bg-black/40"></div>
                                 <div className="absolute inset-0 flex items-center justify-center p-8">
-                                    <img src={logoUrl} alt="Logo Central" className={`w-full h-full object-contain drop-shadow-2xl transition-all duration-700 ${isPlaying && !isTuning ? 'opacity-100 scale-100' : 'opacity-60 scale-95'}`} />
+                                    <img src={logoUrl} alt="Logo Central" className={`w-full h-full object-contain drop-shadow-2xl transition-all duration-700 ${isPlaying && !isTuning ? 'opacity-100 scale-100' : 'opacity-60 scale-95'}`} onError={(e) => { e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2NjYyIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjMzMzIj5Mb2dvPC90ZXh0Pjwvc3ZnPg=='}} />
                                 </div>
                               </div>
                           </div>
 
                           {/* Título y Artista */}
-                          <div className="flex flex-col items-start w-full mt-8 mb-auto shrink-0 z-10">
+                          <div className="flex flex-col items-start w-full mt-8 mb-auto shrink-0">
                             <h2 className={`text-[26px] font-bold tracking-tight text-white w-full truncate ${isTuning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}>
                               {isTuning ? 'Buscando señal...' : songInfo.title}
                             </h2>
@@ -617,7 +728,7 @@
                           </div>
 
                           {/* Controles de Reproducción y Volumen */}
-                          <div className="w-full flex flex-col gap-8 shrink-0 mt-4 px-2 z-10">
+                          <div className="w-full flex flex-col gap-8 shrink-0 mt-4">
                               
                               {/* Deslizador de Volumen iOS Style */}
                               <div className="flex items-center gap-3 w-full">
@@ -650,24 +761,7 @@
 
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'tv' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          
-                          {/* SELECTOR DE CANALES */}
-                          <div className="flex bg-white/5 p-1 rounded-[16px] border border-white/10 w-full shrink-0 mt-2 z-10">
-                              <button
-                                onClick={() => setActiveTvChannel('venevision')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-xs font-bold transition-all duration-300 ${activeTvChannel === 'venevision' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                              >
-                                <Tv size={16} /> Venevisión
-                              </button>
-                              <button
-                                onClick={() => setActiveTvChannel('televen')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-xs font-bold transition-all duration-300 ${activeTvChannel === 'televen' ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                              >
-                                <Tv size={16} /> Televen
-                              </button>
-                          </div>
-
-                          <div className="w-full bg-white/10 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0 z-10">
+                          <div className="w-full bg-white/10 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0">
                               <div className="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10 flex items-center gap-1.5 shadow-md backdrop-blur-md bg-opacity-80">
                                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
                                   EN VIVO
@@ -677,28 +771,18 @@
                                 <div className="absolute inset-0 bg-black/80 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
                                    <AlertCircle size={40} className="text-white/40 mb-3" />
                                    <h3 className="text-base font-semibold text-white mb-1">Señal Expirada</h3>
-                                   <p className="text-xs text-white/50 mb-4">El enlace temporal de seguridad caducó o fue bloqueado.</p>
-                                   {activeTvChannel === 'televen' && (
-                                     <a 
-                                       href="https://app.televen.com/" 
-                                       target="_blank" 
-                                       rel="noopener noreferrer"
-                                       className="bg-red-600 hover:bg-red-500 text-white text-[11px] font-bold px-4 py-2.5 rounded-full transition-colors flex items-center gap-2 shadow-lg"
-                                     >
-                                       <Play size={16} className="ml-1" /> Abrir Televen App
-                                     </a>
-                                   )}
+                                   <p className="text-xs text-white/50">El servidor cerró la conexión.</p>
                                 </div>
                               )}
 
                               <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
                               <div className="p-5 flex flex-col gap-1">
-                                  <h3 className="text-lg font-bold text-white tracking-tight">{activeTvChannel === 'televen' ? 'Televen HD' : 'Venevisión'}</h3>
+                                  <h3 className="text-lg font-bold text-white tracking-tight">Venevisión</h3>
                                   <p className="text-[13px] text-white/60">Señal Nacional Continua</p>
                               </div>
                           </div>
 
-                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10">
+                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2">
                               <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center shrink-0">
                                   <Youtube size={26} />
                               </div>
@@ -710,99 +794,55 @@
                           </a>
                       </div>
 
-                      {/* --- VISTA DEPORTES --- */}
+                      {/* --- VISTA DEPORTES ACTUALIZADA (Grupos + Llaves) --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-3 ${viewMode === 'sports' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
                           
-                          {/* SELECTOR PARTIDOS / GRUPOS */}
-                          <div className="flex bg-white/5 p-1 rounded-[16px] border border-white/10 w-full shrink-0 mb-2 mt-2 z-10">
-                              <button
-                                onClick={() => setSportsTab('matches')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[12px] text-xs font-bold transition-all duration-300 ${sportsTab === 'matches' ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                          <h3 className="text-[13px] font-semibold tracking-wide text-white/50 uppercase px-2 mb-1 shrink-0 flex items-center gap-2 mt-2">
+                              <Globe size={16} className="text-blue-500" /> Mundial FIFA 2026
+                          </h3>
+
+                          {/* Control Segmentado iOS Style */}
+                          <div className="flex bg-[#1c1c1e] p-1 rounded-[14px] border border-white/5 w-full shrink-0 mb-3 z-10 shadow-inner">
+                              <button 
+                                onClick={() => setSportsTab('matches')} 
+                                className={`flex-1 py-1.5 text-[12px] font-semibold rounded-[10px] transition-all duration-300 ${sportsTab === 'matches' ? 'bg-[#3a3a3c] text-white shadow-md' : 'text-white/40'}`}
                               >
-                                Calendario
+                                En Vivo / Hoy
                               </button>
-                              <button
-                                onClick={() => setSportsTab('groups')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-[12px] text-xs font-bold transition-all duration-300 ${sportsTab === 'groups' ? 'bg-red-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
+                              <button 
+                                onClick={() => setSportsTab('groups')} 
+                                className={`flex-1 py-1.5 text-[12px] font-semibold rounded-[10px] transition-all duration-300 ${sportsTab === 'groups' ? 'bg-[#3a3a3c] text-white shadow-md' : 'text-white/40'}`}
                               >
                                 Grupos
+                              </button>
+                              <button 
+                                onClick={() => setSportsTab('bracket')} 
+                                className={`flex-1 py-1.5 text-[12px] font-semibold rounded-[10px] transition-all duration-300 ${sportsTab === 'bracket' ? 'bg-[#3a3a3c] text-white shadow-md' : 'text-white/40'}`}
+                              >
+                                Llaves
                               </button>
                           </div>
                           
                           {loadingSports ? (
-                              <div className="flex flex-col items-center justify-center py-12 shrink-0 z-10">
+                              <div className="flex flex-col items-center justify-center py-12 shrink-0">
                                   <div className="animate-spin rounded-full h-8 w-8 border-2 border-transparent border-t-white mb-4"></div>
-                                  <p className="text-[13px] text-white/50">Cargando datos deportivos...</p>
+                                  <p className="text-[13px] text-white/50">Cargando resultados globales...</p>
                               </div>
                           ) : sportsTab === 'matches' ? (
+                              // TABLA 1: EN VIVO Y HOY
                               matches.length > 0 ? (
-                                  matches.map((match, i) => (
-                                      <div key={i} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col gap-4 shrink-0 shadow-lg relative overflow-hidden z-10">
-                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>}
-                                          
-                                          <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                                              <p className="text-[11px] text-white/70 font-semibold uppercase tracking-wider truncate flex items-center gap-1">
-                                                  {match.league}
-                                              </p>
-                                              <p className="text-[11px] text-white/40 font-medium">
-                                                  {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}
-                                              </p>
-                                          </div>
-                                          
-                                          <div className="flex justify-between items-center">
-                                              <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                                  <img src={match.home.logo} alt={match.home.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
-                                                  <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.home.name}</span>
-                                              </div>
-                                              
-                                              <div className="flex flex-col items-center justify-center w-[30%] text-center">
-                                                  {match.status === 'pre' ? (
-                                                      <div className="flex flex-col items-center">
-                                                          <span className="text-[13px] font-semibold text-white/90 bg-white/10 px-3 py-1.5 rounded-full mb-1">
-                                                              {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
-                                                          </span>
-                                                      </div>
-                                                  ) : (
-                                                      <div className="flex flex-col items-center">
-                                                          <div className="flex items-center gap-2">
-                                                              <span className="text-3xl font-bold text-white tracking-tighter">{match.home.score}</span>
-                                                              <span className="text-lg font-bold text-white/30">-</span>
-                                                              <span className="text-3xl font-bold text-white tracking-tighter">{match.away.score}</span>
-                                                          </div>
-                                                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full mt-2 ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/10 text-white/50'}`}>
-                                                              {match.detail}
-                                                          </span>
-                                                      </div>
-                                                  )}
-                                              </div>
-
-                                              <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                                  <img src={match.away.logo} alt={match.away.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
-                                                  <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.away.name}</span>
-                                              </div>
-                                          </div>
-                                          
-                                          {match.league.toLowerCase().includes('fifa') && (
-                                              <div className="mt-1 pt-3 border-t border-white/10 flex justify-center items-center">
-                                                  <p className="text-[10px] text-white/50 font-medium flex items-center gap-1.5">
-                                                      <Tv size={12} className="text-white/40" />
-                                                      Transmite: <span className="text-white/90 font-bold">Televen / DSports</span>
-                                                  </p>
-                                              </div>
-                                          )}
-                                      </div>
-                                  ))
+                                  matches.map((match, i) => <MatchCard key={i} match={match} />)
                               ) : (
-                                  <div className="text-center py-12 flex flex-col items-center shrink-0 z-10">
+                                  <div className="text-center py-12 flex flex-col items-center shrink-0">
                                       <Trophy size={48} className="text-white/20 mb-4" />
                                       <p className="text-[13px] text-white/50">No hay partidos destacados hoy.</p>
                                   </div>
                               )
-                          ) : (
-                              /* --- VISTA DE GRUPOS --- */
+                          ) : sportsTab === 'groups' ? (
+                              // TABLA 2: GRUPOS MUNDIAL
                               standings.length > 0 ? (
                                   standings.map((group, idx) => (
-                                      <div key={idx} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-4 flex flex-col gap-2 shrink-0 shadow-lg mb-2 z-10">
+                                      <div key={idx} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-4 flex flex-col gap-2 shrink-0 shadow-lg mb-2">
                                           <h4 className="text-white font-bold text-[15px] tracking-tight ml-2 mt-1">{group.name}</h4>
                                           <div className="flex text-[10px] text-white/50 border-b border-white/10 pb-2 uppercase font-bold tracking-wider mt-2">
                                               <div className="flex-1 ml-2">Selección</div>
@@ -829,9 +869,28 @@
                                       </div>
                                   ))
                               ) : (
-                                  <div className="text-center py-12 flex flex-col items-center shrink-0 z-10">
+                                  <div className="text-center py-12 flex flex-col items-center shrink-0">
                                       <Globe size={48} className="text-white/20 mb-4" />
                                       <p className="text-[13px] text-white/50">Los grupos aún no están disponibles.</p>
+                                  </div>
+                              )
+                          ) : (
+                              // TABLA 3: LLAVES / ELIMINATORIAS
+                              bracket.length > 0 ? (
+                                  bracket.map((phaseGroup, idx) => (
+                                      <div key={idx} className="mb-2 shrink-0">
+                                          <div className="flex items-center gap-3 mb-3 ml-2 mt-2">
+                                              <div className="h-px bg-white/20 flex-1"></div>
+                                              <h4 className="text-[11px] text-white/50 uppercase font-bold tracking-widest">{phaseGroup.phase}</h4>
+                                              <div className="h-px bg-white/20 flex-1"></div>
+                                          </div>
+                                          {phaseGroup.matches.map((match, mIdx) => <MatchCard key={mIdx} match={match} />)}
+                                      </div>
+                                  ))
+                              ) : (
+                                  <div className="text-center py-12 flex flex-col items-center shrink-0">
+                                      <Trophy size={48} className="text-white/20 mb-4" />
+                                      <p className="text-[13px] text-white/50 text-center px-4">Aún no se han definido los equipos de la fase final.</p>
                                   </div>
                               )
                           )}
@@ -839,7 +898,7 @@
 
                       {/* --- VISTA SATÉLITE --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'nasa' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col shrink-0 z-10">
+                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col shrink-0">
                               <div className="flex items-center gap-2 mb-1">
                                   <Globe size={18} className="text-white/80"/>
                                   <span className="text-[13px] font-semibold text-white tracking-wide">Satélite Mucutuy</span>
@@ -847,7 +906,7 @@
                               <p className="text-[11px] text-white/50 mt-1">8.2456° N, -71.2864° W</p>
                           </div>
                           
-                          <div className="flex-1 w-full bg-black rounded-[24px] border border-white/10 overflow-hidden relative min-h-[300px] shadow-2xl shrink-0 z-10">
+                          <div className="flex-1 w-full bg-black rounded-[24px] border border-white/10 overflow-hidden relative min-h-[300px] shadow-2xl shrink-0">
                               <iframe 
                                   src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" 
                                   className="w-full h-full border-0 opacity-90 transition-opacity duration-700"
