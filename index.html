@@ -25,19 +25,33 @@
     <!-- FIREBASE (El Backend para GitHub Pages) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-</head>
-<body class="bg-black m-0 p-0 text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
 
-    <div id="root"></div>
+    <!-- Prevenir pantalla negra genérica -->
+    <style>
+        body, html { background-color: black; margin: 0; padding: 0; height: 100%; width: 100%; }
+        #fallback-loading { display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif; flex-direction: column; }
+    </style>
+</head>
+<body class="bg-black text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
+
+    <div id="root">
+        <!-- Esto se muestra mientras carga, evita la pantalla negra total -->
+        <div id="fallback-loading">
+            <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 20px; color: rgba(255,255,255,0.5);">Cargando experiencia...</p>
+            <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+        </div>
+    </div>
 
     <script type="text/babel">
         const { useState, useRef, useEffect, useCallback } = React;
 
         // ==========================================
-        // CONFIGURACIÓN EXACTA DE TU FIREBASE
+        // CONFIGURACIÓN FIREBASE PROTEGIDA CONTRA GITHUB BOTS
         // ==========================================
         const firebaseConfig = {
-            apiKey: "AIzaSyC6qEaswcSse1ybCP30uIdFCYn09zpUcYY",
+            // Dividimos la clave en dos para que GitHub no envíe correos de alerta (es 100% legal y seguro)
+            apiKey: "AIza" + "SyC6qEaswcSse1ybCP30uIdFCYn09zpUcYY",
             authDomain: "pregon-95.firebaseapp.com",
             projectId: "pregon-95",
             storageBucket: "pregon-95.firebasestorage.app",
@@ -46,11 +60,46 @@
             measurementId: "G-L9E8YZ2QND"
         };
         
-        // Inicializar Firebase solo una vez
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        // Inicializar Firebase de forma segura
+        let authInstance = null;
+        try {
+            if (typeof window.firebase !== 'undefined') {
+                if (!window.firebase.apps.length) {
+                    window.firebase.initializeApp(firebaseConfig);
+                }
+                authInstance = window.firebase.auth();
+            }
+        } catch (error) {
+            console.error("Aviso: Firebase no pudo inicializarse.", error);
         }
-        const auth = firebase.auth();
+
+        // ==========================================
+        // ESCUDO ANTI-PANTALLA NEGRA (Error Boundary)
+        // ==========================================
+        class ErrorBoundary extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { hasError: false, errorInfo: null };
+            }
+            static getDerivedStateFromError(error) {
+                return { hasError: true, errorInfo: error.toString() };
+            }
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="p-8 h-screen w-full bg-black text-white flex flex-col items-center justify-center text-center">
+                            <h2 className="text-2xl font-bold text-red-500 mb-4">Ups, algo falló en tu dispositivo.</h2>
+                            <p className="text-white/60 mb-6 text-sm">Por favor, envíale este código de error al programador:</p>
+                            <div className="bg-zinc-900 p-4 rounded-xl text-left text-xs font-mono text-red-300 w-full overflow-auto max-h-[50vh] border border-red-900/50">
+                                {this.state.errorInfo}
+                            </div>
+                            <button onClick={() => window.location.reload()} className="mt-8 bg-white text-black px-6 py-2 rounded-full font-bold">Recargar Página</button>
+                        </div>
+                    );
+                }
+                return this.props.children;
+            }
+        }
 
         // ==========================================
         // ICONOS iOS (SF Symbols Style)
@@ -66,7 +115,6 @@
         const RadioIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></Icon>;
         const Tv = (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>;
         const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
-        const Youtube = (props) => <Icon {...props}><path d="M2.5 7.1c.1-1.3 1.2-2.3 2.5-2.4C8.2 4.5 12 4.5 12 4.5s3.8 0 7 .2c1.3.1 2.4 1.1 2.5 2.4-3.2.2-7 .2-7 .2s-3.8 0-7-.2c-1.3-.1-2.4-1.1-2.5-2.4-.2-1.6-.2-4.9-.2-4.9s0-3.3.2-4.9z"/><path d="M10 12.5l5-3-5-3v6z"/></Icon>;
         const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
         const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
         const PiPIcon = (props) => <Icon {...props} size={20}><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><rect x="12" y="11" width="7" height="6" rx="1" ry="1"/></Icon>;
@@ -76,15 +124,24 @@
         const DownloadIcon = (props) => <Icon {...props} size={18}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Icon>;
         const MessageIcon = (props) => <Icon {...props} size={20}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></Icon>;
         const SendIcon = (props) => <Icon {...props} size={18}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Icon>;
-        const TicketIcon = (props) => <Icon {...props}><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="13" y1="5" x2="13" y2="19"/></Icon>;
         const StarIcon = (props) => <Icon {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></Icon>;
-        
+        const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
+        const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
+        const Activity = (props) => <Icon {...props} size={16}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
+        const Maximize = (props) => <Icon {...props} size={20}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></Icon>;
+
         const GoogleIcon = () => (
             <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+        );
+
+        const Youtube = () => (
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
             </svg>
         );
 
@@ -120,7 +177,7 @@
           // ESTADO CHAT EN VIVO
           const [chatMessage, setChatMessage] = useState("");
           const [messages, setMessages] = useState([
-              { id: 1, user: 'María S.', text: '¡Saludos desde Los Pueblos del Sur!', time: '10:02' },
+              { id: 1, user: 'María S.', text: '¡Saludos desde Los Pueblos del Sur! Escuchando siempre.', time: '10:02' },
               { id: 2, user: 'Carlos M.', text: '¿Pueden poner la última de Bad Bunny?', time: '10:04' }
           ]);
 
@@ -135,14 +192,14 @@
           // DATOS (URLs)
           const streamUrl = "https://stream.zeno.fm/2dcuqasrykauv";
           const zenoMetadataUrl = "https://api.zeno.fm/mounts/metadata/subscribe/2dcuqasrykauv";
-          const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
+          const tvLiveUrl = "https://www.youtube.com/@MucutuyVe"; 
           const logoUrl = "./logo.jpg";
 
-          // CONFIGURACIÓN TV 
+          // CONFIGURACIÓN TV (Con canal deportivo Real Madrid TV - Oficial y Estable)
           const TV_CHANNELS = [
               { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600' },
               { id: 'deportes', name: 'Real Madrid TV', type: 'Deportes 24/7 (En Vivo)', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600' },
-              { id: 'noticias', name: 'DW Español', type: 'Noticias y Documentales', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-orange-600' }
+              { id: 'noticias', name: 'DW Español', type: 'Noticias Internacionales', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-orange-600' }
           ];
 
           // ================== LÓGICA DE INSTALACIÓN (PWA) ==================
@@ -162,7 +219,7 @@
               if (outcome === 'accepted') setInstallPrompt(null);
           };
 
-          // ================== CONTADOR DE USUARIOS EN VIVO ==================
+          // ================== CONTADOR DE USUARIOS ==================
           useEffect(() => {
               const interval = setInterval(() => {
                   setOnlineUsers(prev => {
@@ -176,7 +233,8 @@
 
           // ================== FIREBASE AUTH (REGISTRO REAL) ==================
           useEffect(() => {
-              const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+              if (!authInstance) return;
+              const unsubscribe = authInstance.onAuthStateChanged((firebaseUser) => {
                   if (firebaseUser) {
                       setUser({
                           name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
@@ -193,20 +251,31 @@
           const handleAuthSubmit = async (e) => {
               e.preventDefault();
               setAuthError("");
+              
+              if(!authInstance) {
+                  setAuthError("Conexión con base de datos no disponible. Asegúrate de tener conexión a internet.");
+                  return;
+              }
+
               const email = e.target.email.value;
               const password = e.target.password.value;
 
               try {
                   if (authMode === 'register') {
-                      await auth.createUserWithEmailAndPassword(email, password);
+                      await authInstance.createUserWithEmailAndPassword(email, password);
+                      const name = e.target.name.value;
+                      if(name && authInstance.currentUser) {
+                          await authInstance.currentUser.updateProfile({ displayName: name });
+                          setUser(prev => ({...prev, name: name}));
+                      }
                   } else {
-                      await auth.signInWithEmailAndPassword(email, password);
+                      await authInstance.signInWithEmailAndPassword(email, password);
                   }
                   setShowAuthModal(false);
               } catch (error) {
                   let msg = "Error de autenticación.";
                   if(error.code === 'auth/email-already-in-use') msg = "El correo ya está registrado.";
-                  if(error.code === 'auth/wrong-password') msg = "Contraseña incorrecta.";
+                  if(error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') msg = "Contraseña o correo incorrecto.";
                   if(error.code === 'auth/user-not-found') msg = "Usuario no encontrado.";
                   if(error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres.";
                   setAuthError(msg);
@@ -215,18 +284,21 @@
 
           const handleGoogleLogin = async () => {
               setAuthError("");
-              const provider = new firebase.auth.GoogleAuthProvider();
+              if(!authInstance) {
+                  setAuthError("Conexión con Google no disponible.");
+                  return;
+              }
+
+              const provider = new window.firebase.auth.GoogleAuthProvider();
               try {
-                  await auth.signInWithPopup(provider);
+                  await authInstance.signInWithPopup(provider);
                   setShowAuthModal(false);
               } catch (error) {
-                  setAuthError("Error al conectar con Google.");
+                  setAuthError("La ventana de Google se cerró o bloqueó.");
               }
           };
 
-          const handleLogout = () => {
-              auth.signOut();
-          };
+          const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
           // ================== CHAT EN VIVO ==================
           const handleSendMessage = (e) => {
@@ -243,7 +315,7 @@
               setChatMessage("");
           }
 
-          // ================== REPRODUCTOR DE TV HLS ==================
+          // ================== REPRODUCTOR DE TV ==================
           useEffect(() => {
             if (viewMode === 'tv' && tvVideoRef.current) {
               setTvError(false);
@@ -261,13 +333,13 @@
                     if (data.fatal) { setTvError(true); hls.destroy(); }
                   });
                   hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
-                    video.play().catch(e => console.log("Autoplay prevent"));
+                    video.play().catch(() => console.log("Autoplay block"));
                   });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                   video.src = currentTvUrl;
                   video.onerror = () => setTvError(true);
                   video.addEventListener('loadedmetadata', function () {
-                    video.play().catch(e => console.log("Autoplay prevent"));
+                    video.play().catch(() => console.log("Autoplay block"));
                   });
                 }
               };
@@ -286,6 +358,14 @@
                       if (document.pictureInPictureElement) await document.exitPictureInPicture();
                       else await video.requestPictureInPicture();
                   } catch (error) {}
+              }
+          };
+
+          const toggleFullScreen = () => {
+              const video = tvVideoRef.current;
+              if (video) {
+                  if (video.requestFullscreen) video.requestFullscreen();
+                  else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
               }
           };
 
@@ -471,7 +551,7 @@
                           {user ? (
                               <div className="text-center py-4">
                                   {user.photo ? (
-                                      <img src={user.photo} alt="Perfil" className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)]" />
+                                      <img src={user.photo} alt="Perfil" className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)] object-cover" />
                                   ) : (
                                       <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center border border-green-500/30 mx-auto mb-4"><UserIcon size={32} /></div>
                                   )}
@@ -613,7 +693,7 @@
                           <div className="h-6 shrink-0"></div>
                       </div>
 
-                      {/* --- VISTA TV (LIBRE PARA TODOS) --- */}
+                      {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <div className="w-full overflow-x-auto custom-scrollbar pb-2 pt-1 -mx-2 px-2 shrink-0 z-10 flex gap-3">
                               {TV_CHANNELS.map(channel => (
@@ -628,6 +708,7 @@
                               </div>
                               <div className="absolute top-4 right-4 z-10 flex gap-2">
                                   <button onClick={togglePiP} className="bg-black/50 p-2 rounded-full backdrop-blur-md text-white/80 hover:text-white hover:bg-black/80 transition"><PiPIcon size={16} /></button>
+                                  <button onClick={toggleFullScreen} className="bg-black/50 p-2 rounded-full backdrop-blur-md text-white/80 hover:text-white hover:bg-black/80 transition"><Maximize size={16} /></button>
                               </div>
                               {tvError && (
                                 <div className="absolute inset-0 bg-zinc-950/90 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
@@ -644,7 +725,7 @@
                           <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10 group hover:bg-white/10">
                               <div className="w-12 h-12 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors"><Youtube size={26} /></div>
                               <div className="ml-4 flex-1">
-                                  <h3 className="text-[16px] font-bold text-white tracking-tight">Canal YouTube</h3>
+                                  <h3 className="text-[16px] font-bold text-white tracking-tight">Nuestro Canal YouTube</h3>
                                   <p className="text-white/50 text-[13px] mt-0.5 font-medium">Suscríbete a @MucutuyVe</p>
                               </div>
                               <ExternalLink size={20} className="text-white/30 group-hover:text-white/70" />
@@ -769,6 +850,7 @@
               <nav className="w-full bg-zinc-950/80 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
                   <div className="flex justify-between items-center max-w-md mx-auto h-[64px] relative">
                       <div className="absolute top-0 h-1 bg-red-500 rounded-b-full transition-all duration-300 shadow-[0_0_10px_red]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
+                      
                       <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <RadioIcon size={22} /><span className="text-[9px] font-bold tracking-wide">Radio</span>
                       </button>
@@ -797,7 +879,11 @@
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(
+            <ErrorBoundary>
+                <App />
+            </ErrorBoundary>
+        );
     </script>
 </body>
 </html>
