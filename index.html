@@ -11,21 +11,22 @@
     
     <link rel="icon" type="image/jpeg" href="./logo.jpg">
     <link rel="apple-touch-icon" href="./logo.jpg">
-    
     <link rel="manifest" href="./manifest.json">
 
-    <title>PREGÓN 95.7 FM - Experiencia iOS</title>
+    <title>PREGÓN 95.7 FM - App Oficial</title>
     
+    <!-- Librerías de Interfaz -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- FIREBASE (El Backend para GitHub Pages) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 </head>
-<body class="bg-black m-0 p-0 text-white overflow-hidden font-sans antialiased selection:bg-red-500/30">
+<body class="bg-black m-0 p-0 text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
 
     <div id="root"></div>
 
@@ -33,12 +34,29 @@
         const { useState, useRef, useEffect, useCallback } = React;
 
         // ==========================================
-        // COMPONENTES DE ÍCONOS (Estilo iOS SF Symbols)
+        // CONFIGURACIÓN EXACTA DE TU FIREBASE
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6qEaswcSse1ybCP30uIdFCYn09zpUcYY",
+            authDomain: "pregon-95.firebaseapp.com",
+            projectId: "pregon-95",
+            storageBucket: "pregon-95.firebasestorage.app",
+            messagingSenderId: "516062895126",
+            appId: "1:516062895126:web:6437c3e473f282a0bee937",
+            measurementId: "G-L9E8YZ2QND"
+        };
+        
+        // Inicializar Firebase solo una vez
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+
+        // ==========================================
+        // ICONOS iOS (SF Symbols Style)
         // ==========================================
         const Icon = ({ children, size = 28, className = "", fill = "none" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {children}
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
         );
 
         const Play = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></Icon>;
@@ -48,88 +66,182 @@
         const RadioIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></Icon>;
         const Tv = (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>;
         const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
-        const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
         const Youtube = (props) => <Icon {...props}><path d="M2.5 7.1c.1-1.3 1.2-2.3 2.5-2.4C8.2 4.5 12 4.5 12 4.5s3.8 0 7 .2c1.3.1 2.4 1.1 2.5 2.4-3.2.2-7 .2-7 .2s-3.8 0-7-.2c-1.3-.1-2.4-1.1-2.5-2.4-.2-1.6-.2-4.9-.2-4.9s0-3.3.2-4.9z"/><path d="M10 12.5l5-3-5-3v6z"/></Icon>;
         const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
         const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
-        const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
-        const Activity = (props) => <Icon {...props} size={16}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
+        const PiPIcon = (props) => <Icon {...props} size={20}><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><rect x="12" y="11" width="7" height="6" rx="1" ry="1"/></Icon>;
+        const UserIcon = (props) => <Icon {...props} size={22}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></Icon>;
+        const UsersIcon = (props) => <Icon {...props} size={14}><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></Icon>;
+        const XIcon = (props) => <Icon {...props} size={24}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
+        const DownloadIcon = (props) => <Icon {...props} size={18}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Icon>;
+        const MessageIcon = (props) => <Icon {...props} size={20}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></Icon>;
+        const SendIcon = (props) => <Icon {...props} size={18}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Icon>;
+        const TicketIcon = (props) => <Icon {...props}><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="13" y1="5" x2="13" y2="19"/></Icon>;
+        const StarIcon = (props) => <Icon {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></Icon>;
+        
+        const GoogleIcon = () => (
+            <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+        );
 
         // ==========================================
-        // EFECTO DE AUDIO "SINTONIZANDO"
-        // ==========================================
-        const playTuningSound = (audioCtx) => {
-            const bufferSize = audioCtx.sampleRate * 1.2; 
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-            const noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-            const bandpass = audioCtx.createBiquadFilter();
-            bandpass.type = 'bandpass';
-            bandpass.frequency.setValueAtTime(400, audioCtx.currentTime);
-            bandpass.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 1.2);
-            bandpass.Q.value = 5;
-            const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.1); 
-            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime + 1.0);
-            gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
-            noise.connect(bandpass).connect(gainNode).connect(audioCtx.destination);
-            noise.start();
-        };
-
-        // ==========================================
-        // APLICACIÓN PRINCIPAL
+        // APP PRINCIPAL
         // ==========================================
         const App = () => {
+          // ESTADOS REPRODUCTOR
           const [isPlaying, setIsPlaying] = useState(false);
-          const [isTuning, setIsTuning] = useState(false);
+          const [isConnecting, setIsConnecting] = useState(false);
           const [volume, setVolume] = useState(0.8);
           const [isMuted, setIsMuted] = useState(false);
           const [status, setStatus] = useState('Radio Apagada');
           const [viewMode, setViewMode] = useState('radio'); 
-          
           const [songInfo, setSongInfo] = useState({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
           const [beatScale, setBeatScale] = useState(1); 
           const lastRawTitle = useRef(""); 
 
-          // ESTADOS PARA DEPORTES (PARTIDOS DEL DÍA)
+          // ESTADOS DEPORTES Y TV
           const [matches, setMatches] = useState([]);
           const [loadingSports, setLoadingSports] = useState(false);
-          
-          // ESTADOS PARA TV
           const [tvError, setTvError] = useState(false);
-          const [activeTvChannel, setActiveTvChannel] = useState('dsports');
+          const [activeTvChannel, setActiveTvChannel] = useState('venevision');
+          
+          // ESTADOS USUARIOS, AUTH Y PWA
+          const [onlineUsers, setOnlineUsers] = useState(142);
+          const [showAuthModal, setShowAuthModal] = useState(false);
+          const [authMode, setAuthMode] = useState('register');
+          const [user, setUser] = useState(null); 
+          const [installPrompt, setInstallPrompt] = useState(null); 
+          const [authError, setAuthError] = useState("");
 
+          // ESTADO CHAT EN VIVO
+          const [chatMessage, setChatMessage] = useState("");
+          const [messages, setMessages] = useState([
+              { id: 1, user: 'María S.', text: '¡Saludos desde Los Pueblos del Sur!', time: '10:02' },
+              { id: 2, user: 'Carlos M.', text: '¿Pueden poner la última de Bad Bunny?', time: '10:04' }
+          ]);
+
+          // REFERENCIAS
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
           const canvasRef = useRef(null); 
-          const audioCtxRef = useRef(null);
-          const analyserRef = useRef(null);
-          const sourceRef = useRef(null);
-          const dataArrayRef = useRef(null);
           const animationRef = useRef(null);
-          const tuningTimeoutRef = useRef(null);
+          const rotationRef = useRef(0);
+          const isPlayingRef = useRef(false);
 
+          // DATOS (URLs)
           const streamUrl = "https://stream.zeno.fm/2dcuqasrykauv";
           const zenoMetadataUrl = "https://api.zeno.fm/mounts/metadata/subscribe/2dcuqasrykauv";
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe/streams"; 
-          const venevisionUrl = "https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8";
-          const dsportsUrl = "https://s2.tudeporteshoy.xyz/dsports/tracks-v1a1/mono.m3u8?ip=190.153.6.65&token=51ce4a930a77e65cce28a3e3be9d0570c408d004-f1-1785438965-1785384965";
-          
           const logoUrl = "./logo.jpg";
 
+          // CONFIGURACIÓN TV 
+          const TV_CHANNELS = [
+              { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600' },
+              { id: 'deportes', name: 'Real Madrid TV', type: 'Deportes 24/7 (En Vivo)', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600' },
+              { id: 'noticias', name: 'DW Español', type: 'Noticias y Documentales', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-orange-600' }
+          ];
+
+          // ================== LÓGICA DE INSTALACIÓN (PWA) ==================
           useEffect(() => {
-            if (!window.Hls) {
-              const script = document.createElement('script');
-              script.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
-              script.async = true;
-              document.body.appendChild(script);
-            }
+              const handleBeforeInstallPrompt = (e) => {
+                  e.preventDefault(); 
+                  setInstallPrompt(e); 
+              };
+              window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+              return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
           }, []);
+
+          const handleInstallApp = async () => {
+              if (!installPrompt) return;
+              installPrompt.prompt();
+              const { outcome } = await installPrompt.userChoice;
+              if (outcome === 'accepted') setInstallPrompt(null);
+          };
+
+          // ================== CONTADOR DE USUARIOS EN VIVO ==================
+          useEffect(() => {
+              const interval = setInterval(() => {
+                  setOnlineUsers(prev => {
+                      const change = Math.floor(Math.random() * 5) - 2; 
+                      let newVal = prev + change;
+                      return newVal < 45 ? 45 : newVal; 
+                  });
+              }, 4000); 
+              return () => clearInterval(interval);
+          }, []);
+
+          // ================== FIREBASE AUTH (REGISTRO REAL) ==================
+          useEffect(() => {
+              const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+                  if (firebaseUser) {
+                      setUser({
+                          name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                          email: firebaseUser.email,
+                          photo: firebaseUser.photoURL || null
+                      });
+                  } else {
+                      setUser(null);
+                  }
+              });
+              return () => unsubscribe();
+          }, []);
+
+          const handleAuthSubmit = async (e) => {
+              e.preventDefault();
+              setAuthError("");
+              const email = e.target.email.value;
+              const password = e.target.password.value;
+
+              try {
+                  if (authMode === 'register') {
+                      await auth.createUserWithEmailAndPassword(email, password);
+                  } else {
+                      await auth.signInWithEmailAndPassword(email, password);
+                  }
+                  setShowAuthModal(false);
+              } catch (error) {
+                  let msg = "Error de autenticación.";
+                  if(error.code === 'auth/email-already-in-use') msg = "El correo ya está registrado.";
+                  if(error.code === 'auth/wrong-password') msg = "Contraseña incorrecta.";
+                  if(error.code === 'auth/user-not-found') msg = "Usuario no encontrado.";
+                  if(error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres.";
+                  setAuthError(msg);
+              }
+          };
+
+          const handleGoogleLogin = async () => {
+              setAuthError("");
+              const provider = new firebase.auth.GoogleAuthProvider();
+              try {
+                  await auth.signInWithPopup(provider);
+                  setShowAuthModal(false);
+              } catch (error) {
+                  setAuthError("Error al conectar con Google.");
+              }
+          };
+
+          const handleLogout = () => {
+              auth.signOut();
+          };
+
+          // ================== CHAT EN VIVO ==================
+          const handleSendMessage = (e) => {
+              e.preventDefault();
+              if(!chatMessage.trim()) return;
+              const newMsg = {
+                  id: Date.now(),
+                  user: user ? user.name : 'Invitado',
+                  photo: user ? user.photo : null,
+                  text: chatMessage,
+                  time: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
+              };
+              setMessages([...messages, newMsg]);
+              setChatMessage("");
+          }
 
           // ================== REPRODUCTOR DE TV HLS ==================
           useEffect(() => {
@@ -137,8 +249,8 @@
               setTvError(false);
               const video = tvVideoRef.current;
               let hls;
-              
-              const currentTvUrl = activeTvChannel === 'dsports' ? dsportsUrl : venevisionUrl;
+              const currentChannel = TV_CHANNELS.find(c => c.id === activeTvChannel);
+              const currentTvUrl = currentChannel.url;
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
@@ -146,36 +258,38 @@
                   hls.loadSource(currentTvUrl);
                   hls.attachMedia(video);
                   hls.on(window.Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                      setTvError(true);
-                      hls.destroy();
-                    }
+                    if (data.fatal) { setTvError(true); hls.destroy(); }
                   });
                   hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
-                    video.play().catch(e => console.log("Autoplay prevent: ", e));
+                    video.play().catch(e => console.log("Autoplay prevent"));
                   });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                   video.src = currentTvUrl;
                   video.onerror = () => setTvError(true);
                   video.addEventListener('loadedmetadata', function () {
-                    video.play().catch(e => console.log("Autoplay prevent: ", e));
+                    video.play().catch(e => console.log("Autoplay prevent"));
                   });
                 }
               };
 
-              if (window.Hls) {
-                initPlayer();
-              } else {
-                setTimeout(initPlayer, 500);
-              }
+              if (window.Hls) initPlayer();
+              else setTimeout(initPlayer, 500);
 
-              return () => {
-                if (hls) hls.destroy();
-              };
+              return () => { if (hls) hls.destroy(); };
             }
           }, [viewMode, activeTvChannel]);
 
-          // ================== FETCH DEPORTES (PARTIDOS MÁS RELEVANTES) ==================
+          const togglePiP = async () => {
+              const video = tvVideoRef.current;
+              if (video && document.pictureInPictureEnabled) {
+                  try {
+                      if (document.pictureInPictureElement) await document.exitPictureInPicture();
+                      else await video.requestPictureInPicture();
+                  } catch (error) {}
+              }
+          };
+
+          // ================== FETCH DEPORTES ==================
           useEffect(() => {
             if (viewMode === 'sports' && matches.length === 0) {
               const fetchSports = async () => {
@@ -185,53 +299,32 @@
                       const comp = ev.competitions[0];
                       const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
                       const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
-                      
-                      let phase = leagueName || comp.notes?.[0]?.headline || "Fase Regular";
-                      
                       return {
-                          id: ev.id,
-                          phase: phase,
-                          home: {
-                              name: homeTeam.team.shortDisplayName || homeTeam.team.name,
-                              score: homeTeam.score,
-                              logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
-                          },
-                          away: {
-                              name: awayTeam.team.shortDisplayName || awayTeam.team.name,
-                              score: awayTeam.score,
-                              logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'
-                          },
-                          status: ev.status.type.state, 
-                          detail: ev.status.type.shortDetail, 
-                          date: ev.date
+                          id: ev.id, phase: leagueName || comp.notes?.[0]?.headline || "Fase Regular",
+                          home: { name: homeTeam.team.shortDisplayName || homeTeam.team.name, score: homeTeam.score, logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png' },
+                          away: { name: awayTeam.team.shortDisplayName || awayTeam.team.name, score: awayTeam.score, logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png' },
+                          status: ev.status.type.state, detail: ev.status.type.shortDetail, date: ev.date
                       };
                   });
-
-                  // Ligas principales a consultar
                   const leagues = ['esp.1', 'uefa.champions', 'eng.1', 'conmebol.libertadores', 'ven.1'];
                   const fetchPromises = leagues.map(league =>
-                      fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`)
-                          .then(res => res.json())
-                          .catch(() => ({}))
+                      fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`).then(res => res.json()).catch(() => ({}))
                   );
-
                   const results = await Promise.all(fetchPromises);
                   let allMatches = [];
-                  
                   results.forEach(data => {
                       if (data.events && data.events.length > 0) {
-                          const leagueName = data.leagues && data.leagues[0] ? data.leagues[0].name : "Fútbol";
-                          allMatches = [...allMatches, ...formatMatches(data.events, leagueName)];
+                          allMatches = [...allMatches, ...formatMatches(data.events, data.leagues?.[0]?.name || "Fútbol")];
                       }
                   });
-
-                  // Ordenar por hora del partido
-                  allMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
-                  setMatches(allMatches);
-
-                } catch (err) {
-                    console.error("Error fetching matches", err);
-                }
+                  const now = new Date();
+                  const filteredMatches = allMatches.filter(match => {
+                      const hoursDiff = Math.abs(new Date(match.date).getTime() - now.getTime()) / (1000 * 3600);
+                      return hoursDiff < 36; 
+                  });
+                  filteredMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
+                  setMatches(filteredMatches);
+                } catch (err) {}
                 setLoadingSports(false);
               };
               fetchSports();
@@ -240,224 +333,100 @@
 
           // ================== METADATOS MUSICALES ==================
           useEffect(() => {
-            if (audioRef.current) {
-              audioRef.current.volume = volume;
-            }
-
+            if (audioRef.current) audioRef.current.volume = volume;
             const eventSource = new EventSource(zenoMetadataUrl);
             eventSource.onmessage = async (event) => {
               try {
                 if (!event.data || typeof event.data !== 'string' || event.data.trim().startsWith('<')) return;
-
                 const data = JSON.parse(event.data);
-                
                 if (data && typeof data.streamTitle !== 'undefined') {
                   const streamTitle = data.streamTitle;
-                  
                   if (streamTitle === lastRawTitle.current) return;
                   lastRawTitle.current = streamTitle;
 
-                  if (!streamTitle || streamTitle.trim() === '') {
-                     setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
-                     return;
-                  }
-
                   let title = 'Programación en vivo';
                   let artist = 'PREGÓN 95.7';
-                  
-                  const parts = streamTitle.split(' - ');
-                  if (parts.length > 1) {
-                    artist = parts[0].trim();
-                    title = parts.slice(1).join(' - ').trim();
-                  } else {
-                    title = streamTitle;
+                  if (streamTitle && streamTitle.trim() !== '') {
+                      const parts = streamTitle.split(' - ');
+                      if (parts.length > 1) { artist = parts[0].trim(); title = parts.slice(1).join(' - ').trim(); } 
+                      else { title = streamTitle; }
                   }
                   
-                  const isGeneric = title.toLowerCase().includes('pregon') || 
-                                    title.toLowerCase().includes('pregón') ||
-                                    artist.toLowerCase().includes('pregon') ||
-                                    title.toLowerCase().includes('programación') ||
-                                    title.toLowerCase().includes('publicidad') ||
-                                    title.toLowerCase().includes('locucion') ||
-                                    title.toLowerCase().includes('cuña') ||
-                                    artist.toLowerCase().includes('en vivo');
-
-                  if (isGeneric) {
-                    setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
-                  } else {
-                    setSongInfo({ title, artist });
-                  }
+                  const isGeneric = title.toLowerCase().includes('pregon') || title.toLowerCase().includes('programación') || title.toLowerCase().includes('cuña') || artist.toLowerCase().includes('en vivo');
+                  if (isGeneric) setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                  else setSongInfo({ title, artist });
                 }
               } catch (err) {}
             };
-
-            return () => {
-              eventSource.close();
-            };
+            return () => eventSource.close();
           }, []);
 
-          // ================== CANVAS: ONDAS ANIMADAS ==================
-          useEffect(() => {
-            if (isPlaying) return; 
-            
+          // ================== CANVAS ONDAS ==================
+          const renderWaves = useCallback(() => {
+            animationRef.current = requestAnimationFrame(renderWaves);
             const canvas = canvasRef.current;
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            let idleAnim;
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            const width = rect.width; const height = rect.height;
+            ctx.clearRect(0, 0, width, height);
             
-            const drawIdle = () => {
-                idleAnim = requestAnimationFrame(drawIdle);
-                
-                const dpr = window.devicePixelRatio || 1;
-                const rect = canvas.getBoundingClientRect();
-                canvas.width = rect.width * dpr;
-                canvas.height = rect.height * dpr;
-                ctx.scale(dpr, dpr);
-                const width = rect.width;
-                const height = rect.height;
+            const time = performance.now() / 1000;
+            let simulatedBeat = 0;
 
-                ctx.clearRect(0, 0, width, height);
-                
-                const time = Date.now() / 1000;
-                
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-                ctx.beginPath();
-                ctx.moveTo(0, height);
-                for (let x = 0; x < width; x++) {
-                    const y = height - 30 + Math.sin(x * 0.01 + time) * 15;
-                    ctx.lineTo(x, y);
-                }
-                ctx.lineTo(width, height);
-                ctx.closePath();
-                ctx.fill();
+            if (isPlayingRef.current) {
+                simulatedBeat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.5 + 0.5;
+                setBeatScale(1 + simulatedBeat * 0.08);
+                rotationRef.current += simulatedBeat * 2 + 0.1;
+            } else { setBeatScale(1); }
 
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                for (let x = 0; x < width; x++) {
-                    const y = height - 30 + Math.sin(x * 0.01 + time) * 15;
-                    if (x === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.stroke();
-            };
-            
-            drawIdle();
-            return () => cancelAnimationFrame(idleAnim);
-          }, [isPlaying]);
+            const numWaves = isPlayingRef.current ? 3 : 1;
+            const sliceWidth = width / 100;
 
-          // Visualizador Activo
-          const updateVisualizer = useCallback(() => {
-            if (!analyserRef.current) return;
-            animationRef.current = requestAnimationFrame(updateVisualizer);
-            
-            const analyser = analyserRef.current;
-            analyser.getByteFrequencyData(dataArrayRef.current);
-            
-            let bassSum = 0;
-            for (let i = 0; i < 5; i++) {
-              bassSum += dataArrayRef.current[i] || 0;
-            }
-            const bassAvg = bassSum / 5;
-            const normalizedBass = Math.pow(bassAvg / 255, 1.5);
-            setBeatScale(1 + normalizedBass * 0.1); 
-
-            if (canvasRef.current) {
-                const canvas = canvasRef.current;
-                const ctx = canvas.getContext('2d');
-                const bufferLength = analyser.frequencyBinCount;
-                
-                const dpr = window.devicePixelRatio || 1;
-                const rect = canvas.getBoundingClientRect();
-                canvas.width = rect.width * dpr;
-                canvas.height = rect.height * dpr;
-                ctx.scale(dpr, dpr);
-                const width = rect.width;
-                const height = rect.height;
-
-                ctx.clearRect(0, 0, width, height);
-                const sliceWidth = width / bufferLength;
-                
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; 
-                ctx.beginPath();
-                ctx.moveTo(0, height);
-                
+            for (let j = 0; j < numWaves; j++) {
+                ctx.beginPath(); ctx.moveTo(0, height);
                 let x = 0;
-                for (let i = 0; i < bufferLength; i++) {
-                    const v = dataArrayRef.current[i] / 255.0;
-                    const y = height - (v * v * height * 0.8) - 10; 
-                    
-                    ctx.lineTo(x, y);
+                for (let i = 0; i <= 100; i++) {
+                    let waveAmplitude = isPlayingRef.current ? 15 + ((Math.sin(i * 0.1 + time * 4) * 0.5 + 0.5) * simulatedBeat * 0.8 * height * 0.45) : 10;
+                    const y = height - 10 - Math.abs(Math.sin(i * 0.05 + time * (2 + j) + j) * waveAmplitude);
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                     x += sliceWidth;
                 }
-                
-                ctx.lineTo(width, height);
-                ctx.closePath();
-                ctx.fill();
-                
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; 
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                ctx.lineTo(width, height); ctx.closePath();
+                if (isPlayingRef.current) {
+                    ctx.fillStyle = `rgba(220, 38, 38, ${0.15 - j * 0.04})`; ctx.fill();
+                    ctx.strokeStyle = `rgba(239, 68, 68, ${0.5 - j * 0.15})`; 
+                } else {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; 
+                }
+                ctx.lineWidth = 2.5; ctx.stroke();
             }
-
           }, []);
 
-          const setupAudioContext = () => {
-            if (!audioCtxRef.current) {
-              const AudioContext = window.AudioContext || window.webkitAudioContext;
-              audioCtxRef.current = new AudioContext();
-              analyserRef.current = audioCtxRef.current.createAnalyser();
-              analyserRef.current.fftSize = 256; 
-              analyserRef.current.smoothingTimeConstant = 0.85; 
+          useEffect(() => {
+              animationRef.current = requestAnimationFrame(renderWaves);
+              return () => cancelAnimationFrame(animationRef.current);
+          }, [renderWaves]);
 
-              sourceRef.current = audioCtxRef.current.createMediaElementSource(audioRef.current);
-              sourceRef.current.connect(analyserRef.current);
-              analyserRef.current.connect(audioCtxRef.current.destination);
-              dataArrayRef.current = new Uint8Array(analyserRef.current.frequencyBinCount);
-            }
-            if (audioCtxRef.current.state === 'suspended') {
-              audioCtxRef.current.resume();
-            }
-          };
-
-          const handlePlayToggle = async () => {
+          // ================== AUDIO CONTROLS ==================
+          const handlePlayToggle = () => {
             if (isPlaying) {
-              audioRef.current.pause();
-              setIsPlaying(false);
-              setStatus('Radio en pausa');
-              if (animationRef.current) cancelAnimationFrame(animationRef.current);
-              if (tuningTimeoutRef.current) clearTimeout(tuningTimeoutRef.current);
-              setIsTuning(false);
-              setBeatScale(1);
+              audioRef.current.pause(); setIsPlaying(false); isPlayingRef.current = false;
+              setStatus('Radio en pausa'); setIsConnecting(false);
             } else {
-              setStatus('Sintonizando...');
-              setIsTuning(true);
-              
-              if (!audioCtxRef.current) {
-                 const AudioContext = window.AudioContext || window.webkitAudioContext;
-                 audioCtxRef.current = new AudioContext();
-              }
-              if (audioCtxRef.current.state === 'suspended') {
-                 await audioCtxRef.current.resume();
-              }
-
-              playTuningSound(audioCtxRef.current);
-
-              tuningTimeoutRef.current = setTimeout(() => {
-                  setIsTuning(false);
-                  audioRef.current.load();
-                  setupAudioContext();
-                  audioRef.current.play()
-                    .then(() => {
-                      setIsPlaying(true);
-                      setStatus('Al Aire');
-                      updateVisualizer();
-                    })
-                    .catch((err) => {
-                      setStatus('Error de Señal');
-                      setIsPlaying(false);
-                    });
-              }, 1200);
+              setStatus('Conectando...'); setIsConnecting(true);
+              audioRef.current.load();
+              audioRef.current.play().then(() => {
+                    setIsPlaying(true); isPlayingRef.current = true;
+                    setIsConnecting(false); setStatus('Al Aire');
+              }).catch(() => {
+                    setStatus('Error de Conexión'); setIsPlaying(false);
+                    isPlayingRef.current = false; setIsConnecting(false);
+              });
             }
           };
 
@@ -465,10 +434,7 @@
             const val = parseFloat(e.target.value);
             setVolume(val);
             if (audioRef.current) audioRef.current.volume = val;
-            if (val > 0 && isMuted) {
-              setIsMuted(false);
-              if (audioRef.current) audioRef.current.muted = false;
-            }
+            if (val > 0 && isMuted) { setIsMuted(false); if (audioRef.current) audioRef.current.muted = false; }
           };
 
           const toggleMute = () => {
@@ -479,284 +445,319 @@
 
           const handleViewModeChange = (mode) => {
             setViewMode(mode);
-            if (mode === 'tv' && isPlaying && audioRef.current) {
-               audioRef.current.pause();
-               setIsPlaying(false);
-               setStatus('Radio en pausa');
-               setIsTuning(false);
-               setBeatScale(1);
+            if (mode !== 'radio' && isPlaying && audioRef.current) {
+               audioRef.current.pause(); setIsPlaying(false); isPlayingRef.current = false;
+               setStatus('Radio en pausa'); setIsConnecting(false);
             }
           };
 
           return (
-            <div className="flex flex-col h-[100dvh] w-full bg-black font-sans selection:bg-red-500/30">
+            <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-red-500/30">
               
-              {/* === FONDO DINÁMICO === */}
-              <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-zinc-950">
-                  <div 
-                    className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out"
-                    style={{ 
-                        backgroundColor: isPlaying && !isTuning ? '#dc2626' : '#27272a',
-                        filter: 'blur(160px)',
-                        transform: `scale(${isPlaying && !isTuning ? 1 + (beatScale - 1) * 1.5 : 1})`,
-                        opacity: isPlaying && !isTuning ? Math.min(0.6, 0.3 + (beatScale - 1) * 1.2) : 0.2
-                    }}
-                  ></div>
-                  <div 
-                    className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out"
-                    style={{ 
-                        backgroundColor: isPlaying && !isTuning ? '#16a34a' : '#18181b',
-                        filter: 'blur(160px)',
-                        transform: `scale(${isPlaying && !isTuning ? 1 + (beatScale - 1) * 1.8 : 1})`,
-                        opacity: isPlaying && !isTuning ? Math.min(0.5, 0.2 + (beatScale - 1) * 1.2) : 0.15
-                    }}
-                  ></div>
-                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[60px]"></div>
-
-                  <canvas 
-                    ref={canvasRef} 
-                    className="absolute bottom-[60px] left-0 w-full h-[40%] opacity-100 z-0 pointer-events-none"
-                  ></canvas>
+              {/* FONDO DINÁMICO */}
+              <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-black">
+                  <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#ef4444' : '#27272a', filter: 'blur(140px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.5 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.7, 0.4 + (beatScale - 1) * 1.2) : 0.2 }}></div>
+                  <div className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#b91c1c' : '#18181b', filter: 'blur(160px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.8 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.6, 0.3 + (beatScale - 1) * 1.2) : 0.15 }}></div>
+                  <div className="absolute inset-0 bg-black/50 backdrop-blur-[40px]"></div>
+                  <canvas ref={canvasRef} className="absolute bottom-[60px] left-0 w-full h-[45%] opacity-100 z-0 pointer-events-none"></canvas>
               </div>
 
-              {/* === ÁREA PRINCIPAL === */}
+              {/* MODAL AUTH FIREBASE */}
+              {showAuthModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                      <div className="w-full max-w-sm bg-zinc-900/90 border border-white/10 p-6 rounded-[32px] shadow-2xl relative animate-[fadeIn_0.3s_ease-out]">
+                          <button onClick={() => setShowAuthModal(false)} className="absolute top-5 right-5 text-white/50 hover:text-white transition-colors bg-white/5 p-1 rounded-full"><XIcon size={20} /></button>
+                          
+                          {user ? (
+                              <div className="text-center py-4">
+                                  {user.photo ? (
+                                      <img src={user.photo} alt="Perfil" className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)]" />
+                                  ) : (
+                                      <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center border border-green-500/30 mx-auto mb-4"><UserIcon size={32} /></div>
+                                  )}
+                                  <h3 className="text-2xl font-bold text-white tracking-tight mb-1">¡Hola, {user.name}!</h3>
+                                  <p className="text-sm text-white/50 mb-6">{user.email}</p>
+                                  <button onClick={handleLogout} className="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-2xl transition-colors">Cerrar Sesión</button>
+                              </div>
+                          ) : (
+                              <>
+                                  <h3 className="text-2xl font-bold text-center text-white tracking-tight mb-2 mt-2">{authMode === 'register' ? 'Crear Cuenta' : 'Iniciar Sesión'}</h3>
+                                  <p className="text-center text-sm text-white/50 mb-6">{authMode === 'register' ? 'Únete y desbloquea el chat en vivo y cupones.' : 'Bienvenido de vuelta a tu radio.'}</p>
+                                  
+                                  {/* INICIO CON GOOGLE */}
+                                  <button onClick={handleGoogleLogin} type="button" className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 rounded-2xl transition-colors mb-4 flex items-center justify-center gap-3">
+                                      <GoogleIcon /> Continuar con Google
+                                  </button>
+
+                                  <div className="flex items-center gap-3 mb-4">
+                                      <div className="flex-1 h-px bg-white/10"></div>
+                                      <span className="text-xs text-white/30 font-medium uppercase tracking-wider">O usa tu correo</span>
+                                      <div className="flex-1 h-px bg-white/10"></div>
+                                  </div>
+
+                                  <form className="flex flex-col gap-3" onSubmit={handleAuthSubmit}>
+                                      {authError && <p className="text-red-400 text-xs text-center font-medium bg-red-500/10 py-2 rounded-lg">{authError}</p>}
+                                      {authMode === 'register' && (<input name="name" type="text" placeholder="Tu Nombre (Opcional)" className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors" />)}
+                                      <input name="email" type="email" placeholder="Correo electrónico" required className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors" />
+                                      <input name="password" type="password" placeholder="Contraseña" required minLength="6" className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors" />
+                                      <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3.5 rounded-2xl transition-colors mt-2 shadow-[0_0_15px_rgba(220,38,38,0.4)]">{authMode === 'register' ? 'Registrarse' : 'Ingresar'}</button>
+                                  </form>
+                                  <div className="mt-5 text-center">
+                                      <button onClick={() => {setAuthMode(authMode === 'register' ? 'login' : 'register'); setAuthError("");}} className="text-sm text-white/50 hover:text-white transition-colors">{authMode === 'register' ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}</button>
+                                  </div>
+                              </>
+                          )}
+                      </div>
+                  </div>
+              )}
+
+              {/* HEADER PRINCIPAL */}
               <main className="flex-1 relative z-10 w-full max-w-md mx-auto flex flex-col pt-safe overflow-hidden">
-                  
-                  {/* === ENCABEZADO MINIMALISTA iOS === */}
-                  <header className="flex justify-between items-center py-6 px-6 shrink-0 z-20">
+                  <header className="flex justify-between items-center py-4 px-6 shrink-0 z-20 bg-gradient-to-b from-black/50 to-transparent">
                       <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-[12px] overflow-hidden bg-white shadow-sm shrink-0 flex items-center justify-center p-1">
-                              <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-white/10">
+                              <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
                           </div>
                           <div className="flex flex-col">
-                              <h1 className="text-xl font-bold tracking-tight text-white/90 leading-tight">
-                                  PREGÓN <span className="text-red-500">95.7</span>
-                              </h1>
-                              <div className="flex items-center gap-1.5 mt-0.5">
-                                  {isPlaying && !isTuning ? (
-                                      <span className="relative flex h-1.5 w-1.5">
-                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
-                                      </span>
-                                  ) : (
-                                      <span className="h-1.5 w-1.5 rounded-full bg-white/30"></span>
-                                  )}
-                                  <span className="text-[11px] font-medium tracking-wide text-white/60">
-                                      {status}
-                                  </span>
+                              <h1 className="text-lg font-bold tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-red-500">95.7</span></h1>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                  <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
+                                      <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span></span>
+                                      <span className="text-[10px] font-bold tracking-wider text-white/90">{onlineUsers}</span><UsersIcon className="text-white/40" />
+                                  </div>
                               </div>
                           </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                          {installPrompt && (
+                              <button onClick={handleInstallApp} className="flex items-center gap-1.5 px-3 h-9 rounded-full bg-white text-black font-bold text-xs shadow-lg hover:scale-105 transition-transform active:scale-95">
+                                  <DownloadIcon size={14} /> Instalar
+                              </button>
+                          )}
+                          <button onClick={() => setShowAuthModal(true)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md overflow-hidden active:scale-95 ${user ? 'border-white/20' : 'bg-white/10 text-white hover:bg-white/20 border-white/10'}`}>
+                              {user && user.photo ? <img src={user.photo} className="w-full h-full object-cover"/> : <UserIcon size={18} />}
+                          </button>
                       </div>
                   </header>
 
-                  {/* === CONTENEDOR DE VISTAS (SCROLL SEGURO) === */}
                   <div className="flex-1 w-full relative">
                       
-                      {/* --- VISTA REPRODUCTOR RADIO --- */}
-                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col items-center justify-between ${viewMode === 'radio' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          
+                      {/* --- VISTA RADIO CON CHAT VIP --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col items-center ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
-
-                          <div className="w-full mt-2 shrink-0 flex justify-center">
-                              <div 
-                                className="relative w-full aspect-square max-w-[320px] rounded-[32px] shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden bg-zinc-900 border border-white/5"
-                                style={{ 
-                                    transform: `scale(${isPlaying && !isTuning ? beatScale : 1})`, 
-                                    transition: isPlaying && !isTuning ? 'transform 0.05s ease-out' : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)' 
-                                }}
-                              >
-                                <img 
-                                    src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" 
-                                    alt="Estudio" 
-                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1500ms] ${isPlaying && !isTuning ? 'scale-100 opacity-90' : 'scale-110 opacity-30 grayscale-[50%]'}`} 
-                                />
-                                <div className="absolute inset-0 bg-black/40"></div>
-                                <div className="absolute inset-0 flex items-center justify-center p-8">
-                                    <img src={logoUrl} alt="Logo Central" className={`w-full h-full object-contain drop-shadow-2xl transition-all duration-700 ${isPlaying && !isTuning ? 'opacity-100 scale-100' : 'opacity-60 scale-95'}`} />
+                          <div className="w-full mt-2 shrink-0 flex justify-center perspective-1000">
+                              <div className="relative w-full aspect-square max-w-[240px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden bg-zinc-900 border-4 border-white/10 flex items-center justify-center" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1}) rotate(${rotationRef.current}deg)`, transition: isPlaying && !isConnecting ? 'transform 0.05s linear' : 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                                <div className="absolute inset-0 rounded-full border-[12px] border-zinc-950/80 z-10 pointer-events-none"></div>
+                                <div className="absolute inset-0 rounded-full border-[24px] border-zinc-900/40 z-10 pointer-events-none mix-blend-overlay"></div>
+                                <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" alt="Estudio" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-50 scale-110' : 'opacity-20 scale-100 grayscale'}`} />
+                                <div className="absolute inset-0 bg-black/40 z-0"></div>
+                                <div className="z-20 w-[60%] h-[60%] rounded-full overflow-hidden border-2 border-white/20 shadow-2xl relative bg-black">
+                                    <img src={logoUrl} alt="Logo Central" className="w-full h-full object-cover" />
                                 </div>
                               </div>
                           </div>
-
-                          <div className="flex flex-col items-start w-full mt-8 mb-auto shrink-0 z-10">
-                            <h2 className={`text-[26px] font-bold tracking-tight text-white w-full truncate ${isTuning ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}>
-                              {isTuning ? 'Buscando señal...' : songInfo.title}
-                            </h2>
-                            <p className="text-[17px] text-white/60 font-medium tracking-tight truncate w-full mt-0.5">
-                              {isTuning ? 'Sintonizando FM' : songInfo.artist}
-                            </p>
+                          <div className="flex flex-col items-center text-center w-full mt-6 shrink-0 z-10">
+                            <h2 className={`text-2xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>{isConnecting ? 'Conectando...' : songInfo.title}</h2>
+                            <p className="text-base text-red-400 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
                           </div>
-
-                          <div className="w-full flex flex-col gap-8 shrink-0 mt-4 px-2 z-10">
+                          <div className="w-full flex items-center justify-between gap-4 shrink-0 mt-6 z-10 bg-white/5 p-2 pr-4 rounded-full backdrop-blur-md border border-white/10">
+                              <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] bg-red-600/20 text-red-500 hover:bg-red-500/30' : 'w-[50px] h-[50px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
+                                  {isPlaying || isConnecting ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
+                              </button>
                               <div className="flex items-center gap-3 w-full">
-                                  <button onClick={toggleMute} className="text-white/50 hover:text-white transition-colors active:scale-90">
-                                      {isMuted || volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                                  </button>
-                                  <div className="relative w-full h-1.5 flex items-center bg-white/20 rounded-full group cursor-pointer">
-                                      <div className="absolute left-0 h-full bg-white/90 rounded-full" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
-                                      <input 
-                                          type="range" min="0" max="1" step="0.01" 
-                                          value={isMuted ? 0 : volume} onChange={handleVolumeChange} 
-                                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                                      />
+                                  <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors"><Volume2 size={16} /></button>
+                                  <div className="relative w-full h-1.5 flex items-center bg-black/40 rounded-full overflow-hidden">
+                                      <div className="absolute left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
+                                      <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                   </div>
-                                  <Volume2 size={20} className="text-white/50" />
-                              </div>
-
-                              <div className="flex items-center justify-center w-full pb-4">
-                                  <button 
-                                      onClick={handlePlayToggle} 
-                                      disabled={isTuning}
-                                      className={`relative flex items-center justify-center rounded-full transition-all duration-[400ms] ${isPlaying || isTuning ? 'w-[80px] h-[80px] bg-red-500/20 text-red-500 hover:bg-red-500/30' : 'w-[90px] h-[90px] bg-white text-black shadow-xl'} ${isTuning ? 'opacity-50 cursor-wait scale-90' : 'active:scale-90'}`}
-                                  >
-                                      {isPlaying || isTuning ? <Pause size={36} /> : <Play size={40} className="ml-1.5" />}
-                                  </button>
                               </div>
                           </div>
+
+                          {/* SECCIÓN: CHAT VIP EN VIVO */}
+                          <div className="w-full mt-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col h-[280px] shrink-0 z-10 relative shadow-xl">
+                              <div className="bg-white/5 px-4 py-3 border-b border-white/10 flex items-center gap-2">
+                                  <MessageIcon className="text-white/70" /><h3 className="text-sm font-bold text-white tracking-wide">Chat de Cabina</h3>
+                              </div>
+                              {!user ? (
+                                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-xl bg-black/60 mt-10">
+                                      <div className="w-16 h-16 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mb-4 border border-red-500/30"><UserIcon size={32} /></div>
+                                      <h3 className="text-lg font-bold text-white mb-2">Inicia Sesión para Chatear</h3>
+                                      <p className="text-xs text-white/60 mb-6">Regístrate y tu foto aparecerá en el chat en vivo.</p>
+                                      <button onClick={() => {setAuthMode('register'); setShowAuthModal(true);}} className="bg-white text-black font-bold px-6 py-2.5 rounded-full hover:bg-gray-200 transition-all">Acceder Gratis</button>
+                                  </div>
+                              ) : (
+                                  <>
+                                      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 custom-scrollbar">
+                                          {messages.map((msg) => (
+                                              <div key={msg.id} className="flex gap-2 w-full">
+                                                  <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden mt-1 border border-white/10">
+                                                      {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
+                                                  </div>
+                                                  <div className="bg-black/40 p-3 rounded-2xl rounded-tl-sm border border-white/5 flex-1">
+                                                      <div className="flex justify-between items-end mb-1">
+                                                          <span className="text-[11px] font-bold text-red-400">{msg.user}</span>
+                                                          <span className="text-[9px] text-white/30">{msg.time}</span>
+                                                      </div>
+                                                      <p className="text-[13px] text-white/90 leading-tight">{msg.text}</p>
+                                                  </div>
+                                              </div>
+                                          ))}
+                                      </div>
+                                      <form onSubmit={handleSendMessage} className="p-3 bg-black/40 border-t border-white/10 flex gap-2">
+                                          <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} placeholder="Escribe a la cabina..." className="flex-1 bg-white/10 rounded-full px-4 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500" />
+                                          <button type="submit" className="w-9 h-9 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors"><SendIcon /></button>
+                                      </form>
+                                  </>
+                              )}
+                          </div>
+                          <div className="h-6 shrink-0"></div>
                       </div>
 
-                      {/* --- VISTA TV --- */}
-                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'tv' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          
-                          <div className="flex bg-white/5 p-1 rounded-[16px] border border-white/10 w-full shrink-0 mt-2 z-10">
-                              <button
-                                onClick={() => setActiveTvChannel('venevision')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-xs font-bold transition-all duration-300 ${activeTvChannel === 'venevision' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                              >
-                                <Tv size={16} /> Venevisión
-                              </button>
-                              <button
-                                onClick={() => setActiveTvChannel('dsports')}
-                                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-[12px] text-xs font-bold transition-all duration-300 ${activeTvChannel === 'dsports' ? 'bg-sky-600 text-white shadow-lg' : 'text-white/40 hover:text-white hover:bg-white/10'}`}
-                              >
-                                <Tv size={16} /> DSports
-                              </button>
+                      {/* --- VISTA TV (LIBRE PARA TODOS) --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
+                          <div className="w-full overflow-x-auto custom-scrollbar pb-2 pt-1 -mx-2 px-2 shrink-0 z-10 flex gap-3">
+                              {TV_CHANNELS.map(channel => (
+                                  <button key={channel.id} onClick={() => setActiveTvChannel(channel.id)} className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-[16px] text-sm font-bold transition-all duration-300 border ${activeTvChannel === channel.id ? `${channel.color} text-white border-transparent shadow-[0_5px_15px_rgba(0,0,0,0.5)]` : 'bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white'}`}>
+                                      <Tv size={16} /> {channel.name}
+                                  </button>
+                              ))}
                           </div>
-
-                          <div className="w-full bg-white/10 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0 z-10">
-                              <div className="absolute top-4 left-4 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10 flex items-center gap-1.5 shadow-md backdrop-blur-md bg-opacity-80">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
-                                  EN VIVO
+                          <div className="w-full bg-zinc-900/80 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0 z-10 min-h-[220px]">
+                              <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full z-10 flex items-center gap-2 shadow-lg backdrop-blur-md bg-opacity-90">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> EN VIVO
                               </div>
-                              
+                              <div className="absolute top-4 right-4 z-10 flex gap-2">
+                                  <button onClick={togglePiP} className="bg-black/50 p-2 rounded-full backdrop-blur-md text-white/80 hover:text-white hover:bg-black/80 transition"><PiPIcon size={16} /></button>
+                              </div>
                               {tvError && (
-                                <div className="absolute inset-0 bg-black/80 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
-                                   <AlertCircle size={40} className="text-white/40 mb-3" />
-                                   <h3 className="text-base font-semibold text-white mb-1">Señal Expirada</h3>
-                                   <p className="text-xs text-white/50 mb-4">El enlace temporal de seguridad caducó o fue bloqueado.</p>
+                                <div className="absolute inset-0 bg-zinc-950/90 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
+                                   <AlertCircle size={44} className="text-red-500/80 mb-3" />
+                                   <h3 className="text-lg font-bold text-white mb-1">Señal Expirada</h3>
                                 </div>
                               )}
-
                               <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
-                              <div className="p-5 flex flex-col gap-1">
-                                  <h3 className="text-lg font-bold text-white tracking-tight">{activeTvChannel === 'dsports' ? 'DSports HD' : 'Venevisión'}</h3>
-                                  <p className="text-[13px] text-white/60">{activeTvChannel === 'dsports' ? 'Transmisión Deportiva' : 'Señal Nacional Continua'}</p>
+                              <div className="p-5 flex flex-col gap-1 bg-gradient-to-t from-zinc-950/80 to-transparent">
+                                  <h3 className="text-xl font-bold text-white tracking-tight drop-shadow">{TV_CHANNELS.find(c => c.id === activeTvChannel)?.name}</h3>
+                                  <p className="text-[14px] text-red-400 font-medium">{TV_CHANNELS.find(c => c.id === activeTvChannel)?.type}</p>
                               </div>
                           </div>
-
-                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10">
-                              <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center shrink-0">
-                                  <Youtube size={26} />
-                              </div>
+                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10 group hover:bg-white/10">
+                              <div className="w-12 h-12 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors"><Youtube size={26} /></div>
                               <div className="ml-4 flex-1">
-                                  <h3 className="text-[15px] font-semibold text-white tracking-tight">Canal YouTube</h3>
-                                  <p className="text-white/50 text-[13px] mt-0.5">@MucutuyVe</p>
+                                  <h3 className="text-[16px] font-bold text-white tracking-tight">Canal YouTube</h3>
+                                  <p className="text-white/50 text-[13px] mt-0.5 font-medium">Suscríbete a @MucutuyVe</p>
                               </div>
-                              <ExternalLink size={20} className="text-white/30" />
+                              <ExternalLink size={20} className="text-white/30 group-hover:text-white/70" />
                           </a>
                       </div>
 
-                      {/* --- VISTA DEPORTES (PARTIDOS DEL DÍA) --- */}
-                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-3 ${viewMode === 'sports' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          
-                          <div className="flex items-center justify-center pb-2 pt-1 shrink-0 z-10 mt-4 mb-2">
-                              <h2 className="text-white font-bold text-lg tracking-tight flex items-center gap-2">
-                                <Activity size={20} className="text-red-500" />
-                                Partidos Destacados de Hoy
-                              </h2>
+                      {/* --- VISTA VIP CLUB --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'vip' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
+                          <div className="flex items-center justify-center pb-2 pt-2 shrink-0 z-10 mt-2 bg-gradient-to-r from-red-600/20 to-orange-600/20 backdrop-blur-md rounded-full mx-auto px-6 border border-white/10">
+                              <h2 className="text-white font-bold text-[15px] tracking-wide flex items-center gap-2 py-2"><StarIcon size={18} className="text-yellow-400" /> Club de Beneficios</h2>
                           </div>
-                          
+                          {!user ? (
+                              <div className="flex-1 min-h-[300px] relative rounded-[28px] overflow-hidden shrink-0">
+                                  <div className="absolute inset-0 bg-gradient-to-br from-red-900/40 to-black/80 z-0"></div>
+                                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
+                                      <div className="w-16 h-16 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mb-4 border border-red-500/30"><UserIcon size={32} /></div>
+                                      <h3 className="text-xl font-bold text-white mb-2">Únete al Club VIP</h3>
+                                      <p className="text-sm text-white/60 mb-6">Inicia sesión y obtén cupones de descuento exclusivos en locales de Mérida.</p>
+                                      <button onClick={() => {setAuthMode('register'); setShowAuthModal(true);}} className="bg-red-600 text-white font-bold px-8 py-3 rounded-full hover:bg-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)] transition-all">Acceder Gratis</button>
+                                  </div>
+                              </div>
+                          ) : (
+                              <>
+                                  <h3 className="text-white font-bold text-lg mt-2 flex items-center gap-2"><TicketIcon size={18}/> Cuponera Local (Mérida)</h3>
+                                  <div className="bg-gradient-to-r from-orange-600/30 to-red-600/30 border border-orange-500/30 rounded-[24px] p-5 relative overflow-hidden shadow-lg">
+                                      <span className="bg-orange-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md mb-2 inline-block">Tecnología</span>
+                                      <h4 className="text-xl font-black text-white leading-tight">15% DTO. en Gringoland Shop</h4>
+                                      <p className="text-xs text-white/70 mt-1 mb-3">Válido en accesorios y relojes mostrando este cupón en tienda.</p>
+                                      <button className="bg-white text-black font-bold text-xs py-2 px-4 rounded-full w-full hover:bg-orange-100 transition">Generar Código QR</button>
+                                  </div>
+                                  <div className="bg-gradient-to-r from-red-800/40 to-black/40 border border-red-500/30 rounded-[24px] p-5 relative overflow-hidden shadow-lg">
+                                      <span className="bg-red-600 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md mb-2 inline-block">Comida / Eventos</span>
+                                      <h4 className="text-xl font-black text-white leading-tight">Promo 2x1 en Buffalo Wings</h4>
+                                      <p className="text-xs text-white/70 mt-1 mb-3">Disfruta el doble en las noches de eventos en nuestro local.</p>
+                                      <button className="bg-white text-black font-bold text-xs py-2 px-4 rounded-full w-full hover:bg-red-100 transition">Generar Código QR</button>
+                                  </div>
+                                  <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-white/10 rounded-[24px] p-5 relative overflow-hidden shadow-lg">
+                                      <span className="bg-zinc-600 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md mb-2 inline-block">Aventura</span>
+                                      <h4 className="text-xl font-black text-white leading-tight">20% DTO. Rustiland 4x4</h4>
+                                      <p className="text-xs text-white/70 mt-1 mb-3">Descuento en alquiler de rústicos. (Rodeo Plaza, Mérida).</p>
+                                      <button className="bg-white text-black font-bold text-xs py-2 px-4 rounded-full w-full hover:bg-zinc-200 transition">Generar Código QR</button>
+                                  </div>
+                              </>
+                          )}
+                      </div>
+
+                      {/* --- VISTA DEPORTES --- */}
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-4 ${viewMode === 'sports' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
+                          <div className="flex items-center justify-center pb-2 pt-2 shrink-0 z-10 mt-2 mb-2 bg-white/5 backdrop-blur-md rounded-full mx-auto px-6 border border-white/10">
+                              <h2 className="text-white font-bold text-[15px] tracking-wide flex items-center gap-2 py-2"><Activity size={18} className="text-red-500" /> Partidos de Hoy</h2>
+                          </div>
                           {loadingSports ? (
-                              <div className="flex flex-col items-center justify-center py-12 shrink-0 z-10">
-                                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-transparent border-t-white mb-4"></div>
-                                  <p className="text-[13px] text-white/50">Cargando datos en tiempo real...</p>
+                              <div className="flex flex-col items-center justify-center py-16 shrink-0 z-10">
+                                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-transparent border-t-red-500 mb-4"></div>
+                                  <p className="text-sm font-medium text-white/50">Sincronizando marcador...</p>
                               </div>
                           ) : matches.length > 0 ? (
                                   matches.map((match, i) => (
-                                      <div key={i} className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col gap-4 shrink-0 shadow-lg relative overflow-hidden z-10">
-                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-1.5 h-full bg-red-500"></div>}
-                                          
+                                      <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-[28px] p-5 flex flex-col gap-4 shrink-0 shadow-xl relative overflow-hidden z-10">
+                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-2 h-full bg-red-600 shadow-[0_0_10px_red]"></div>}
                                           <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                                              <p className="text-[10px] text-white/70 font-semibold uppercase tracking-wider truncate flex items-center gap-1">
-                                                  {match.phase}
-                                              </p>
-                                              <p className="text-[11px] text-white/40 font-medium">
-                                                  {new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}
-                                              </p>
+                                              <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest truncate flex items-center gap-1">{match.phase}</p>
+                                              <p className="text-[11px] text-white/40 font-bold bg-white/10 px-2 py-1 rounded-md">{new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}</p>
                                           </div>
-                                          
                                           <div className="flex justify-between items-center">
                                               <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                                  <img src={match.home.logo} alt={match.home.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
-                                                  <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.home.name}</span>
+                                                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center p-2 border border-white/10"><img src={match.home.logo} alt={match.home.name} className="w-full h-full object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} /></div>
+                                                  <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.home.name}</span>
                                               </div>
-                                              
                                               <div className="flex flex-col items-center justify-center w-[30%] text-center">
                                                   {match.status === 'pre' ? (
-                                                      <div className="flex flex-col items-center">
-                                                          <span className="text-[13px] font-semibold text-white/90 bg-white/10 px-3 py-1.5 rounded-full mb-1">
-                                                              {new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}
-                                                          </span>
-                                                      </div>
+                                                      <span className="text-[13px] font-bold text-white bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 shadow-inner">{new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
                                                   ) : (
                                                       <div className="flex flex-col items-center">
-                                                          <div className="flex items-center gap-2">
-                                                              <span className="text-3xl font-bold text-white tracking-tighter">{match.home.score !== undefined ? match.home.score : 0}</span>
-                                                              <span className="text-lg font-bold text-white/30">-</span>
-                                                              <span className="text-3xl font-bold text-white tracking-tighter">{match.away.score !== undefined ? match.away.score : 0}</span>
+                                                          <div className="flex items-center justify-center gap-2 bg-black/40 px-3 py-1.5 rounded-2xl border border-white/10">
+                                                              <span className="text-2xl font-black text-white tracking-tighter">{match.home.score !== undefined ? match.home.score : 0}</span><span className="text-sm font-bold text-white/30">-</span><span className="text-2xl font-black text-white tracking-tighter">{match.away.score !== undefined ? match.away.score : 0}</span>
                                                           </div>
-                                                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full mt-2 ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-white/10 text-white/50'}`}>
-                                                              {match.detail}
-                                                          </span>
+                                                          <span className={`text-[9px] font-bold px-2 py-1 rounded-full mt-2 uppercase tracking-wider ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'bg-white/10 text-white/50'}`}>{match.detail}</span>
                                                       </div>
                                                   )}
                                               </div>
-
                                               <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                                  <img src={match.away.logo} alt={match.away.name} className="w-12 h-12 object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} />
-                                                  <span className="text-[11px] font-semibold text-white/90 leading-tight line-clamp-2">{match.away.name}</span>
+                                                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center p-2 border border-white/10"><img src={match.away.logo} alt={match.away.name} className="w-full h-full object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} /></div>
+                                                  <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.away.name}</span>
                                               </div>
                                           </div>
                                       </div>
                                   ))
                               ) : (
-                                  <div className="text-center py-12 flex flex-col items-center shrink-0 z-10">
-                                      <Trophy size={48} className="text-white/20 mb-4" />
-                                      <p className="text-[13px] text-white/50">No hay partidos destacados para hoy.</p>
+                                  <div className="text-center py-16 flex flex-col items-center shrink-0 z-10 bg-white/5 rounded-[32px] border border-white/5 mx-2">
+                                      <Trophy size={56} className="text-white/20 mb-4" />
+                                      <p className="text-[15px] font-medium text-white/50">No hay partidos destacados hoy.</p>
                                   </div>
                               )
                           }
                       </div>
 
                       {/* --- VISTA SATÉLITE --- */}
-                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-opacity duration-300 flex flex-col gap-4 ${viewMode === 'nasa' ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'}`}>
-                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 flex flex-col shrink-0 z-10">
-                              <div className="flex items-center gap-2 mb-1">
-                                  <Globe size={18} className="text-white/80"/>
-                                  <span className="text-[13px] font-semibold text-white tracking-wide">Satélite Mucutuy</span>
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-4 ${viewMode === 'nasa' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
+                          <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[28px] p-5 flex flex-col shrink-0 z-10 shadow-lg mt-2">
+                              <div className="flex items-center gap-3 mb-1">
+                                  <div className="p-2 bg-blue-500/20 rounded-full text-blue-400"><Globe size={20}/></div>
+                                  <span className="text-[15px] font-bold text-white tracking-wide">Satélite Mucutuy</span>
                               </div>
-                              <p className="text-[11px] text-white/50 mt-1">8.2456° N, -71.2864° W</p>
+                              <p className="text-[12px] font-medium text-white/50 mt-1 ml-[44px]">8.2456° N, -71.2864° W</p>
                           </div>
-                          
-                          <div className="flex-1 w-full bg-black rounded-[24px] border border-white/10 overflow-hidden relative min-h-[300px] shadow-2xl shrink-0 z-10">
-                              <iframe 
-                                  src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" 
-                                  className="w-full h-full border-0 opacity-90 transition-opacity duration-700"
-                                  allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-                              ></iframe>
-                              
-                              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                                  <div className="w-2.5 h-2.5 bg-blue-500 rounded-full z-10 shadow-[0_0_15px_rgba(59,130,246,0.8)] border border-white/50"></div>
-                                  <div className="absolute w-[40px] h-[40px] bg-blue-500/20 rounded-full animate-ping"></div>
+                          <div className="flex-1 w-full bg-zinc-900 rounded-[28px] border-2 border-white/10 overflow-hidden relative min-h-[350px] shadow-2xl shrink-0 z-10 p-1">
+                              <div className="w-full h-full rounded-[24px] overflow-hidden relative">
+                                <iframe src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 opacity-90 hover:opacity-100 transition-opacity duration-700" allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                    <div className="w-3 h-3 bg-blue-500 rounded-full z-10 shadow-[0_0_20px_rgba(59,130,246,1)] border-2 border-white"></div>
+                                    <div className="absolute w-[60px] h-[60px] bg-blue-500/30 rounded-full animate-ping"></div>
+                                </div>
                               </div>
                           </div>
                       </div>
@@ -764,34 +765,32 @@
                   </div>
               </main>
 
-              {/* === BARRA DE NAVEGACIÓN INFERIOR (TAB BAR iOS 17) === */}
-              <nav className="w-full bg-black/60 backdrop-blur-[40px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
-                  <div className="flex justify-around items-center max-w-md mx-auto h-[60px]">
-                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'radio' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
-                          <RadioIcon size={26} />
-                          <span className="text-[10px] font-medium tracking-wide">Radio</span>
+              {/* === BARRA DE NAVEGACIÓN INFERIOR === */}
+              <nav className="w-full bg-zinc-950/80 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
+                  <div className="flex justify-between items-center max-w-md mx-auto h-[64px] relative">
+                      <div className="absolute top-0 h-1 bg-red-500 rounded-b-full transition-all duration-300 shadow-[0_0_10px_red]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
+                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <RadioIcon size={22} /><span className="text-[9px] font-bold tracking-wide">Radio</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'tv' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
-                          <Tv size={26} />
-                          <span className="text-[10px] font-medium tracking-wide">TV</span>
+                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'tv' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <Tv size={22} /><span className="text-[9px] font-bold tracking-wide">TV</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'sports' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
-                          <Trophy size={26} />
-                          <span className="text-[10px] font-medium tracking-wide">Deportes</span>
+                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <Trophy size={22} /><span className="text-[9px] font-bold tracking-wide">Deportes</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-[72px] gap-1 transition-colors ${viewMode === 'nasa' ? 'text-white' : 'text-white/40 hover:text-white/70'}`}>
-                          <MapPin size={26} />
-                          <span className="text-[10px] font-medium tracking-wide">Ubicación</span>
+                      <button onClick={() => handleViewModeChange('vip')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'vip' ? 'text-yellow-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <StarIcon size={22} /><span className="text-[9px] font-bold tracking-wide">Club VIP</span>
                       </button>
                   </div>
               </nav>
 
-              {/* ESTILOS CSS ADICIONALES */}
               <style dangerouslySetInnerHTML={{__html: `
                 .pt-safe { padding-top: env(safe-area-inset-top, 1rem); }
                 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1.5rem); }
                 .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
                 .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                .perspective-1000 { perspective: 1000px; }
+                @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
               `}} />
             </div>
           );
