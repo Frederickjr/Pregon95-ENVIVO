@@ -22,11 +22,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- FIREBASE (El Backend para GitHub Pages) -->
+    <!-- FIREBASE (Autenticación y Base de Datos en Tiempo Real) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
-    <!-- Prevenir pantalla negra genérica -->
     <style>
         body, html { background-color: black; margin: 0; padding: 0; height: 100%; width: 100%; }
         #fallback-loading { display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif; flex-direction: column; }
@@ -35,7 +35,6 @@
 <body class="bg-black text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
 
     <div id="root">
-        <!-- Esto se muestra mientras carga, evita la pantalla negra total -->
         <div id="fallback-loading">
             <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <p style="margin-top: 20px; color: rgba(255,255,255,0.5);">Cargando experiencia...</p>
@@ -47,49 +46,41 @@
         const { useState, useRef, useEffect, useCallback } = React;
 
         // ==========================================
-        // CONFIGURACIÓN FIREBASE PROTEGIDA CONTRA GITHUB BOTS
+        // CONFIGURACIÓN FIREBASE 
         // ==========================================
         const firebaseConfig = {
-            // Dividimos la clave en dos para que GitHub no envíe correos de alerta (es 100% legal y seguro)
             apiKey: "AIza" + "SyC6qEaswcSse1ybCP30uIdFCYn09zpUcYY",
             authDomain: "pregon-95.firebaseapp.com",
             projectId: "pregon-95",
             storageBucket: "pregon-95.firebasestorage.app",
             messagingSenderId: "516062895126",
             appId: "1:516062895126:web:6437c3e473f282a0bee937",
-            measurementId: "G-L9E8YZ2QND"
+            measurementId: "G-L9E8YZ2QND",
+            databaseURL: "https://pregon-95-default-rtdb.firebaseio.com" // URL base para la base de datos
         };
         
-        // Inicializar Firebase de forma segura
         let authInstance = null;
+        let dbInstance = null;
         try {
             if (typeof window.firebase !== 'undefined') {
                 if (!window.firebase.apps.length) {
                     window.firebase.initializeApp(firebaseConfig);
                 }
                 authInstance = window.firebase.auth();
+                dbInstance = window.firebase.database();
             }
         } catch (error) {
             console.error("Aviso: Firebase no pudo inicializarse.", error);
         }
 
-        // ==========================================
-        // ESCUDO ANTI-PANTALLA NEGRA (Error Boundary)
-        // ==========================================
         class ErrorBoundary extends React.Component {
-            constructor(props) {
-                super(props);
-                this.state = { hasError: false, errorInfo: null };
-            }
-            static getDerivedStateFromError(error) {
-                return { hasError: true, errorInfo: error.toString() };
-            }
+            constructor(props) { super(props); this.state = { hasError: false, errorInfo: null }; }
+            static getDerivedStateFromError(error) { return { hasError: true, errorInfo: error.toString() }; }
             render() {
                 if (this.state.hasError) {
                     return (
                         <div className="p-8 h-screen w-full bg-black text-white flex flex-col items-center justify-center text-center">
-                            <h2 className="text-2xl font-bold text-red-500 mb-4">Ups, algo falló en tu dispositivo.</h2>
-                            <p className="text-white/60 mb-6 text-sm">Por favor, envíale este código de error al programador:</p>
+                            <h2 className="text-2xl font-bold text-red-500 mb-4">Ups, algo falló.</h2>
                             <div className="bg-zinc-900 p-4 rounded-xl text-left text-xs font-mono text-red-300 w-full overflow-auto max-h-[50vh] border border-red-900/50">
                                 {this.state.errorInfo}
                             </div>
@@ -102,7 +93,7 @@
         }
 
         // ==========================================
-        // ICONOS iOS (SF Symbols Style)
+        // ICONOS
         // ==========================================
         const Icon = ({ children, size = 28, className = "", fill = "none" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
@@ -124,12 +115,10 @@
         const DownloadIcon = (props) => <Icon {...props} size={18}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Icon>;
         const MessageIcon = (props) => <Icon {...props} size={20}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></Icon>;
         const SendIcon = (props) => <Icon {...props} size={18}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Icon>;
-        const StarIcon = (props) => <Icon {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></Icon>;
         const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
         const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
         const Activity = (props) => <Icon {...props} size={16}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
         const Maximize = (props) => <Icon {...props} size={20}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></Icon>;
-        const TicketIcon = (props) => <Icon {...props}><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><line x1="13" y1="5" x2="13" y2="19"/></Icon>;
 
         const GoogleIcon = () => (
             <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -167,7 +156,7 @@
           const [tvError, setTvError] = useState(false);
           const [activeTvChannel, setActiveTvChannel] = useState('venevision');
           
-          // ESTADOS USUARIOS, AUTH Y PWA
+          // ESTADOS USUARIOS Y PWA
           const [onlineUsers, setOnlineUsers] = useState(142);
           const [showAuthModal, setShowAuthModal] = useState(false);
           const [authMode, setAuthMode] = useState('register');
@@ -175,19 +164,16 @@
           const [installPrompt, setInstallPrompt] = useState(null); 
           const [authError, setAuthError] = useState("");
 
-          // ESTADO CHAT EN VIVO
+          // ESTADO CHAT EN VIVO GLOBAL
           const [chatMessage, setChatMessage] = useState("");
-          const [messages, setMessages] = useState([
-              { id: 1, user: 'María S.', text: '¡Saludos desde Los Pueblos del Sur! Escuchando siempre.', time: '10:02' },
-              { id: 2, user: 'Carlos M.', text: '¿Pueden poner la última de Bad Bunny?', time: '10:04' }
-          ]);
+          const [messages, setMessages] = useState([]);
+          const chatEndRef = useRef(null); // Ref para auto-scroll del chat
 
-          // REFERENCIAS
+          // REFERENCIAS DOM/ANIMACIONES
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
           const canvasRef = useRef(null); 
           const animationRef = useRef(null);
-          const rotationRef = useRef(0);
           const isPlayingRef = useRef(false);
 
           // DATOS (URLs)
@@ -196,14 +182,13 @@
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe"; 
           const logoUrl = "./logo.jpg";
 
-          // CONFIGURACIÓN TV (Con canal deportivo Real Madrid TV - Oficial y Estable)
           const TV_CHANNELS = [
               { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600' },
               { id: 'deportes', name: 'Real Madrid TV', type: 'Deportes 24/7 (En Vivo)', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600' },
               { id: 'noticias', name: 'DW Español', type: 'Noticias Internacionales', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-orange-600' }
           ];
 
-          // ================== LÓGICA DE INSTALACIÓN (PWA) ==================
+          // ================== PWA ==================
           useEffect(() => {
               const handleBeforeInstallPrompt = (e) => {
                   e.preventDefault(); 
@@ -220,7 +205,7 @@
               if (outcome === 'accepted') setInstallPrompt(null);
           };
 
-          // ================== CONTADOR DE USUARIOS ==================
+          // ================== CONTADOR USUARIOS ==================
           useEffect(() => {
               const interval = setInterval(() => {
                   setOnlineUsers(prev => {
@@ -232,12 +217,13 @@
               return () => clearInterval(interval);
           }, []);
 
-          // ================== FIREBASE AUTH (REGISTRO REAL) ==================
+          // ================== FIREBASE AUTH ==================
           useEffect(() => {
               if (!authInstance) return;
               const unsubscribe = authInstance.onAuthStateChanged((firebaseUser) => {
                   if (firebaseUser) {
                       setUser({
+                          uid: firebaseUser.uid,
                           name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
                           email: firebaseUser.email,
                           photo: firebaseUser.photoURL || null
@@ -252,15 +238,9 @@
           const handleAuthSubmit = async (e) => {
               e.preventDefault();
               setAuthError("");
-              
-              if(!authInstance) {
-                  setAuthError("Conexión con base de datos no disponible.");
-                  return;
-              }
-
+              if(!authInstance) { setAuthError("Conexión con base de datos no disponible."); return; }
               const email = e.target.email.value;
               const password = e.target.password.value;
-
               try {
                   if (authMode === 'register') {
                       await authInstance.createUserWithEmailAndPassword(email, password);
@@ -285,34 +265,68 @@
 
           const handleGoogleLogin = async () => {
               setAuthError("");
-              if(!authInstance) {
-                  setAuthError("Conexión con Google no disponible.");
-                  return;
-              }
-
+              if(!authInstance) return;
               const provider = new window.firebase.auth.GoogleAuthProvider();
               try {
                   await authInstance.signInWithPopup(provider);
                   setShowAuthModal(false);
-              } catch (error) {
-                  setAuthError("La ventana de Google se cerró o bloqueó.");
-              }
+              } catch (error) { setAuthError("La ventana de Google se cerró o bloqueó."); }
           };
 
           const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
-          // ================== CHAT EN VIVO ==================
+          // ================== CHAT REAL-TIME GLOBAL ==================
+          useEffect(() => {
+              if (!dbInstance) return;
+              
+              // Nos conectamos a la "sala" del chat limitando a los últimos 50 mensajes para no saturar
+              const chatRef = dbInstance.ref('chat_cabina').limitToLast(50);
+              
+              const listener = chatRef.on('value', (snapshot) => {
+                  const data = snapshot.val();
+                  if (data) {
+                      // Convertir el objeto de Firebase en un Array ordenado
+                      const loadedMessages = Object.keys(data).map(key => ({
+                          id: key,
+                          ...data[key]
+                      }));
+                      setMessages(loadedMessages);
+                  } else {
+                      setMessages([{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos al chat en vivo de Mucutuy!', time: '' }]);
+                  }
+              });
+
+              return () => chatRef.off('value', listener);
+          }, []);
+
+          // Auto-scroll hacia abajo cuando llega un mensaje nuevo
+          useEffect(() => {
+              if (chatEndRef.current) {
+                  chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+              }
+          }, [messages]);
+
           const handleSendMessage = (e) => {
               e.preventDefault();
               if(!chatMessage.trim()) return;
+              
+              if (!user) {
+                  setAuthMode('login');
+                  setShowAuthModal(true);
+                  return;
+              }
+
               const newMsg = {
-                  id: Date.now(),
-                  user: user ? user.name : 'Invitado',
-                  photo: user ? user.photo : null,
+                  user: user.name,
+                  photo: user.photo,
                   text: chatMessage,
+                  timestamp: window.firebase.database.ServerValue.TIMESTAMP,
                   time: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
               };
-              setMessages([...messages, newMsg]);
+              
+              if (dbInstance) {
+                  dbInstance.ref('chat_cabina').push(newMsg);
+              }
               setChatMessage("");
           }
 
@@ -461,7 +475,6 @@
             if (isPlayingRef.current) {
                 simulatedBeat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.5 + 0.5;
                 setBeatScale(1 + simulatedBeat * 0.08);
-                rotationRef.current += simulatedBeat * 2 + 0.1;
             } else { setBeatScale(1); }
 
             const numWaves = isPlayingRef.current ? 3 : 1;
@@ -563,7 +576,7 @@
                           ) : (
                               <>
                                   <h3 className="text-2xl font-bold text-center text-white tracking-tight mb-2 mt-2">{authMode === 'register' ? 'Crear Cuenta' : 'Iniciar Sesión'}</h3>
-                                  <p className="text-center text-sm text-white/50 mb-6">{authMode === 'register' ? 'Únete y desbloquea el chat en vivo y cupones.' : 'Bienvenido de vuelta a tu radio.'}</p>
+                                  <p className="text-center text-sm text-white/50 mb-6">{authMode === 'register' ? 'Únete para poder participar en el chat en vivo.' : 'Bienvenido de vuelta a tu radio.'}</p>
                                   
                                   {/* INICIO CON GOOGLE */}
                                   <button onClick={handleGoogleLogin} type="button" className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 rounded-2xl transition-colors mb-4 flex items-center justify-center gap-3">
@@ -626,21 +639,28 @@
                       {/* --- VISTA RADIO CON CHAT VIP --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col items-center ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
-                          <div className="w-full mt-2 shrink-0 flex justify-center perspective-1000">
-                              <div className="relative w-full aspect-square max-w-[240px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden bg-zinc-900 border-4 border-white/10 flex items-center justify-center" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1}) rotate(${rotationRef.current}deg)`, transition: isPlaying && !isConnecting ? 'transform 0.05s linear' : 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                                <div className="absolute inset-0 rounded-full border-[12px] border-zinc-950/80 z-10 pointer-events-none"></div>
-                                <div className="absolute inset-0 rounded-full border-[24px] border-zinc-900/40 z-10 pointer-events-none mix-blend-overlay"></div>
-                                <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" alt="Estudio" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-50 scale-110' : 'opacity-20 scale-100 grayscale'}`} />
-                                <div className="absolute inset-0 bg-black/40 z-0"></div>
-                                <div className="z-20 w-[60%] h-[60%] rounded-full overflow-hidden border-2 border-white/20 shadow-2xl relative bg-black">
-                                    <img src={logoUrl} alt="Logo Central" className="w-full h-full object-cover" />
-                                </div>
+                          
+                          {/* CONTENEDOR SEPARADO PARA EVITAR DEFORMACIÓN: Wrapper hace Scale, Inner hace Spin CSS */}
+                          <div className="w-full mt-2 shrink-0 flex justify-center perspective-1000 transition-transform duration-75" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1})` }}>
+                              <div className="relative w-full aspect-square max-w-[240px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex items-center justify-center">
+                                  {/* El disco rotatorio usando CSS puro, sin deformación */}
+                                  <div className={`absolute inset-0 w-full h-full rounded-full overflow-hidden bg-zinc-900 border-4 border-white/10 ${isPlaying && !isConnecting ? 'animate-[spin_4s_linear_infinite]' : ''}`}>
+                                      <div className="absolute inset-0 rounded-full border-[12px] border-zinc-950/80 z-10 pointer-events-none"></div>
+                                      <div className="absolute inset-0 rounded-full border-[24px] border-zinc-900/40 z-10 pointer-events-none mix-blend-overlay"></div>
+                                      <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" alt="Estudio" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-50 scale-110' : 'opacity-20 scale-100 grayscale'}`} />
+                                      <div className="absolute inset-0 bg-black/40 z-0"></div>
+                                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-[60%] h-[60%] rounded-full overflow-hidden border-2 border-white/20 shadow-2xl bg-black">
+                                          <img src={logoUrl} alt="Logo Central" className="w-full h-full object-cover" />
+                                      </div>
+                                  </div>
                               </div>
                           </div>
+
                           <div className="flex flex-col items-center text-center w-full mt-6 shrink-0 z-10">
                             <h2 className={`text-2xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>{isConnecting ? 'Conectando...' : songInfo.title}</h2>
                             <p className="text-base text-red-400 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
                           </div>
+
                           <div className="w-full flex items-center justify-between gap-4 shrink-0 mt-6 z-10 bg-white/5 p-2 pr-4 rounded-full backdrop-blur-md border border-white/10">
                               <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] bg-red-600/20 text-red-500 hover:bg-red-500/30' : 'w-[50px] h-[50px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
                                   {isPlaying || isConnecting ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
@@ -654,47 +674,47 @@
                               </div>
                           </div>
 
-                          {/* SECCIÓN: CHAT VIP EN VIVO */}
-                          <div className="w-full mt-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col h-[280px] shrink-0 z-10 relative shadow-xl">
-                              <div className="bg-white/5 px-4 py-3 border-b border-white/10 flex items-center gap-2">
-                                  <MessageIcon className="text-white/70" /><h3 className="text-sm font-bold text-white tracking-wide">Chat de Cabina</h3>
-                              </div>
-                              {!user ? (
-                                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-xl bg-black/60 mt-10">
-                                      <div className="w-16 h-16 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mb-4 border border-red-500/30"><UserIcon size={32} /></div>
-                                      <h3 className="text-lg font-bold text-white mb-2">Inicia Sesión para Chatear</h3>
-                                      <p className="text-xs text-white/60 mb-6">Regístrate y tu foto aparecerá en el chat en vivo.</p>
-                                      <button onClick={() => {setAuthMode('register'); setShowAuthModal(true);}} className="bg-white text-black font-bold px-6 py-2.5 rounded-full hover:bg-gray-200 transition-all">Acceder Gratis</button>
+                          {/* SECCIÓN: CHAT GLOBAL EN VIVO */}
+                          <div className="w-full mt-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col h-[320px] shrink-0 z-10 relative shadow-xl">
+                              <div className="bg-black/40 px-4 py-3 border-b border-white/10 flex justify-between items-center">
+                                  <div className="flex items-center gap-2">
+                                      <MessageIcon className="text-white/70" /><h3 className="text-sm font-bold text-white tracking-wide">Chat Global</h3>
                                   </div>
-                              ) : (
-                                  <>
-                                      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 custom-scrollbar">
-                                          {messages.map((msg) => (
-                                              <div key={msg.id} className="flex gap-2 w-full">
-                                                  <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden mt-1 border border-white/10">
-                                                      {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
-                                                  </div>
-                                                  <div className="bg-black/40 p-3 rounded-2xl rounded-tl-sm border border-white/5 flex-1">
-                                                      <div className="flex justify-between items-end mb-1">
-                                                          <span className="text-[11px] font-bold text-red-400">{msg.user}</span>
-                                                          <span className="text-[9px] text-white/30">{msg.time}</span>
-                                                      </div>
-                                                      <p className="text-[13px] text-white/90 leading-tight">{msg.text}</p>
-                                                  </div>
+                                  <div className="flex items-center gap-1.5">
+                                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>
+                                      <span className="text-[10px] text-white/50 font-bold uppercase">En vivo</span>
+                                  </div>
+                              </div>
+                              
+                              <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
+                                  {messages.map((msg) => {
+                                      const isMe = user && user.name === msg.user;
+                                      return (
+                                          <div key={msg.id} className={`flex gap-2 w-full ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                                              <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden border border-white/10">
+                                                  {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
                                               </div>
-                                          ))}
-                                      </div>
-                                      <form onSubmit={handleSendMessage} className="p-3 bg-black/40 border-t border-white/10 flex gap-2">
-                                          <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} placeholder="Escribe a la cabina..." className="flex-1 bg-white/10 rounded-full px-4 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500" />
-                                          <button type="submit" className="w-9 h-9 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors"><SendIcon /></button>
-                                      </form>
-                                  </>
-                              )}
+                                              <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm'}`}>
+                                                  <div className={`flex justify-between items-end mb-1 gap-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                                                      <span className={`text-[11px] font-bold ${isMe ? 'text-red-400' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
+                                                      <span className="text-[9px] text-white/30">{msg.time}</span>
+                                                  </div>
+                                                  <p className={`text-[13px] leading-tight ${isMe ? 'text-white' : 'text-white/90'}`}>{msg.text}</p>
+                                              </div>
+                                          </div>
+                                      );
+                                  })}
+                                  <div ref={chatEndRef} />
+                              </div>
+                              <form onSubmit={handleSendMessage} className="p-3 bg-black/60 border-t border-white/10 flex gap-2">
+                                  <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para escribir"} disabled={!user} className="flex-1 bg-white/10 rounded-full px-4 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50" />
+                                  <button type="submit" disabled={!user || !chatMessage.trim()} className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600"><SendIcon /></button>
+                              </form>
                           </div>
                           <div className="h-6 shrink-0"></div>
                       </div>
 
-                      {/* --- VISTA TV (LIBRE PARA TODOS) --- */}
+                      {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <div className="w-full overflow-x-auto custom-scrollbar pb-2 pt-1 -mx-2 px-2 shrink-0 z-10 flex gap-3">
                               {TV_CHANNELS.map(channel => (
@@ -731,46 +751,6 @@
                               </div>
                               <ExternalLink size={20} className="text-white/30 group-hover:text-white/70" />
                           </a>
-                      </div>
-
-                      {/* --- VISTA VIP CLUB --- */}
-                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'vip' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
-                          <div className="flex items-center justify-center pb-2 pt-2 shrink-0 z-10 mt-2 bg-gradient-to-r from-red-600/20 to-orange-600/20 backdrop-blur-md rounded-full mx-auto px-6 border border-white/10">
-                              <h2 className="text-white font-bold text-[15px] tracking-wide flex items-center gap-2 py-2"><StarIcon size={18} className="text-yellow-400" /> Club de Beneficios</h2>
-                          </div>
-                          {!user ? (
-                              <div className="flex-1 min-h-[300px] relative rounded-[28px] overflow-hidden shrink-0">
-                                  <div className="absolute inset-0 bg-gradient-to-br from-red-900/40 to-black/80 z-0"></div>
-                                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
-                                      <div className="w-16 h-16 bg-red-600/20 text-red-500 rounded-full flex items-center justify-center mb-4 border border-red-500/30"><UserIcon size={32} /></div>
-                                      <h3 className="text-xl font-bold text-white mb-2">Únete al Club VIP</h3>
-                                      <p className="text-sm text-white/60 mb-6">Inicia sesión y obtén cupones de descuento exclusivos en locales de Mérida.</p>
-                                      <button onClick={() => {setAuthMode('register'); setShowAuthModal(true);}} className="bg-red-600 text-white font-bold px-8 py-3 rounded-full hover:bg-red-500 shadow-[0_0_20px_rgba(220,38,38,0.4)] transition-all">Acceder Gratis</button>
-                                  </div>
-                              </div>
-                          ) : (
-                              <>
-                                  <h3 className="text-white font-bold text-lg mt-2 flex items-center gap-2"><TicketIcon size={18}/> Cuponera Local (Mérida)</h3>
-                                  <div className="bg-gradient-to-r from-orange-600/30 to-red-600/30 border border-orange-500/30 rounded-[24px] p-5 relative overflow-hidden shadow-lg">
-                                      <span className="bg-orange-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md mb-2 inline-block">Tecnología</span>
-                                      <h4 className="text-xl font-black text-white leading-tight">15% DTO. en Gringoland Shop</h4>
-                                      <p className="text-xs text-white/70 mt-1 mb-3">Válido en accesorios y relojes mostrando este cupón en tienda.</p>
-                                      <button className="bg-white text-black font-bold text-xs py-2 px-4 rounded-full w-full hover:bg-orange-100 transition">Generar Código QR</button>
-                                  </div>
-                                  <div className="bg-gradient-to-r from-red-800/40 to-black/40 border border-red-500/30 rounded-[24px] p-5 relative overflow-hidden shadow-lg">
-                                      <span className="bg-red-600 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md mb-2 inline-block">Comida / Eventos</span>
-                                      <h4 className="text-xl font-black text-white leading-tight">Promo 2x1 en Buffalo Wings</h4>
-                                      <p className="text-xs text-white/70 mt-1 mb-3">Disfruta el doble en las noches de eventos en nuestro local.</p>
-                                      <button className="bg-white text-black font-bold text-xs py-2 px-4 rounded-full w-full hover:bg-red-100 transition">Generar Código QR</button>
-                                  </div>
-                                  <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-900/80 border border-white/10 rounded-[24px] p-5 relative overflow-hidden shadow-lg">
-                                      <span className="bg-zinc-600 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md mb-2 inline-block">Aventura</span>
-                                      <h4 className="text-xl font-black text-white leading-tight">20% DTO. Rustiland 4x4</h4>
-                                      <p className="text-xs text-white/70 mt-1 mb-3">Descuento en alquiler de rústicos. (Rodeo Plaza, Mérida).</p>
-                                      <button className="bg-white text-black font-bold text-xs py-2 px-4 rounded-full w-full hover:bg-zinc-200 transition">Generar Código QR</button>
-                                  </div>
-                              </>
-                          )}
                       </div>
 
                       {/* --- VISTA DEPORTES --- */}
@@ -851,7 +831,6 @@
               <nav className="w-full bg-zinc-950/80 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
                   <div className="flex justify-between items-center max-w-md mx-auto h-[64px] relative">
                       <div className="absolute top-0 h-1 bg-red-500 rounded-b-full transition-all duration-300 shadow-[0_0_10px_red]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
-                      
                       <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <RadioIcon size={22} /><span className="text-[9px] font-bold tracking-wide">Radio</span>
                       </button>
@@ -861,8 +840,8 @@
                       <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <Trophy size={22} /><span className="text-[9px] font-bold tracking-wide">Deportes</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('vip')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'vip' ? 'text-yellow-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                          <StarIcon size={22} /><span className="text-[9px] font-bold tracking-wide">Club VIP</span>
+                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'nasa' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <MapPin size={22} /><span className="text-[9px] font-bold tracking-wide">Ubicación</span>
                       </button>
                   </div>
               </nav>
