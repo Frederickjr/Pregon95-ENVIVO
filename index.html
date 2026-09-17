@@ -36,7 +36,6 @@
 <body class="bg-black text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
 
     <div id="root">
-        <!-- Esto se muestra mientras carga, evita la pantalla negra total -->
         <div id="fallback-loading">
             <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <p style="margin-top: 20px; color: rgba(255,255,255,0.5);">Cargando experiencia...</p>
@@ -51,7 +50,6 @@
         // CONFIGURACIÓN FIREBASE PROTEGIDA
         // ==========================================
         const firebaseConfig = {
-            // Dividimos la clave en dos para que GitHub no envíe correos de alerta
             apiKey: "AIza" + "SyC6qEaswcSse1ybCP30uIdFCYn09zpUcYY",
             authDomain: "pregon-95.firebaseapp.com",
             projectId: "pregon-95",
@@ -90,7 +88,7 @@
         }
 
         // ==========================================
-        // ICONOS iOS (SF Symbols Style)
+        // ICONOS
         // ==========================================
         const Icon = ({ children, size = 28, className = "", fill = "none" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
@@ -99,7 +97,6 @@
         const Play = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></Icon>;
         const Pause = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></Icon>;
         const Volume2 = (props) => <Icon {...props} size={20}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></Icon>;
-        const VolumeX = (props) => <Icon {...props} size={20}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></Icon>;
         const RadioIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></Icon>;
         const Tv = (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>;
         const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
@@ -116,6 +113,8 @@
         const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
         const Activity = (props) => <Icon {...props} size={16}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
         const Maximize = (props) => <Icon {...props} size={20}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></Icon>;
+        const Bell = (props) => <Icon {...props} size={18}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></Icon>;
+        const Sparkles = (props) => <Icon {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4M3 5h4"/></Icon>;
 
         const GoogleIcon = () => (
             <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -153,7 +152,7 @@
           const [tvError, setTvError] = useState(false);
           const [activeTvChannel, setActiveTvChannel] = useState('venevision');
           
-          // ESTADOS USUARIOS, AUTH Y PWA
+          // ESTADOS USUARIOS Y AUTH
           const [onlineUsers, setOnlineUsers] = useState(142);
           const [showAuthModal, setShowAuthModal] = useState(false);
           const [authMode, setAuthMode] = useState('register');
@@ -166,12 +165,21 @@
           const [messages, setMessages] = useState([]);
           const chatEndRef = useRef(null);
 
+          // ESTADOS ASISTENTE IA "PREGÓN" (Gemini)
+          const GEMINI_API_KEY = "AQ.Ab8RN6IgQtL2wWcXGA9RpnI02wO-7UGQNpvIpHHRV4EmuhXVaA"; // API KEY FIJA
+          const [showAIAssistant, setShowAIAssistant] = useState(false);
+          const [aiInput, setAiInput] = useState("");
+          const [isAITyping, setIsAITyping] = useState(false);
+          const [aiMessages, setAiMessages] = useState([
+              { id: 1, text: "¡Epa! Soy Pregón, tu asistente de inteligencia artificial. ¿Qué quieres saber de la radio o de Mucutuy hoy?", isUser: false }
+          ]);
+          const aiChatEndRef = useRef(null);
+
           // REFERENCIAS
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
           const canvasRef = useRef(null); 
           const animationRef = useRef(null);
-          const rotationRef = useRef(0);
           const isPlayingRef = useRef(false);
 
           // DATOS (URLs)
@@ -180,51 +188,16 @@
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe"; 
           const logoUrl = "./logo.jpg";
 
-          // NUEVOS DATOS: Logos cargados localmente desde tu repositorio
           const TV_CHANNELS = [
-              { 
-                  id: 'venevision', 
-                  name: 'Venevisión', 
-                  type: 'Nacional', 
-                  url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', 
-                  color: 'bg-blue-600',
-                  logo: './venevision.png' // <-- Verifica que este nombre coincida
-              },
-              { 
-                  id: 'cnn', 
-                  name: 'CNN Fast', 
-                  type: 'Noticias 24/7', 
-                  url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', 
-                  color: 'bg-red-600',
-                  logo: './cnn.png' // <-- Verifica que este nombre coincida
-              },
-              { 
-                  id: 'deportes', 
-                  name: 'Real Madrid', 
-                  type: 'Deportes 24/7', 
-                  url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', 
-                  color: 'bg-indigo-600',
-                  logo: './realmadrid.png' // <-- Verifica que este nombre coincida
-              },
-              {
-                  id: 'dsports',
-                  name: 'DSports',
-                  type: 'Deportes',
-                  url: 'https://s1.envivoslatam99.sbs/global/dsports/index.m3u8?token=e8feb6634367eba49f5776e8f6192f43d84ddee0-6e-1789661100-1789607100&ip=190.6.11.212',
-                  color: 'bg-blue-800',
-                  logo: './dsports.png' // <-- Verifica que este nombre coincida
-              },
-              { 
-                  id: 'noticias', 
-                  name: 'DW Español', 
-                  type: 'Noticias', 
-                  url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', 
-                  color: 'bg-sky-500',
-                  logo: './dw.png' // <-- Verifica que este nombre coincida
-              }
+              { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600', logo: './venevision.png' },
+              { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-red-600', logo: './cnn.png' },
+              { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600', logo: './realmadrid.png' },
+              { id: 'dsports', name: 'DSports', type: 'Deportes', url: 'https://s1.envivoslatam99.sbs/global/dsports/index.m3u8?token=e8feb6634367eba49f5776e8f6192f43d84ddee0-6e-1789661100-1789607100&ip=190.6.11.212', color: 'bg-blue-800', logo: './dsports.png' },
+              { id: 'noticias', name: 'DW Español', type: 'Noticias', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-sky-500', logo: './dw.png' },
+              { id: 'tam', name: 'TAM TV', type: 'Regional', url: 'https://rtmp.tamtv.com.ve/tmp_hls/stream/index.m3u8', color: 'bg-emerald-500', logo: './tam.png' }
           ];
 
-          // ================== PWA ==================
+          // ================== PWA Y PERMISOS ==================
           useEffect(() => {
               const handleBeforeInstallPrompt = (e) => {
                   e.preventDefault(); 
@@ -241,6 +214,17 @@
               if (outcome === 'accepted') setInstallPrompt(null);
           };
 
+          const requestNotificationPermission = () => {
+              if ("Notification" in window) {
+                  Notification.requestPermission().then(permission => {
+                      if (permission === "granted") alert("¡Notificaciones activadas! Te avisaremos de nuevos mensajes y partidos.");
+                      else if (permission === "denied") alert("Las notificaciones fueron denegadas en tu navegador.");
+                  });
+              } else {
+                  alert("Tu dispositivo o navegador no soporta notificaciones.");
+              }
+          };
+
           // ================== CONTADOR USUARIOS ==================
           useEffect(() => {
               const interval = setInterval(() => {
@@ -252,7 +236,7 @@
               return () => clearInterval(interval);
           }, []);
 
-          // ================== FIREBASE AUTH (CORREO, GOOGLE Y CONTRASEÑA) ==================
+          // ================== FIREBASE AUTH ==================
           useEffect(() => {
               if (!authInstance) return;
               const unsubscribe = authInstance.onAuthStateChanged((firebaseUser) => {
@@ -268,7 +252,6 @@
                   }
               });
               
-              // Verificar si venimos de una redirección de Google y capturar posibles errores
               authInstance.getRedirectResult().catch((error) => {
                   if(error.code === 'auth/unauthorized-domain') {
                       setAuthError("Error: Debes autorizar tu dominio de GitHub Pages en la consola de Firebase.");
@@ -295,7 +278,6 @@
                           await userCredential.user.updateProfile({ displayName: name });
                           setUser(prev => ({...prev, name: name}));
                       }
-                      // Enviar correo de verificación real
                       await userCredential.user.sendEmailVerification();
                       alert("¡Cuenta creada exitosamente!\n\nTe hemos enviado un enlace a tu correo para validarlo. Revisa tu bandeja de entrada o spam.");
                   } else {
@@ -316,11 +298,9 @@
               setAuthError("");
               if(!authInstance) return;
               const provider = new window.firebase.auth.GoogleAuthProvider();
-              // Cambiamos de Popup a Redirect para asegurar compatibilidad total en móviles y GitHub
               authInstance.signInWithRedirect(provider);
           };
 
-          // Función para recuperar contraseña perdida
           const handlePasswordReset = async () => {
               const email = prompt("Ingresa tu correo electrónico para enviarte el enlace de recuperación de contraseña:");
               if(email) {
@@ -340,7 +320,10 @@
 
           const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
-          // ================== CHAT REAL-TIME GLOBAL ==================
+          // ================== CHAT REAL-TIME GLOBAL CON NOTIFICACIONES ==================
+          const isInitialChatLoad = useRef(true);
+          const lastMessageId = useRef(null);
+
           useEffect(() => {
               if (!dbInstance) return;
               const chatRef = dbInstance.ref('chat_cabina').limitToLast(50);
@@ -352,12 +335,31 @@
                           ...data[key]
                       }));
                       setMessages(loadedMessages);
+                      
+                      // Disparar Notificación Local de Chat
+                      if (!isInitialChatLoad.current && loadedMessages.length > 0) {
+                          const lastMsg = loadedMessages[loadedMessages.length - 1];
+                          // Solo notificar si el mensaje es nuevo y no es del usuario actual
+                          if (lastMsg.id !== lastMessageId.current && (!user || lastMsg.user !== user.name)) {
+                              if ("Notification" in window && Notification.permission === "granted") {
+                                  new Notification(`Pregón 95.7 - Nuevo mensaje`, {
+                                      body: `${lastMsg.user}: ${lastMsg.text}`,
+                                      icon: './logo.jpg'
+                                  });
+                              }
+                          }
+                          lastMessageId.current = lastMsg.id;
+                      } else {
+                           if(loadedMessages.length > 0) lastMessageId.current = loadedMessages[loadedMessages.length - 1].id;
+                           isInitialChatLoad.current = false;
+                      }
                   } else {
                       setMessages([{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos al chat en vivo de Mucutuy!', time: '' }]);
+                      isInitialChatLoad.current = false;
                   }
               });
               return () => chatRef.off('value', listener);
-          }, []);
+          }, [user]);
 
           useEffect(() => {
               if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -384,6 +386,59 @@
               if (dbInstance) dbInstance.ref('chat_cabina').push(newMsg);
               setChatMessage("");
           }
+
+          // ================== LÓGICA ASISTENTE IA "PREGÓN" (GEMINI API) ==================
+          useEffect(() => {
+              if (aiChatEndRef.current) aiChatEndRef.current.scrollIntoView({ behavior: "smooth" });
+          }, [aiMessages, showAIAssistant, isAITyping]);
+
+          const handleAIRequest = async (e) => {
+              e.preventDefault();
+              if(!aiInput.trim()) return;
+              
+              const currentInput = aiInput;
+              const newMsg = { id: Date.now(), text: currentInput, isUser: true };
+              setAiMessages(prev => [...prev, newMsg]);
+              setAiInput("");
+              setIsAITyping(true);
+
+              try {
+                  // Conexión real con Gemini 3.8 Flash v1beta usando API KEY fija
+                  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                          system_instruction: {
+                              parts: [{ text: "Eres Pregón, el asistente virtual y locutor de IA de la radio comunitaria Pregón 95.7 FM ubicada en Mucutuy, Mérida, Venezuela. Responde de forma carismática, alegre, breve y muy venezolana (andina). Ayudas a los usuarios con información de la radio, deportes y saludos." }]
+                          },
+                          contents: [{
+                              role: "user",
+                              parts: [{ text: currentInput }]
+                          }]
+                      })
+                  });
+                  
+                  const data = await response.json();
+                  setIsAITyping(false);
+                  
+                  if (data.candidates && data.candidates[0].content.parts[0].text) {
+                      setAiMessages(prev => [...prev, { 
+                          id: Date.now() + 1, 
+                          text: data.candidates[0].content.parts[0].text, 
+                          isUser: false 
+                      }]);
+                  } else {
+                      throw new Error(data.error?.message || "Sin respuesta");
+                  }
+              } catch (error) {
+                  setIsAITyping(false);
+                  setAiMessages(prev => [...prev, { 
+                      id: Date.now() + 1, 
+                      text: "Oye compadre, hubo un problemita conectando con mi cerebro. Revisa tu conexión a internet.", 
+                      isUser: false 
+                  }]);
+              }
+          };
 
           // ================== REPRODUCTOR DE TV ==================
           useEffect(() => {
@@ -439,7 +494,8 @@
               }
           };
 
-          // ================== FETCH DEPORTES ==================
+          // ================== FETCH DEPORTES Y NOTIFICACIÓN ==================
+          const sportsNotified = useRef(false);
           useEffect(() => {
             if (viewMode === 'sports' && matches.length === 0) {
               const fetchSports = async () => {
@@ -481,6 +537,25 @@
             }
           }, [viewMode, matches.length]);
 
+          // Notificación de Partidos
+          useEffect(() => {
+              if (matches.length > 0 && !sportsNotified.current) {
+                  const todayMatches = matches.filter(m => {
+                      const matchDate = new Date(m.date);
+                      const today = new Date();
+                      return matchDate.getDate() === today.getDate() && matchDate.getMonth() === today.getMonth();
+                  });
+                  
+                  if (todayMatches.length > 0 && "Notification" in window && Notification.permission === "granted") {
+                      new Notification(`¡Hay ${todayMatches.length} partidos hoy!`, {
+                          body: `Revisa la sección de Deportes en Pregón 95.7 para ver los resultados y horarios.`,
+                          icon: './logo.jpg'
+                      });
+                  }
+                  sportsNotified.current = true;
+              }
+          }, [matches]);
+
           // ================== METADATOS MUSICALES ==================
           useEffect(() => {
             if (audioRef.current) audioRef.current.volume = volume;
@@ -511,7 +586,7 @@
             return () => eventSource.close();
           }, []);
 
-          // ================== CANVAS ONDAS ==================
+          // ================== CANVAS ONDAS ESTILO NEON/MODERNAS ==================
           const renderWaves = useCallback(() => {
             animationRef.current = requestAnimationFrame(renderWaves);
             const canvas = canvasRef.current;
@@ -532,28 +607,53 @@
                 setBeatScale(1 + simulatedBeat * 0.08);
             } else { setBeatScale(1); }
 
-            const numWaves = isPlayingRef.current ? 3 : 1;
+            // Configuración para ondas modernas
+            ctx.globalCompositeOperation = 'screen';
+            const numWaves = isPlayingRef.current ? 4 : 2;
             const sliceWidth = width / 100;
+            
+            const colors = [
+                { r: 239, g: 68, b: 68 },  // Rojo vibrante
+                { r: 168, g: 85, b: 247 }, // Púrpura
+                { r: 59, g: 130, b: 246 }, // Azul celeste
+                { r: 236, g: 72, b: 153 }  // Rosa neón
+            ];
 
             for (let j = 0; j < numWaves; j++) {
-                ctx.beginPath(); ctx.moveTo(0, height);
+                ctx.beginPath();
                 let x = 0;
+                
+                // Variación de fase para cada onda
+                const phase = time * (1.5 + j * 0.5) + j * Math.PI / 2;
+                
                 for (let i = 0; i <= 100; i++) {
-                    let waveAmplitude = isPlayingRef.current ? 15 + ((Math.sin(i * 0.1 + time * 4) * 0.5 + 0.5) * simulatedBeat * 0.8 * height * 0.45) : 10;
-                    const y = height - 10 - Math.abs(Math.sin(i * 0.05 + time * (2 + j) + j) * waveAmplitude);
-                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    let waveAmplitude = isPlayingRef.current ? 20 + ((Math.sin(i * 0.08 + phase) * 0.5 + 0.5) * simulatedBeat * height * 0.6) : 5;
+                    const y = height / 2 + Math.sin(i * 0.05 + phase) * waveAmplitude * (j % 2 === 0 ? 1 : -1);
+                    
+                    if (i === 0) ctx.moveTo(x, y); 
+                    else ctx.lineTo(x, y);
                     x += sliceWidth;
                 }
-                ctx.lineTo(width, height); ctx.closePath();
-                if (isPlayingRef.current) {
-                    ctx.fillStyle = `rgba(220, 38, 38, ${0.15 - j * 0.04})`; ctx.fill();
-                    ctx.strokeStyle = `rgba(239, 68, 68, ${0.5 - j * 0.15})`; 
-                } else {
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; ctx.fill();
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; 
-                }
-                ctx.lineWidth = 2.5; ctx.stroke();
+
+                const color = colors[j % colors.length];
+                const gradient = ctx.createLinearGradient(0, 0, width, 0);
+                gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+                gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${isPlayingRef.current ? 0.8 : 0.3})`);
+                gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+
+                ctx.strokeStyle = gradient;
+                ctx.lineWidth = isPlayingRef.current ? 3.5 : 2;
+                
+                // Efecto Neon Glow
+                ctx.shadowBlur = isPlayingRef.current ? 15 : 5;
+                ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
+                
+                ctx.stroke();
             }
+            // Restaurar configuración
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.shadowBlur = 0;
+
           }, []);
 
           useEffect(() => {
@@ -594,7 +694,6 @@
 
           const handleViewModeChange = (mode) => {
             setViewMode(mode);
-            // La radio SOLO se detiene si el usuario entra a la TV
             if (mode === 'tv' && isPlaying && audioRef.current) {
                audioRef.current.pause(); setIsPlaying(false); isPlayingRef.current = false;
                setStatus('Radio en pausa'); setIsConnecting(false);
@@ -604,12 +703,21 @@
           return (
             <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-red-500/30">
               
-              {/* FONDO DINÁMICO */}
+              {/* FONDO DINÁMICO TIPO CUADRÍCULA TECNOLÓGICA */}
               <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-black">
-                  <div className="absolute top-[-20%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#ef4444' : '#27272a', filter: 'blur(140px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.5 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.7, 0.4 + (beatScale - 1) * 1.2) : 0.2 }}></div>
-                  <div className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#b91c1c' : '#18181b', filter: 'blur(160px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.8 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.6, 0.3 + (beatScale - 1) * 1.2) : 0.15 }}></div>
-                  <div className="absolute inset-0 bg-black/50 backdrop-blur-[40px]"></div>
-                  <canvas ref={canvasRef} className="absolute bottom-[60px] left-0 w-full h-[45%] opacity-100 z-0 pointer-events-none"></canvas>
+                  {/* Patrón de Cuadrícula (Grid) Moderno */}
+                  <div className="absolute inset-0 opacity-20" style={{ 
+                      backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)', 
+                      backgroundSize: '25px 25px', 
+                      maskImage: 'radial-gradient(ellipse 80% 80% at 50% 30%, black 10%, transparent 80%)', 
+                      WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 30%, black 10%, transparent 80%)' 
+                  }}></div>
+                  
+                  {/* Orbes de luz (Reactivos al audio) */}
+                  <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#3b82f6' : '#27272a', filter: 'blur(140px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.5 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.5, 0.2 + (beatScale - 1) * 1.2) : 0.15 }}></div>
+                  <div className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#ef4444' : '#18181b', filter: 'blur(160px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.8 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.5, 0.2 + (beatScale - 1) * 1.2) : 0.1 }}></div>
+                  
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[20px]"></div>
               </div>
 
               {/* MODAL AUTH FIREBASE */}
@@ -685,6 +793,9 @@
                           </div>
                       </div>
                       <div className="flex items-center gap-2">
+                          <button onClick={requestNotificationPermission} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
+                              <Bell size={16} />
+                          </button>
                           {installPrompt && (
                               <button onClick={handleInstallApp} className="flex items-center gap-1.5 px-3 h-9 rounded-full bg-white text-black font-bold text-xs shadow-lg hover:scale-105 transition-transform active:scale-95">
                                   <DownloadIcon size={14} /> Instalar
@@ -698,45 +809,57 @@
 
                   <div className="flex-1 w-full relative">
                       
-                      {/* --- VISTA RADIO CON CHAT GLOBAL --- */}
+                      {/* --- VISTA RADIO CON ASISTENTE IA --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col items-center ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
                           
-                          {/* Reproductor Rediseñado para evitar deformaciones móviles */}
-                          <div className="w-full mt-2 shrink-0 flex justify-center perspective-1000 transition-transform duration-75" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1})` }}>
-                              <div className="relative w-full aspect-square max-w-[240px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex items-center justify-center">
-                                  <div className={`absolute inset-0 w-full h-full rounded-full overflow-hidden bg-zinc-900 border-4 border-white/10 ${isPlaying && !isConnecting ? 'animate-[spin_4s_linear_infinite]' : ''}`}>
+                          {/* Botón flotante IA "Pregón" */}
+                          <div className="w-full flex justify-end shrink-0 z-20 mb-2 relative">
+                              <button onClick={() => setShowAIAssistant(true)} className="flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-blue-600/20 hover:from-purple-600/40 hover:to-blue-600/40 border border-white/20 backdrop-blur-xl px-4 py-2 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.2)] transition-all transform hover:scale-105">
+                                  <Sparkles size={16} className="text-purple-300 animate-pulse" />
+                                  <span className="text-[11px] font-bold text-white tracking-wide">Pregón IA</span>
+                              </button>
+                          </div>
+
+                          {/* Reproductor Rediseñado */}
+                          <div className="w-full mt-2 shrink-0 flex justify-center perspective-1000 transition-transform duration-75 relative" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1})` }}>
+                              
+                              {/* Canvas de Ondas Centralizado y Superpuesto */}
+                              <canvas ref={canvasRef} className="absolute inset-0 w-full h-[150%] top-1/2 -translate-y-1/2 opacity-100 z-0 pointer-events-none"></canvas>
+
+                              <div className="relative z-10 w-full aspect-square max-w-[240px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center backdrop-blur-sm">
+                                  <div className={`absolute inset-0 w-full h-full rounded-full overflow-hidden bg-zinc-900 border-4 border-white/10 ${isPlaying && !isConnecting ? 'animate-[spin_6s_linear_infinite]' : ''}`}>
                                       <div className="absolute inset-0 rounded-full border-[12px] border-zinc-950/80 z-10 pointer-events-none"></div>
                                       <div className="absolute inset-0 rounded-full border-[24px] border-zinc-900/40 z-10 pointer-events-none mix-blend-overlay"></div>
                                       <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" alt="Estudio" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-50 scale-110' : 'opacity-20 scale-100 grayscale'}`} />
-                                      <div className="absolute inset-0 bg-black/40 z-0"></div>
-                                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-[60%] h-[60%] rounded-full overflow-hidden border-2 border-white/20 shadow-2xl bg-black">
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
+                                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-[60%] h-[60%] rounded-full overflow-hidden border-2 border-white/30 shadow-[0_0_30px_rgba(0,0,0,1)] bg-black">
                                           <img src={logoUrl} alt="Logo Central" className="w-full h-full object-cover" />
                                       </div>
                                   </div>
                               </div>
                           </div>
 
-                          <div className="flex flex-col items-center text-center w-full mt-6 shrink-0 z-10">
+                          <div className="flex flex-col items-center text-center w-full mt-8 shrink-0 z-10">
                             <h2 className={`text-2xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>{isConnecting ? 'Conectando...' : songInfo.title}</h2>
                             <p className="text-base text-red-400 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
                           </div>
                           
-                          <div className="w-full flex items-center justify-between gap-4 shrink-0 mt-6 z-10 bg-white/5 p-2 pr-4 rounded-full backdrop-blur-md border border-white/10">
-                              <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] bg-red-600/20 text-red-500 hover:bg-red-500/30' : 'w-[50px] h-[50px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
+                          <div className="w-full flex items-center justify-between gap-4 shrink-0 mt-6 z-10 bg-white/5 p-2 pr-4 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
+                              <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] bg-red-600/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'w-[50px] h-[50px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
                                   {isPlaying || isConnecting ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
                               </button>
                               <div className="flex items-center gap-3 w-full">
                                   <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors"><Volume2 size={16} /></button>
-                                  <div className="relative w-full h-1.5 flex items-center bg-black/40 rounded-full overflow-hidden">
-                                      <div className="absolute left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
+                                  <div className="relative w-full h-1.5 flex items-center bg-black/60 rounded-full overflow-hidden border border-white/5">
+                                      <div className="absolute left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
                                       <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                   </div>
                               </div>
                           </div>
 
                           {/* CHAT REAL TIME GLOBAL */}
-                          <div className="w-full mt-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col h-[320px] shrink-0 z-10 relative shadow-xl">
+                          <div className="w-full mt-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col h-[320px] shrink-0 z-10 relative shadow-2xl">
                               <div className="bg-black/40 px-4 py-3 border-b border-white/10 flex justify-between items-center">
                                   <div className="flex items-center gap-2">
                                       <MessageIcon className="text-white/70" /><h3 className="text-sm font-bold text-white tracking-wide">Chat Global</h3>
@@ -755,7 +878,7 @@
                                               <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden border border-white/10">
                                                   {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
                                               </div>
-                                              <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm'}`}>
+                                              <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
                                                   <div className={`flex justify-between items-end mb-1 gap-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                                                       <span className={`text-[11px] font-bold ${isMe ? 'text-red-400' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
                                                       <span className="text-[9px] text-white/30">{msg.time}</span>
@@ -768,17 +891,59 @@
                                   <div ref={chatEndRef} />
                               </div>
                               <form onSubmit={handleSendMessage} className="p-3 bg-black/60 border-t border-white/10 flex gap-2">
-                                  <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/10 rounded-full px-4 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50" />
-                                  <button type="submit" disabled={!user || !chatMessage.trim()} className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600"><SendIcon /></button>
+                                  <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50 transition-all" />
+                                  <button type="submit" disabled={!user || !chatMessage.trim()} className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600 shadow-[0_0_10px_rgba(239,68,68,0.4)]"><SendIcon /></button>
                               </form>
                           </div>
                           <div className="h-6 shrink-0"></div>
                       </div>
 
+                      {/* --- MODAL ASISTENTE IA "PREGÓN" --- */}
+                      {showAIAssistant && (
+                          <div className="absolute inset-x-4 top-[10%] bottom-20 z-40 bg-zinc-950/95 backdrop-blur-3xl rounded-[32px] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.9)] flex flex-col overflow-hidden animate-[fadeIn_0.2s_ease-out]">
+                              <div className="px-5 py-4 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-purple-600/10 to-blue-600/10">
+                                  <div className="flex items-center gap-3">
+                                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                                          <Sparkles size={16} className="text-white" />
+                                      </div>
+                                      <div>
+                                          <h3 className="font-bold text-white text-[15px] leading-tight">Pregón IA</h3>
+                                          <p className="text-[10px] text-white/50 uppercase tracking-widest font-semibold flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> En línea</p>
+                                      </div>
+                                  </div>
+                                  <button onClick={() => setShowAIAssistant(false)} className="text-white/40 hover:text-white bg-white/5 hover:bg-white/10 p-2 rounded-full transition-colors"><XIcon size={18}/></button>
+                              </div>
+                              
+                              <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4 custom-scrollbar bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAiPjwvcmVjdD4KPGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PC9jaXJjbGU+Cjwvc3ZnPg==')]">
+                                  {aiMessages.map(msg => (
+                                      <div key={msg.id} className={`flex w-full ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                                          <div className={`p-3.5 max-w-[85%] text-[13px] leading-relaxed shadow-lg ${msg.isUser ? 'bg-blue-600 text-white rounded-[20px] rounded-br-sm' : 'bg-white/10 text-white/90 border border-white/10 rounded-[20px] rounded-bl-sm backdrop-blur-md'}`}>
+                                              {msg.text}
+                                          </div>
+                                      </div>
+                                  ))}
+                                  {isAITyping && (
+                                      <div className="flex w-full justify-start">
+                                          <div className="p-3.5 bg-white/5 border border-white/5 rounded-[20px] rounded-bl-sm backdrop-blur-md flex items-center gap-1.5">
+                                              <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce"></span>
+                                              <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></span>
+                                              <span className="w-1.5 h-1.5 bg-white/50 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></span>
+                                          </div>
+                                      </div>
+                                  )}
+                                  <div ref={aiChatEndRef} />
+                              </div>
+
+                              <form onSubmit={handleAIRequest} className="p-4 bg-black/60 border-t border-white/5 flex gap-2 backdrop-blur-xl">
+                                  <input type="text" value={aiInput} onChange={(e)=>setAiInput(e.target.value)} placeholder="Pregúntale algo a Pregón..." className="flex-1 bg-white/10 border border-white/10 rounded-full px-5 text-[13px] text-white placeholder:text-white/40 focus:outline-none focus:border-purple-500/50 transition-colors shadow-inner" />
+                                  <button type="submit" disabled={!aiInput.trim()} className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white shrink-0 disabled:opacity-50 shadow-[0_0_15px_rgba(168,85,247,0.4)]"><SendIcon size={16}/></button>
+                              </form>
+                          </div>
+                      )}
+
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 pt-2 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           
-                          {/* Contenedor del Reproductor de Video */}
                           <div className="w-full bg-zinc-900/80 backdrop-blur-2xl rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0 z-10 min-h-[220px]">
                               <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full z-10 flex items-center gap-2 shadow-lg backdrop-blur-md bg-opacity-90">
                                   <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> EN VIVO
@@ -800,7 +965,6 @@
                               </div>
                           </div>
 
-                          {/* Selector de Canales - Estilo Liquid Glass SIN textura con Logos y Colores de Marca */}
                           <div className="flex flex-col gap-3 shrink-0 z-10">
                               <h3 className="text-[13px] font-bold text-white/50 uppercase tracking-wider ml-1">Canales Disponibles</h3>
                               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -816,18 +980,12 @@
                                                       : 'border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:border-white/20 hover:scale-[1.01]'
                                               }`}
                                           >
-                                              {/* Fondo dinámico dependiendo del estado activo */}
                                               <div className={`absolute inset-0 transition-opacity duration-500 mix-blend-overlay ${isActive ? channel.color : 'bg-white'} ${isActive ? 'opacity-50' : 'opacity-[0.03]'}`}></div>
-                                              
-                                              {/* Gradiente sutil para simular el cristal líquido */}
                                               <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-50 pointer-events-none"></div>
-                                              
-                                              {/* Brillo superior en el borde (Highlight) */}
                                               {isActive && (
                                                   <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-60"></div>
                                               )}
                                               
-                                              {/* Logo con fallback automático a icono genérico */}
                                               <div className="relative z-10 w-12 h-10 flex items-center justify-center mt-1">
                                                    <img 
                                                         src={channel.logo} 
@@ -835,13 +993,11 @@
                                                         className={`w-full h-full object-contain transition-all duration-500 drop-shadow-lg ${isActive ? 'opacity-100 scale-110' : 'opacity-60 group-hover:opacity-100 group-hover:scale-105'}`} 
                                                         onError={(e) => {
                                                             e.target.onerror = null;
-                                                            // Si la imagen falla por cualquier razón, muestra el icono de TV vectorizado automáticamente
                                                             e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-opacity='0.6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='20' height='15' x='2' y='7' rx='2' ry='2'/%3E%3Cpolyline points='17 2 12 7 7 2'/%3E%3C/svg%3E";
                                                         }}
                                                     />
                                               </div>
                                               
-                                              {/* Texto */}
                                               <span className={`relative z-10 text-[12px] font-black text-center leading-tight tracking-wide drop-shadow-md transition-colors duration-500 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white/80'}`}>{channel.name}</span>
                                           </button>
                                       );
@@ -849,7 +1005,6 @@
                               </div>
                           </div>
                           
-                          {/* Botón YouTube */}
                           <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10 group hover:bg-white/10">
                               <div className="w-12 h-12 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors"><Youtube size={26} /></div>
                               <div className="ml-4 flex-1">
