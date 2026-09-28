@@ -32,6 +32,26 @@
         body, html { background-color: black; margin: 0; padding: 0; height: 100%; width: 100%; }
         #fallback-loading { display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif; flex-direction: column; }
     </style>
+
+    <!-- REGISTRO DEL SERVICE WORKER PARA HABILITAR INSTALACIÓN PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Registramos un service worker muy básico directamente
+          const swCode = `
+            self.addEventListener('install', (e) => { self.skipWaiting(); });
+            self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+            self.addEventListener('fetch', (e) => { });
+          `;
+          const blob = new Blob([swCode], {type: 'application/javascript'});
+          const swUrl = URL.createObjectURL(blob);
+          
+          navigator.serviceWorker.register(swUrl)
+            .then(reg => console.log('Service Worker registrado para instalación PWA'))
+            .catch(err => console.log('Error al registrar Service Worker:', err));
+        });
+      }
+    </script>
 </head>
 <body class="bg-black text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
 
@@ -142,7 +162,7 @@
           const [isMuted, setIsMuted] = useState(false);
           const [status, setStatus] = useState('Radio Apagada');
           const [viewMode, setViewMode] = useState('radio'); 
-          const [songInfo, setSongInfo] = useState({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+          const [songInfo, setSongInfo] = useState({ title: 'Programación En Vivo', artist: 'Pregón 95.7 FM' });
           const [beatScale, setBeatScale] = useState(1); 
           const lastRawTitle = useRef(""); 
 
@@ -163,10 +183,13 @@
           const [installPrompt, setInstallPrompt] = useState(null); 
           const [showInstallBanner, setShowInstallBanner] = useState(false);
 
-          // ESTADO CHAT EN VIVO GLOBAL
+          // ESTADO CHAT FLOTANTE EN VIVO
+          const [showChat, setShowChat] = useState(false);
+          const [unreadCount, setUnreadCount] = useState(0);
           const [chatMessage, setChatMessage] = useState("");
           const [messages, setMessages] = useState([]);
           const chatEndRef = useRef(null);
+          const showChatRef = useRef(false);
 
           // REFERENCIAS
           const audioRef = useRef(null);
@@ -198,7 +221,6 @@
               const handleBeforeInstallPrompt = (e) => {
                   e.preventDefault(); 
                   setInstallPrompt(e); 
-                  // Mostrar el banner automáticamente al detectar que se puede instalar
                   setShowInstallBanner(true);
               };
               window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -357,7 +379,7 @@
 
           const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
-          // ================== CHAT REAL-TIME GLOBAL CON NOTIFICACIONES ==================
+          // ================== CHAT REAL-TIME FLOTANTE CON NOTIFICACIONES ==================
           const isInitialChatLoad = useRef(true);
           const lastMessageId = useRef(null);
 
@@ -372,6 +394,12 @@
               }
           };
 
+          // Mantener referencia actualizada para el callback de Firebase
+          useEffect(() => {
+              showChatRef.current = showChat;
+              if (showChat) setUnreadCount(0); // Limpiar notificaciones al abrir el chat
+          }, [showChat]);
+
           useEffect(() => {
               if (!dbInstance) return;
               const chatRef = dbInstance.ref('chat_cabina').limitToLast(50);
@@ -384,11 +412,16 @@
                       }));
                       setMessages(loadedMessages);
                       
-                      // Disparar Notificación Local de Chat
+                      // Disparar Notificación y Globo Numérico
                       if (!isInitialChatLoad.current && loadedMessages.length > 0) {
                           const lastMsg = loadedMessages[loadedMessages.length - 1];
                           // Solo notificar si el mensaje es nuevo y no es del usuario actual
                           if (lastMsg.id !== lastMessageId.current && (!user || lastMsg.user !== user.name)) {
+                              
+                              if (!showChatRef.current) {
+                                  setUnreadCount(prev => prev + 1);
+                              }
+                              
                               if ("Notification" in window && Notification.permission === "granted") {
                                   new Notification(`Pregón 95.7 - Nuevo mensaje`, {
                                       body: `${lastMsg.user}: ${lastMsg.text}`,
@@ -409,15 +442,19 @@
               return () => chatRef.off('value', listener);
           }, [user]);
 
+          // Auto-scroll solo cuando el modal del chat está abierto
           useEffect(() => {
-              if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-          }, [messages]);
+              if (showChat && chatEndRef.current) {
+                  chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+              }
+          }, [messages, showChat]);
 
           const handleSendMessage = (e) => {
               e.preventDefault();
               if(!chatMessage.trim()) return;
               
               if (!user) {
+                  setShowChat(false);
                   setAuthMode('login');
                   setShowAuthModal(true);
                   return;
@@ -446,12 +483,32 @@
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
-                  hls = new window.Hls();
+                  hls = new window.Hls({
+                    maxBufferLength: 30, 
+                    maxMaxBufferLength: 60,
+                    enableWorker: true,
+                    lowLatencyMode: true
+                  });
                   hls.loadSource(currentTvUrl);
                   hls.attachMedia(video);
+                  
                   hls.on(window.Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) { setTvError(true); hls.destroy(); }
+                    if (data.fatal) {
+                      switch (data.type) {
+                        case window.Hls.ErrorTypes.NETWORK_ERROR:
+                          hls.startLoad();
+                          break;
+                        case window.Hls.ErrorTypes.MEDIA_ERROR:
+                          hls.recoverMediaError();
+                          break;
+                        default:
+                          setTvError(true);
+                          hls.destroy();
+                          break;
+                      }
+                    }
                   });
+                  
                   hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
                     video.play().catch(() => console.log("Autoplay block"));
                   });
@@ -467,7 +524,10 @@
               if (window.Hls) initPlayer();
               else setTimeout(initPlayer, 500);
 
-              return () => { if (hls) hls.destroy(); };
+              return () => { 
+                if (hls) hls.destroy(); 
+                else if (video) { video.removeAttribute('src'); video.load(); }
+              };
             }
           }, [viewMode, activeTvChannel]);
 
@@ -507,7 +567,17 @@
                           status: ev.status.type.state, detail: ev.status.type.shortDetail, date: ev.date
                       };
                   });
-                  const leagues = ['esp.1', 'uefa.champions', 'eng.1', 'conmebol.libertadores', 'ven.1'];
+                  
+                  // AQUI AGREGAMOS LAS SELECCIONES NACIONALES
+                  const leagues = [
+                      // Clubes 
+                      'esp.1', 'uefa.champions', 'eng.1', 'conmebol.libertadores', 'ven.1',
+                      // Selecciones Nacionales (Eliminatorias, Copas y Amistosos)
+                      'fifa.worldq.conmebol', 'fifa.worldq.uefa', 'fifa.worldq.concacaf', 
+                      'fifa.friendly', 'uefa.nations', 'concacaf.nations.league', 
+                      'conmebol.america', 'uefa.euro', 'fifa.world'
+                  ];
+
                   const fetchPromises = leagues.map(league =>
                       fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`).then(res => res.json()).catch(() => ({}))
                   );
@@ -564,16 +634,17 @@
                   if (streamTitle === lastRawTitle.current) return;
                   lastRawTitle.current = streamTitle;
 
-                  let title = 'Programación en vivo';
-                  let artist = 'PREGÓN 95.7';
+                  let title = 'Programación En Vivo';
+                  let artist = 'Pregón 95.7 FM';
                   if (streamTitle && streamTitle.trim() !== '') {
                       const parts = streamTitle.split(' - ');
                       if (parts.length > 1) { artist = parts[0].trim(); title = parts.slice(1).join(' - ').trim(); } 
                       else { title = streamTitle; }
                   }
                   
-                  const isGeneric = title.toLowerCase().includes('pregon') || title.toLowerCase().includes('programación') || title.toLowerCase().includes('cuña') || artist.toLowerCase().includes('en vivo');
-                  if (isGeneric) setSongInfo({ title: 'Programación en vivo', artist: 'La voz que te acompaña' });
+                  // Detección mejorada de vacíos o info genérica
+                  const isGeneric = !title || title.trim() === '' || title.toLowerCase().includes('pregon') || title.toLowerCase().includes('programación') || title.toLowerCase().includes('cuña') || artist.toLowerCase().includes('en vivo');
+                  if (isGeneric) setSongInfo({ title: 'Programación En Vivo', artist: 'Pregón 95.7 FM' });
                   else setSongInfo({ title, artist });
                 }
               } catch (err) {}
@@ -602,23 +673,21 @@
                 setBeatScale(1 + simulatedBeat * 0.08);
             } else { setBeatScale(1); }
 
-            // Configuración para ondas modernas
             ctx.globalCompositeOperation = 'screen';
             const numWaves = isPlayingRef.current ? 4 : 2;
             const sliceWidth = width / 100;
             
             const colors = [
-                { r: 239, g: 68, b: 68 },  // Rojo vibrante
-                { r: 168, g: 85, b: 247 }, // Púrpura
-                { r: 59, g: 130, b: 246 }, // Azul celeste
-                { r: 236, g: 72, b: 153 }  // Rosa neón
+                { r: 239, g: 68, b: 68 },
+                { r: 168, g: 85, b: 247 },
+                { r: 59, g: 130, b: 246 },
+                { r: 236, g: 72, b: 153 }
             ];
 
             for (let j = 0; j < numWaves; j++) {
                 ctx.beginPath();
                 let x = 0;
                 
-                // Variación de fase para cada onda
                 const phase = time * (1.5 + j * 0.5) + j * Math.PI / 2;
                 
                 for (let i = 0; i <= 100; i++) {
@@ -639,13 +708,11 @@
                 ctx.strokeStyle = gradient;
                 ctx.lineWidth = isPlayingRef.current ? 3.5 : 2;
                 
-                // Efecto Neon Glow
                 ctx.shadowBlur = isPlayingRef.current ? 15 : 5;
                 ctx.shadowColor = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
                 
                 ctx.stroke();
             }
-            // Restaurar configuración
             ctx.globalCompositeOperation = 'source-over';
             ctx.shadowBlur = 0;
 
@@ -700,7 +767,6 @@
               
               {/* FONDO DINÁMICO TIPO CUADRÍCULA TECNOLÓGICA */}
               <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-black">
-                  {/* Patrón de Cuadrícula (Grid) Moderno */}
                   <div className="absolute inset-0 opacity-20" style={{ 
                       backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)', 
                       backgroundSize: '25px 25px', 
@@ -708,7 +774,6 @@
                       WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 30%, black 10%, transparent 80%)' 
                   }}></div>
                   
-                  {/* Orbes de luz (Reactivos al audio) */}
                   <div className="absolute top-[-10%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#3b82f6' : '#27272a', filter: 'blur(140px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.5 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.5, 0.2 + (beatScale - 1) * 1.2) : 0.15 }}></div>
                   <div className="absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-[2000ms] ease-in-out" style={{ backgroundColor: isPlaying && !isConnecting ? '#ef4444' : '#18181b', filter: 'blur(160px)', transform: `scale(${isPlaying && !isConnecting ? 1 + (beatScale - 1) * 1.8 : 1})`, opacity: isPlaying && !isConnecting ? Math.min(0.5, 0.2 + (beatScale - 1) * 1.2) : 0.1 }}></div>
                   
@@ -787,6 +852,52 @@
                   </div>
               )}
 
+              {/* MODAL VENTANA FLOTANTE DEL CHAT */}
+              {showChat && (
+                  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 animate-[fadeIn_0.3s_ease-out]">
+                      <div className="w-full h-[85vh] sm:h-[600px] max-w-md bg-zinc-900/95 border-t sm:border border-white/10 sm:rounded-[32px] rounded-t-[32px] shadow-2xl relative flex flex-col overflow-hidden">
+                          <div className="bg-black/60 px-5 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
+                              <div className="flex items-center gap-3">
+                                  <MessageIcon className="text-red-500" />
+                                  <h3 className="text-base font-bold text-white tracking-wide">Chat en Vivo</h3>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-1.5">
+                                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>
+                                      <span className="text-[10px] text-white/50 font-bold uppercase">Conectados</span>
+                                  </div>
+                                  <button onClick={() => setShowChat(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full transition-colors"><XIcon size={20} /></button>
+                              </div>
+                          </div>
+                          
+                          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
+                              {messages.map((msg) => {
+                                  const isMe = user && user.name === msg.user;
+                                  return (
+                                      <div key={msg.id} className={`flex gap-2 w-full ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                                          <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden border border-white/10">
+                                              {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
+                                          </div>
+                                          <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
+                                              <div className={`flex justify-between items-end mb-1 gap-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                                                  <span className={`text-[11px] font-bold ${isMe ? 'text-red-400' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
+                                                  <span className="text-[9px] text-white/30">{msg.time}</span>
+                                              </div>
+                                              <p className={`text-[13px] leading-tight ${isMe ? 'text-white' : 'text-white/90'}`}>{msg.text}</p>
+                                          </div>
+                                      </div>
+                                  );
+                              })}
+                              <div ref={chatEndRef} />
+                          </div>
+                          <form onSubmit={handleSendMessage} className="p-3 bg-black/60 border-t border-white/10 flex gap-2 pb-safe">
+                              <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50 transition-all" />
+                              <button type="submit" disabled={!user || !chatMessage.trim()} className="w-11 h-11 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600 shadow-[0_0_10px_rgba(239,68,68,0.4)]"><SendIcon /></button>
+                          </form>
+                      </div>
+                  </div>
+              )}
+
               {/* HEADER PRINCIPAL */}
               <main className="flex-1 relative z-10 w-full max-w-md mx-auto flex flex-col pt-safe overflow-hidden">
                   <header className="flex justify-between items-center py-4 px-6 shrink-0 z-20 bg-gradient-to-b from-black/50 to-transparent">
@@ -821,16 +932,16 @@
                   <div className="flex-1 w-full relative">
                       
                       {/* --- VISTA RADIO PRINCIPAL --- */}
-                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col items-center ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
+                      <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col items-center justify-start ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
                           
                           {/* Reproductor Rediseñado */}
-                          <div className="w-full mt-6 shrink-0 flex justify-center perspective-1000 transition-transform duration-75 relative" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1})` }}>
+                          <div className="w-full mt-4 shrink-0 flex justify-center perspective-1000 transition-transform duration-75 relative" style={{ transform: `scale(${isPlaying && !isConnecting ? beatScale : 1})` }}>
                               
                               {/* Canvas de Ondas Centralizado y Superpuesto */}
                               <canvas ref={canvasRef} className="absolute inset-0 w-full h-[150%] top-1/2 -translate-y-1/2 opacity-100 z-0 pointer-events-none"></canvas>
 
-                              <div className="relative z-10 w-full aspect-square max-w-[240px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center backdrop-blur-sm">
+                              <div className="relative z-10 w-full aspect-square max-w-[260px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center backdrop-blur-sm">
                                   <div className={`absolute inset-0 w-full h-full rounded-full overflow-hidden bg-zinc-900 border-4 border-white/10 ${isPlaying && !isConnecting ? 'animate-[spin_6s_linear_infinite]' : ''}`}>
                                       <div className="absolute inset-0 rounded-full border-[12px] border-zinc-950/80 z-10 pointer-events-none"></div>
                                       <div className="absolute inset-0 rounded-full border-[24px] border-zinc-900/40 z-10 pointer-events-none mix-blend-overlay"></div>
@@ -843,62 +954,24 @@
                               </div>
                           </div>
 
-                          <div className="flex flex-col items-center text-center w-full mt-8 shrink-0 z-10">
+                          <div className="flex flex-col items-center text-center w-full mt-10 shrink-0 z-10">
                             <h2 className={`text-2xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>{isConnecting ? 'Conectando...' : songInfo.title}</h2>
                             <p className="text-base text-red-400 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
                           </div>
                           
-                          <div className="w-full flex items-center justify-between gap-4 shrink-0 mt-6 z-10 bg-white/5 p-2 pr-4 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
-                              <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] bg-red-600/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'w-[50px] h-[50px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
-                                  {isPlaying || isConnecting ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
+                          <div className="w-full flex items-center justify-between gap-4 shrink-0 mt-8 z-10 bg-white/5 p-3 pr-5 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
+                              <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[56px] h-[56px] bg-red-600/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'w-[56px] h-[56px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
+                                  {isPlaying || isConnecting ? <Pause size={28} /> : <Play size={28} className="ml-1.5" />}
                               </button>
                               <div className="flex items-center gap-3 w-full">
-                                  <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors"><Volume2 size={16} /></button>
-                                  <div className="relative w-full h-1.5 flex items-center bg-black/60 rounded-full overflow-hidden border border-white/5">
+                                  <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors"><Volume2 size={18} /></button>
+                                  <div className="relative w-full h-2 flex items-center bg-black/60 rounded-full overflow-hidden border border-white/5">
                                       <div className="absolute left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
                                       <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                   </div>
                               </div>
                           </div>
-
-                          {/* CHAT REAL TIME GLOBAL */}
-                          <div className="w-full mt-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] overflow-hidden flex flex-col h-[320px] shrink-0 z-10 relative shadow-2xl">
-                              <div className="bg-black/40 px-4 py-3 border-b border-white/10 flex justify-between items-center">
-                                  <div className="flex items-center gap-2">
-                                      <MessageIcon className="text-white/70" /><h3 className="text-sm font-bold text-white tracking-wide">Chat Global</h3>
-                                  </div>
-                                  <div className="flex items-center gap-1.5">
-                                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>
-                                      <span className="text-[10px] text-white/50 font-bold uppercase">En vivo</span>
-                                  </div>
-                              </div>
-                              
-                              <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
-                                  {messages.map((msg) => {
-                                      const isMe = user && user.name === msg.user;
-                                      return (
-                                          <div key={msg.id} className={`flex gap-2 w-full ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                                              <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden border border-white/10">
-                                                  {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
-                                              </div>
-                                              <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
-                                                  <div className={`flex justify-between items-end mb-1 gap-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                                                      <span className={`text-[11px] font-bold ${isMe ? 'text-red-400' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
-                                                      <span className="text-[9px] text-white/30">{msg.time}</span>
-                                                  </div>
-                                                  <p className={`text-[13px] leading-tight ${isMe ? 'text-white' : 'text-white/90'}`}>{msg.text}</p>
-                                              </div>
-                                          </div>
-                                      );
-                                  })}
-                                  <div ref={chatEndRef} />
-                              </div>
-                              <form onSubmit={handleSendMessage} className="p-3 bg-black/60 border-t border-white/10 flex gap-2">
-                                  <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 text-xs text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50 transition-all" />
-                                  <button type="submit" disabled={!user || !chatMessage.trim()} className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600 shadow-[0_0_10px_rgba(239,68,68,0.4)]"><SendIcon /></button>
-                              </form>
-                          </div>
-                          <div className="h-6 shrink-0"></div>
+                          <div className="h-24 shrink-0"></div>
                       </div>
 
                       {/* --- VISTA TV --- */}
@@ -965,7 +1038,7 @@
                               </div>
                           </div>
                           
-                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 z-10 group hover:bg-white/10">
+                          <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 mb-8 z-10 group hover:bg-white/10">
                               <div className="w-12 h-12 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors"><Youtube size={26} /></div>
                               <div className="ml-4 flex-1">
                                   <h3 className="text-[16px] font-bold text-white tracking-tight">Canal YouTube</h3>
@@ -1024,6 +1097,7 @@
                                   </div>
                               )
                           }
+                          <div className="h-8 shrink-0"></div>
                       </div>
 
                       {/* --- VISTA SATÉLITE --- */}
@@ -1035,7 +1109,7 @@
                               </div>
                               <p className="text-[12px] font-medium text-white/50 mt-1 ml-[44px]">8.2456° N, -71.2864° W</p>
                           </div>
-                          <div className="flex-1 w-full bg-zinc-900 rounded-[28px] border-2 border-white/10 overflow-hidden relative min-h-[350px] shadow-2xl shrink-0 z-10 p-1">
+                          <div className="flex-1 w-full bg-zinc-900 rounded-[28px] border-2 border-white/10 overflow-hidden relative min-h-[350px] shadow-2xl shrink-0 z-10 p-1 mb-8">
                               <div className="w-full h-full rounded-[24px] overflow-hidden relative">
                                 <iframe src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 opacity-90 hover:opacity-100 transition-opacity duration-700" allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
                                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
@@ -1048,6 +1122,19 @@
 
                   </div>
               </main>
+
+              {/* BOTÓN FLOTANTE DEL CHAT */}
+              <button 
+                  onClick={() => setShowChat(true)} 
+                  className="fixed bottom-[80px] right-5 w-14 h-14 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center text-white z-40 hover:bg-red-500 transition-transform active:scale-95 border border-white/20"
+              >
+                  <MessageIcon size={24} />
+                  {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-red-600 shadow-md animate-bounce">
+                          {unreadCount > 9 ? '+9' : unreadCount}
+                      </span>
+                  )}
+              </button>
 
               {/* === BARRA DE NAVEGACIÓN INFERIOR === */}
               <nav className="w-full bg-zinc-950/80 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
