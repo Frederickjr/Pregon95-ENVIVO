@@ -33,21 +33,12 @@
         #fallback-loading { display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-family: sans-serif; flex-direction: column; }
     </style>
 
-    <!-- REGISTRO DEL SERVICE WORKER PARA HABILITAR INSTALACIÓN PWA -->
+    <!-- REGISTRO DEL SERVICE WORKER PARA MODO OFFLINE REAL -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // Registramos un service worker muy básico directamente
-          const swCode = `
-            self.addEventListener('install', (e) => { self.skipWaiting(); });
-            self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
-            self.addEventListener('fetch', (e) => { });
-          `;
-          const blob = new Blob([swCode], {type: 'application/javascript'});
-          const swUrl = URL.createObjectURL(blob);
-          
-          navigator.serviceWorker.register(swUrl)
-            .then(reg => console.log('Service Worker registrado para instalación PWA'))
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker Offline registrado correctamente'))
             .catch(err => console.log('Error al registrar Service Worker:', err));
         });
       }
