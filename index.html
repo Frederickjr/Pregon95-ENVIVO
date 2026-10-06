@@ -9,11 +9,24 @@
     <meta name="application-name" content="PREGÓN 95.7">
     <meta name="theme-color" content="#09090b">
     
+    <!-- ETIQUETAS SEO PARA GOOGLE -->
+    <title>PREGÓN 95.7 FM | La Radio de Mucutuy y los Pueblos del Sur</title>
+    <meta name="description" content="Escucha en vivo PREGÓN 95.7 FM, la radio comunitaria de Mucutuy, Mérida. Disfruta de merengue campesino, vals andino, noticias locales, deportes y TV en vivo.">
+    <meta name="keywords" content="Pregón 95.7, radio en vivo, Mucutuy, Pueblos del Sur, Mérida, merengue campesino, vals andino, emisora venezolana, radio comunitaria">
+    <meta name="author" content="Pregón 95.7 FM">
+
+    <!-- ETIQUETAS PARA REDES SOCIALES (WhatsApp, Facebook, Twitter) -->
+    <meta property="og:title" content="PREGÓN 95.7 FM - En Vivo">
+    <meta property="og:description" content="La señal de los Pueblos del Sur directamente en tu celular. Escucha nuestra programación en vivo.">
+    <meta property="og:image" content="./logo.jpg">
+    <meta property="og:type" content="website">
+    
+    <!-- ETIQUETA DE VERIFICACIÓN DE GOOGLE -->
+    <meta name="google-site-verification" content="rRW6oQq6hZEqY2_rzFtlwicrWSQXmrd_DwjdOiXbU9c" />
+    
     <link rel="icon" type="image/jpeg" href="./logo.jpg">
     <link rel="apple-touch-icon" href="./logo.jpg">
     <link rel="manifest" href="./manifest.json">
-
-    <title>PREGÓN 95.7 FM - App Oficial</title>
     
     <!-- Librerías de Interfaz -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -239,7 +252,7 @@
                           url: window.location.href,
                       });
                   } catch (err) {
-                      console.log('Error al compartir:', err);
+                          console.log('Error al compartir:', err);
                   }
               } else {
                   alert("Tu navegador no soporta la función de compartir nativa. ¡Copia el link y compártelo!");
