@@ -252,7 +252,7 @@
                           url: window.location.href,
                       });
                   } catch (err) {
-                          console.log('Error al compartir:', err);
+                      console.log('Error al compartir:', err);
                   }
               } else {
                   alert("Tu navegador no soporta la función de compartir nativa. ¡Copia el link y compártelo!");
@@ -345,18 +345,11 @@
                           email: firebaseUser.email,
                           photo: firebaseUser.photoURL || null
                       });
+                      // Ocultamos el modal si detectamos que la sesión se inició con éxito
+                      setShowAuthModal(false);
                   } else {
                       setUser(null);
                   }
-              });
-              
-              authInstance.getRedirectResult().catch((error) => {
-                  if(error.code === 'auth/unauthorized-domain') {
-                      setAuthError("Error: Debes autorizar tu dominio de GitHub Pages en la consola de Firebase.");
-                  } else {
-                      setAuthError("No se pudo iniciar sesión con Google.");
-                  }
-                  setShowAuthModal(true);
               });
 
               return () => unsubscribe();
@@ -392,11 +385,22 @@
               }
           };
 
-          const handleGoogleLogin = () => {
+          // INICIO DE SESIÓN CON GOOGLE CORREGIDO A POPUP
+          const handleGoogleLogin = async () => {
               setAuthError("");
               if(!authInstance) return;
               const provider = new window.firebase.auth.GoogleAuthProvider();
-              authInstance.signInWithRedirect(provider);
+              
+              try {
+                  // signInWithPopup funciona perfectamente en móviles y PWAs sin perder la sesión
+                  await authInstance.signInWithPopup(provider);
+              } catch (error) {
+                  if(error.code === 'auth/unauthorized-domain') {
+                      setAuthError("Error: Debes autorizar tu dominio en Firebase.");
+                  } else if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+                      setAuthError("No se pudo iniciar sesión con Google. Intenta nuevamente.");
+                  }
+              }
           };
 
           const handlePasswordReset = async () => {
