@@ -14,6 +14,7 @@
     <meta name="description" content="Escucha en vivo PREGÓN 95.7 FM, la radio comunitaria de Mucutuy, Mérida. Disfruta de merengue campesino, vals andino, noticias locales, deportes y TV en vivo.">
     <meta name="keywords" content="Pregón 95.7, radio en vivo, Mucutuy, Pueblos del Sur, Mérida, merengue campesino, vals andino, emisora venezolana, radio comunitaria">
     <meta name="author" content="Pregón 95.7 FM">
+    <meta itemprop="image" content="./logo.jpg">
 
     <!-- ETIQUETAS PARA REDES SOCIALES (WhatsApp, Facebook, Twitter) -->
     <meta property="og:title" content="PREGÓN 95.7 FM - En Vivo">
@@ -24,7 +25,9 @@
     <!-- ETIQUETA DE VERIFICACIÓN DE GOOGLE -->
     <meta name="google-site-verification" content="rRW6oQq6hZEqY2_rzFtlwicrWSQXmrd_DwjdOiXbU9c" />
     
-    <link rel="icon" type="image/jpeg" href="./logo.jpg">
+    <!-- ICONOS PARA GOOGLE Y MÓVILES REFORZADOS -->
+    <link rel="icon" type="image/jpeg" href="./logo.jpg" sizes="192x192">
+    <link rel="shortcut icon" href="./logo.jpg">
     <link rel="apple-touch-icon" href="./logo.jpg">
     <link rel="manifest" href="./manifest.json">
     
@@ -334,7 +337,7 @@
               };
           }, []);
 
-          // ================== FIREBASE AUTH (CORREO Y GOOGLE FUNCIONALES) ==================
+          // ================== FIREBASE AUTH ==================
           useEffect(() => {
               if (!authInstance) return;
               const unsubscribe = authInstance.onAuthStateChanged((firebaseUser) => {
@@ -345,7 +348,6 @@
                           email: firebaseUser.email,
                           photo: firebaseUser.photoURL || null
                       });
-                      // Ocultamos el modal si detectamos que la sesión se inició con éxito
                       setShowAuthModal(false);
                   } else {
                       setUser(null);
@@ -385,15 +387,23 @@
               }
           };
 
-          // INICIO DE SESIÓN CON GOOGLE CORREGIDO A POPUP
+          // INICIO DE SESIÓN CON GOOGLE (HÍBRIDO: PC vs MÓVIL)
           const handleGoogleLogin = async () => {
               setAuthError("");
               if(!authInstance) return;
               const provider = new window.firebase.auth.GoogleAuthProvider();
               
               try {
-                  // signInWithPopup funciona perfectamente en móviles y PWAs sin perder la sesión
-                  await authInstance.signInWithPopup(provider);
+                  // Detectamos si el usuario está en un dispositivo móvil
+                  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                  
+                  if (isMobile) {
+                      // En móviles usamos redirección para evitar bloqueos de ventanas emergentes en Safari/Chrome
+                      await authInstance.signInWithRedirect(provider);
+                  } else {
+                      // En PC usamos el Popup porque es más rápido y fluido
+                      await authInstance.signInWithPopup(provider);
+                  }
               } catch (error) {
                   if(error.code === 'auth/unauthorized-domain') {
                       setAuthError("Error: Debes autorizar tu dominio en Firebase.");
