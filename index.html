@@ -217,7 +217,7 @@
               { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600', logo: './venevision.png' },
               { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-red-600', logo: './cnn.png' },
               { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600', logo: './realmadrid.png' },
-              { id: 'dsports', name: 'DSports', type: 'Deportes', url: 'http://191.97.59.33:8000/play/a09t/index.m3u8', color: 'bg-blue-800', logo: './dsports.png' },
+              { id: 'dsports', name: 'DSports', type: 'Deportes', url: 'https://proxy-tv.frederickalgo.workers.dev/play/a09t/index.m3u8', color: 'bg-blue-800', logo: './dsports.png' },
               { id: 'noticias', name: 'DW Español', type: 'Noticias', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-sky-500', logo: './dw.png' },
               { id: 'tam', name: 'TAM TV', type: 'Regional', url: 'https://rtmp.tamtv.com.ve/tmp_hls/stream/index.m3u8', color: 'bg-emerald-500', logo: './tam.png' },
               { id: 'chavo', name: 'El Chavo', type: 'Entretenimiento', url: 'https://live20.bozztv.com/giatvplayout7/giatv-211465/tracks-v1a1/mono.ts.m3u8', color: 'bg-orange-500', logo: './chavo.png' },
@@ -436,6 +436,23 @@
           const isInitialChatLoad = useRef(true);
           const lastMessageId = useRef(null);
 
+          // FUNCIÓN CORREGIDA PARA NOTIFICACIONES EN PWA Y ANDROID CHROME
+          const sendAppNotification = (title, bodyText) => {
+              if (!("Notification" in window) || Notification.permission !== "granted") return;
+              const options = { body: bodyText, icon: './logo.jpg' };
+              try {
+                  // Intento 1: Constructor normal (Funciona en Windows, Mac, iOS Safari normal)
+                  new Notification(title, options);
+              } catch (e) {
+                  // Intento 2: Constructor PWA ServiceWorker (Soluciona el error en Android Chrome)
+                  if (navigator.serviceWorker) {
+                      navigator.serviceWorker.ready.then(registration => {
+                          registration.showNotification(title, options);
+                      }).catch(err => console.log("SW Notification error:", err));
+                  }
+              }
+          };
+
           const requestNotificationPermission = () => {
               if ("Notification" in window) {
                   Notification.requestPermission().then(permission => {
@@ -475,12 +492,8 @@
                                   setUnreadCount(prev => prev + 1);
                               }
                               
-                              if ("Notification" in window && Notification.permission === "granted") {
-                                  new Notification(`Pregón 95.7 - Nuevo mensaje`, {
-                                      body: `${lastMsg.user}: ${lastMsg.text}`,
-                                      icon: './logo.jpg'
-                                  });
-                              }
+                              // LLAMADA A LA FUNCIÓN DE NOTIFICACIONES CORREGIDA
+                              sendAppNotification(`Pregón 95.7 - Nuevo mensaje`, `${lastMsg.user}: ${lastMsg.text}`);
                           }
                           lastMessageId.current = lastMsg.id;
                       } else {
@@ -664,11 +677,9 @@
                       return matchDate.getDate() === today.getDate() && matchDate.getMonth() === today.getMonth();
                   });
                   
-                  if (todayMatches.length > 0 && "Notification" in window && Notification.permission === "granted") {
-                      new Notification(`¡Hay ${todayMatches.length} partidos hoy!`, {
-                          body: `Revisa la sección de Deportes en Pregón 95.7 para ver los resultados y horarios.`,
-                          icon: './logo.jpg'
-                      });
+                  if (todayMatches.length > 0) {
+                      // LLAMADA A LA FUNCIÓN DE NOTIFICACIONES CORREGIDA
+                      sendAppNotification(`¡Hay ${todayMatches.length} partidos hoy!`, `Revisa la sección de Deportes en Pregón 95.7 para ver los resultados y horarios.`);
                   }
                   sportsNotified.current = true;
               }
