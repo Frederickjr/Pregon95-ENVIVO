@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PREGÓN 95.7">
     <meta name="application-name" content="PREGÓN 95.7">
-    <meta name="theme-color" content="#09090b">
+    <meta name="theme-color" content="#000000">
     
     <!-- ETIQUETAS SEO PARA GOOGLE -->
     <title>PREGÓN 95.7 FM | La Radio de Mucutuy y los Pueblos del Sur</title>
@@ -129,20 +129,34 @@
         const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
         const AlertCircle = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></Icon>;
         const ExternalLink = (props) => <Icon {...props}><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></Icon>;
-        const PiPIcon = (props) => <Icon {...props} size={20}><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><rect x="12" y="11" width="7" height="6" rx="1" ry="1"/></Icon>;
         const UserIcon = (props) => <Icon {...props} size={22}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></Icon>;
         const UsersIcon = (props) => <Icon {...props} size={14}><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></Icon>;
         const XIcon = (props) => <Icon {...props} size={24}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Icon>;
-        const DownloadIcon = (props) => <Icon {...props} size={18}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Icon>;
         const MessageIcon = (props) => <Icon {...props} size={20}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></Icon>;
         const SendIcon = (props) => <Icon {...props} size={18}><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></Icon>;
         const Globe = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
         const MapPin = (props) => <Icon {...props}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></Icon>;
         const Activity = (props) => <Icon {...props} size={16}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
-        const Maximize = (props) => <Icon {...props} size={20}><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></Icon>;
         const Bell = (props) => <Icon {...props} size={18}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></Icon>;
         const ShareIcon = (props) => <Icon {...props} size={18}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></Icon>;
+        
+        // ÍCONOS DINÁMICOS DE CLIMA Y HORA
+        const ClockIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
+        const Sun = (props) => <Icon {...props}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></Icon>;
         const CloudSun = (props) => <Icon {...props}><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></Icon>;
+        const Cloud = (props) => <Icon {...props}><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></Icon>;
+        const CloudRain = (props) => <Icon {...props}><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></Icon>;
+        const CloudLightning = (props) => <Icon {...props}><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></Icon>;
+
+        const getWeatherIcon = (code) => {
+            if (code === 0) return <Sun size={16} className="text-yellow-400" />;
+            if (code >= 1 && code <= 2) return <CloudSun size={16} className="text-yellow-400" />;
+            if (code === 3) return <Cloud size={16} className="text-white/80" />;
+            if (code >= 50 && code <= 69) return <CloudRain size={16} className="text-blue-400" />;
+            if (code >= 80 && code <= 82) return <CloudRain size={16} className="text-blue-400" />;
+            if (code >= 95) return <CloudLightning size={16} className="text-yellow-500" />;
+            return <CloudSun size={16} className="text-white/70" />;
+        };
 
         const GoogleIcon = () => (
             <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
@@ -179,9 +193,10 @@
           const [tvError, setTvError] = useState(false);
           const [activeTvChannel, setActiveTvChannel] = useState('venevision');
           
-          // ESTADOS USUARIOS, CLIMA Y AUTH
+          // ESTADOS USUARIOS, CLIMA Y HORA
           const [onlineUsers, setOnlineUsers] = useState(1);
           const [weather, setWeather] = useState(null);
+          const [timeVE, setTimeVE] = useState('');
           const [showAuthModal, setShowAuthModal] = useState(false);
           const [authMode, setAuthMode] = useState('register');
           const [user, setUser] = useState(null); 
@@ -199,12 +214,17 @@
           const chatEndRef = useRef(null);
           const showChatRef = useRef(false);
 
-          // REFERENCIAS
+          // REFERENCIAS 
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
-          const canvasRef = useRef(null); 
-          const animationRef = useRef(null);
           const isPlayingRef = useRef(false);
+
+          // REFERENCIAS BARRAS RÍTMICAS (WEB AUDIO)
+          const canvasRef = useRef(null);
+          const animationRef = useRef(null);
+          const audioCtxRef = useRef(null);
+          const analyserRef = useRef(null);
+          const dataArrayRef = useRef(null);
 
           // DATOS (URLs)
           const streamUrl = "https://stream.zeno.fm/2dcuqasrykauv";
@@ -224,7 +244,50 @@
               { id: 'rcn', name: 'RCN Más', type: 'Entretenimiento', url: 'https://rcntv-rcnmas-1-us.plex.wurl.tv/playlist.m3u8', color: 'bg-yellow-500', logo: './rcn.png' }
           ];
 
-          // ================== PWA Y AVISO DE INSTALACIÓN AUTOMÁTICO ==================
+          // ================== RELOJ DE VENEZUELA ==================
+          useEffect(() => {
+              const updateTime = () => {
+                  const now = new Date();
+                  setTimeVE(now.toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit' }));
+              };
+              updateTime();
+              const interval = setInterval(updateTime, 10000); 
+              return () => clearInterval(interval);
+          }, []);
+
+          // ================== RUTAS / NAVEGACIÓN ==================
+          useEffect(() => {
+              const handleHashChange = () => {
+                  const hash = window.location.hash.replace('#/', '').replace('#', '') || 'radio';
+                  const validModes = ['radio', 'tv', 'sports', 'nasa'];
+                  const newMode = validModes.includes(hash) ? hash : 'radio';
+                  
+                  setViewMode(newMode);
+                  
+                  if (newMode === 'tv' && isPlayingRef.current && audioRef.current) {
+                      audioRef.current.pause(); 
+                      setIsPlaying(false); 
+                      isPlayingRef.current = false;
+                      setStatus('Radio en pausa'); 
+                      setIsConnecting(false);
+                  }
+              };
+
+              if (!window.location.hash) {
+                  window.location.replace('#/radio');
+              } else {
+                  handleHashChange();
+              }
+
+              window.addEventListener('hashchange', handleHashChange);
+              return () => window.removeEventListener('hashchange', handleHashChange);
+          }, []);
+
+          const handleViewModeChange = (mode) => {
+              window.location.hash = `#/${mode}`;
+          };
+
+          // ================== PWA ==================
           useEffect(() => {
               const handleBeforeInstallPrompt = (e) => {
                   e.preventDefault(); 
@@ -240,85 +303,56 @@
               setShowInstallBanner(false);
               installPrompt.prompt();
               const { outcome } = await installPrompt.userChoice;
-              if (outcome === 'accepted') {
-                  setInstallPrompt(null);
-              }
+              if (outcome === 'accepted') setInstallPrompt(null);
           };
 
-          // ================== COMPARTIR NATIVO (Web Share API) ==================
           const handleShareApp = async () => {
               if (navigator.share) {
                   try {
                       await navigator.share({
                           title: 'Pregón 95.7 FM - Mucutuy',
-                          text: 'Escucha la radio en vivo, chatea y mira la TV desde la App Oficial de Pregón 95.7 FM.',
+                          text: 'Escucha la radio en vivo, chatea y mira la TV.',
                           url: window.location.href,
                       });
-                  } catch (err) {
-                      console.log('Error al compartir:', err);
-                  }
+                  } catch (err) {}
               } else {
-                  alert("Tu navegador no soporta la función de compartir nativa. ¡Copia el link y compártelo!");
+                  alert("Tu navegador no soporta la función de compartir nativa.");
               }
           };
 
-          // ================== MEDIA SESSION API (Pantalla de Bloqueo / Bluetooth) ==================
           useEffect(() => {
               if ('mediaSession' in navigator) {
                   navigator.mediaSession.metadata = new window.MediaMetadata({
                       title: songInfo.title,
                       artist: songInfo.artist,
-                      album: 'Pregón 95.7 FM - Mucutuy',
-                      artwork: [
-                          { src: './logo.jpg', sizes: '512x512', type: 'image/jpeg' }
-                      ]
+                      album: 'Pregón 95.7 FM',
+                      artwork: [{ src: './logo.jpg', sizes: '512x512', type: 'image/jpeg' }]
                   });
-
-                  navigator.mediaSession.setActionHandler('play', () => {
-                      if (audioRef.current) {
-                          audioRef.current.play();
-                          setIsPlaying(true);
-                          isPlayingRef.current = true;
-                      }
-                  });
-                  
-                  navigator.mediaSession.setActionHandler('pause', () => {
-                      if (audioRef.current) {
-                          audioRef.current.pause();
-                          setIsPlaying(false);
-                          isPlayingRef.current = false;
-                      }
-                  });
+                  navigator.mediaSession.setActionHandler('play', () => handlePlayToggle());
+                  navigator.mediaSession.setActionHandler('pause', () => handlePlayToggle());
               }
           }, [songInfo, isPlaying]);
 
-          // ================== CONTADOR DE USUARIOS REAL (FIREBASE) Y CLIMA ==================
+          // ================== CONTADOR Y CLIMA ==================
           useEffect(() => {
-              // 1. CLIMA MUCUTUY (Open-Meteo API - No requiere Key)
               const fetchWeather = async () => {
                   try {
                       const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=8.2456&longitude=-71.2864&current_weather=true");
                       const data = await res.json();
-                      if(data && data.current_weather) {
-                          setWeather(data.current_weather);
-                      }
-                  } catch(e) { console.log("Error clima:", e); }
+                      if(data && data.current_weather) setWeather(data.current_weather);
+                  } catch(e) {}
               };
-              fetchWeather(); // Cargar inicial
-              const weatherInterval = setInterval(fetchWeather, 30 * 60 * 1000); // Actualizar cada 30 mins
+              fetchWeather(); 
+              const weatherInterval = setInterval(fetchWeather, 30 * 60 * 1000); 
 
-              // 2. CONTADOR FIREBASE REAL
               let connectedRef, myConnectionsRef, newConnectionRef, connectedListener, connectionsListener;
-              
               if (dbInstance) {
                   myConnectionsRef = dbInstance.ref('conexiones_activas');
                   connectedRef = dbInstance.ref('.info/connected');
 
                   connectedListener = connectedRef.on('value', (snap) => {
                       if (snap.val() === true) {
-                          // Agregar esta conexión a la lista
                           newConnectionRef = myConnectionsRef.push();
-                          // Cuando este cliente se desconecta, removerlo de la lista
                           newConnectionRef.onDisconnect().remove();
                           newConnectionRef.set(true);
                       }
@@ -353,14 +387,13 @@
                       setUser(null);
                   }
               });
-
               return () => unsubscribe();
           }, []);
 
           const handleAuthSubmit = async (e) => {
               e.preventDefault();
               setAuthError("");
-              if(!authInstance) { setAuthError("Conexión con base de datos no disponible."); return; }
+              if(!authInstance) return;
               const email = e.target.email.value;
               const password = e.target.password.value;
               try {
@@ -372,83 +405,56 @@
                           setUser(prev => ({...prev, name: name}));
                       }
                       await userCredential.user.sendEmailVerification();
-                      alert("¡Cuenta creada exitosamente!\n\nTe hemos enviado un enlace a tu correo para validarlo. Revisa tu bandeja de entrada o spam.");
+                      alert("¡Cuenta creada exitosamente!");
                   } else {
                       await authInstance.signInWithEmailAndPassword(email, password);
                   }
                   setShowAuthModal(false);
               } catch (error) {
-                  let msg = "Error de autenticación.";
-                  if(error.code === 'auth/email-already-in-use') msg = "El correo ya está registrado.";
-                  if(error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') msg = "Contraseña o correo incorrecto.";
-                  if(error.code === 'auth/user-not-found') msg = "Usuario no encontrado.";
-                  if(error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres.";
-                  setAuthError(msg);
+                  setAuthError("Error de autenticación. Verifica tus datos.");
               }
           };
 
-          // INICIO DE SESIÓN CON GOOGLE (HÍBRIDO: PC vs MÓVIL)
           const handleGoogleLogin = async () => {
               setAuthError("");
               if(!authInstance) return;
               const provider = new window.firebase.auth.GoogleAuthProvider();
-              
               try {
-                  // Detectamos si el usuario está en un dispositivo móvil
                   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                  
-                  if (isMobile) {
-                      // En móviles usamos redirección para evitar bloqueos de ventanas emergentes en Safari/Chrome
-                      await authInstance.signInWithRedirect(provider);
-                  } else {
-                      // En PC usamos el Popup porque es más rápido y fluido
-                      await authInstance.signInWithPopup(provider);
-                  }
+                  if (isMobile) await authInstance.signInWithRedirect(provider);
+                  else await authInstance.signInWithPopup(provider);
               } catch (error) {
-                  if(error.code === 'auth/unauthorized-domain') {
-                      setAuthError("Error: Debes autorizar tu dominio en Firebase.");
-                  } else if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
-                      setAuthError("No se pudo iniciar sesión con Google. Intenta nuevamente.");
-                  }
+                  setAuthError("No se pudo iniciar sesión con Google.");
               }
           };
 
           const handlePasswordReset = async () => {
-              const email = prompt("Ingresa tu correo electrónico para enviarte el enlace de recuperación de contraseña:");
+              const email = prompt("Ingresa tu correo electrónico:");
               if(email) {
                   try {
                       await authInstance.sendPasswordResetEmail(email);
-                      alert("Hemos enviado un enlace a " + email + " para que restablezcas tu contraseña.");
+                      alert("Enlace enviado.");
                       setShowAuthModal(false);
                   } catch(error) {
-                      if(error.code === 'auth/user-not-found') {
-                          alert("Error: Este correo no está registrado en nuestra base de datos.");
-                      } else {
-                          alert("Error al intentar enviar el correo. Intenta de nuevo.");
-                      }
+                      alert("Error al intentar enviar el correo.");
                   }
               }
           };
 
           const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
-          // ================== CHAT REAL-TIME FLOTANTE CON NOTIFICACIONES ==================
+          // ================== CHAT Y NOTIFICACIONES ==================
           const isInitialChatLoad = useRef(true);
           const lastMessageId = useRef(null);
 
-          // FUNCIÓN CORREGIDA PARA NOTIFICACIONES EN PWA Y ANDROID CHROME
           const sendAppNotification = (title, bodyText) => {
               if (!("Notification" in window) || Notification.permission !== "granted") return;
               const options = { body: bodyText, icon: './logo.jpg' };
               try {
-                  // Intento 1: Constructor normal (Funciona en Windows, Mac, iOS Safari normal)
                   new Notification(title, options);
               } catch (e) {
-                  // Intento 2: Constructor PWA ServiceWorker (Soluciona el error en Android Chrome)
                   if (navigator.serviceWorker) {
-                      navigator.serviceWorker.ready.then(registration => {
-                          registration.showNotification(title, options);
-                      }).catch(err => console.log("SW Notification error:", err));
+                      navigator.serviceWorker.ready.then(reg => reg.showNotification(title, options));
                   }
               }
           };
@@ -456,18 +462,14 @@
           const requestNotificationPermission = () => {
               if ("Notification" in window) {
                   Notification.requestPermission().then(permission => {
-                      if (permission === "granted") alert("¡Notificaciones activadas! Te avisaremos de nuevos mensajes y partidos.");
-                      else if (permission === "denied") alert("Las notificaciones fueron denegadas en tu navegador.");
+                      if (permission === "granted") alert("¡Notificaciones activadas!");
                   });
-              } else {
-                  alert("Tu dispositivo o navegador no soporta notificaciones.");
               }
           };
 
-          // Mantener referencia actualizada para el callback de Firebase
           useEffect(() => {
               showChatRef.current = showChat;
-              if (showChat) setUnreadCount(0); // Limpiar notificaciones al abrir el chat
+              if (showChat) setUnreadCount(0);
           }, [showChat]);
 
           useEffect(() => {
@@ -476,24 +478,13 @@
               const listener = chatRef.on('value', (snapshot) => {
                   const data = snapshot.val();
                   if (data) {
-                      const loadedMessages = Object.keys(data).map(key => ({
-                          id: key,
-                          ...data[key]
-                      }));
+                      const loadedMessages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
                       setMessages(loadedMessages);
-                      
-                      // Disparar Notificación y Globo Numérico
                       if (!isInitialChatLoad.current && loadedMessages.length > 0) {
                           const lastMsg = loadedMessages[loadedMessages.length - 1];
-                          // Solo notificar si el mensaje es nuevo y no es del usuario actual
                           if (lastMsg.id !== lastMessageId.current && (!user || lastMsg.user !== user.name)) {
-                              
-                              if (!showChatRef.current) {
-                                  setUnreadCount(prev => prev + 1);
-                              }
-                              
-                              // LLAMADA A LA FUNCIÓN DE NOTIFICACIONES CORREGIDA
-                              sendAppNotification(`Pregón 95.7 - Nuevo mensaje`, `${lastMsg.user}: ${lastMsg.text}`);
+                              if (!showChatRef.current) setUnreadCount(prev => prev + 1);
+                              sendAppNotification(`Pregón 95.7`, `${lastMsg.user}: ${lastMsg.text}`);
                           }
                           lastMessageId.current = lastMsg.id;
                       } else {
@@ -501,39 +492,30 @@
                            isInitialChatLoad.current = false;
                       }
                   } else {
-                      setMessages([{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos al chat en vivo de Mucutuy!', time: '' }]);
+                      setMessages([{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos!', time: '' }]);
                       isInitialChatLoad.current = false;
                   }
               });
               return () => chatRef.off('value', listener);
           }, [user]);
 
-          // Auto-scroll solo cuando el modal del chat está abierto
           useEffect(() => {
-              if (showChat && chatEndRef.current) {
-                  chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-              }
+              if (showChat && chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
           }, [messages, showChat]);
 
           const handleSendMessage = (e) => {
               e.preventDefault();
               if(!chatMessage.trim()) return;
-              
               if (!user) {
                   setShowChat(false);
-                  setAuthMode('login');
                   setShowAuthModal(true);
                   return;
               }
-
               const newMsg = {
-                  user: user.name,
-                  photo: user.photo,
-                  text: chatMessage,
+                  user: user.name, photo: user.photo, text: chatMessage,
                   timestamp: window.firebase.database.ServerValue.TIMESTAMP,
                   time: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
               };
-              
               if (dbInstance) dbInstance.ref('chat_cabina').push(newMsg);
               setChatMessage("");
           }
@@ -549,73 +531,30 @@
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
-                  hls = new window.Hls({
-                    maxBufferLength: 30, 
-                    maxMaxBufferLength: 60,
-                    enableWorker: true,
-                    lowLatencyMode: true
-                  });
+                  hls = new window.Hls({ enableWorker: true, lowLatencyMode: true });
                   hls.loadSource(currentTvUrl);
                   hls.attachMedia(video);
-                  
-                  hls.on(window.Hls.Events.ERROR, function (event, data) {
+                  hls.on(window.Hls.Events.ERROR, function (e, data) {
                     if (data.fatal) {
-                      switch (data.type) {
-                        case window.Hls.ErrorTypes.NETWORK_ERROR:
-                          hls.startLoad();
-                          break;
-                        case window.Hls.ErrorTypes.MEDIA_ERROR:
-                          hls.recoverMediaError();
-                          break;
-                        default:
-                          setTvError(true);
-                          hls.destroy();
-                          break;
-                      }
+                      if(data.type === window.Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+                      else if(data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+                      else { setTvError(true); hls.destroy(); }
                     }
                   });
-                  
-                  hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
-                    video.play().catch(() => console.log("Autoplay block"));
-                  });
+                  hls.on(window.Hls.Events.MANIFEST_PARSED, function () { video.play().catch(()=>{}); });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                   video.src = currentTvUrl;
                   video.onerror = () => setTvError(true);
-                  video.addEventListener('loadedmetadata', function () {
-                    video.play().catch(() => console.log("Autoplay block"));
-                  });
+                  video.addEventListener('loadedmetadata', function () { video.play().catch(()=>{}); });
                 }
               };
 
-              if (window.Hls) initPlayer();
-              else setTimeout(initPlayer, 500);
-
-              return () => { 
-                if (hls) hls.destroy(); 
-                else if (video) { video.removeAttribute('src'); video.load(); }
-              };
+              if (window.Hls) initPlayer(); else setTimeout(initPlayer, 500);
+              return () => { if (hls) hls.destroy(); else if (video) { video.removeAttribute('src'); video.load(); } };
             }
           }, [viewMode, activeTvChannel]);
 
-          const togglePiP = async () => {
-              const video = tvVideoRef.current;
-              if (video && document.pictureInPictureEnabled) {
-                  try {
-                      if (document.pictureInPictureElement) await document.exitPictureInPicture();
-                      else await video.requestPictureInPicture();
-                  } catch (error) {}
-              }
-          };
-
-          const toggleFullScreen = () => {
-              const video = tvVideoRef.current;
-              if (video) {
-                  if (video.requestFullscreen) video.requestFullscreen();
-                  else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
-              }
-          };
-
-          // ================== FETCH DEPORTES Y NOTIFICACIÓN ==================
+          // ================== FETCH DEPORTES ==================
           const sportsNotified = useRef(false);
           useEffect(() => {
             if (viewMode === 'sports' && matches.length === 0) {
@@ -634,16 +573,7 @@
                       };
                   });
                   
-                  // AQUI AGREGAMOS LAS SELECCIONES NACIONALES
-                  const leagues = [
-                      // Clubes 
-                      'esp.1', 'uefa.champions', 'eng.1', 'conmebol.libertadores', 'ven.1',
-                      // Selecciones Nacionales (Eliminatorias, Copas y Amistosos)
-                      'fifa.worldq.conmebol', 'fifa.worldq.uefa', 'fifa.worldq.concacaf', 
-                      'fifa.friendly', 'uefa.nations', 'concacaf.nations.league', 
-                      'conmebol.america', 'uefa.euro', 'fifa.world'
-                  ];
-
+                  const leagues = ['esp.1', 'uefa.champions', 'conmebol.libertadores', 'ven.1', 'fifa.worldq.conmebol'];
                   const fetchPromises = leagues.map(league =>
                       fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`).then(res => res.json()).catch(() => ({}))
                   );
@@ -668,23 +598,6 @@
             }
           }, [viewMode, matches.length]);
 
-          // Notificación de Partidos
-          useEffect(() => {
-              if (matches.length > 0 && !sportsNotified.current) {
-                  const todayMatches = matches.filter(m => {
-                      const matchDate = new Date(m.date);
-                      const today = new Date();
-                      return matchDate.getDate() === today.getDate() && matchDate.getMonth() === today.getMonth();
-                  });
-                  
-                  if (todayMatches.length > 0) {
-                      // LLAMADA A LA FUNCIÓN DE NOTIFICACIONES CORREGIDA
-                      sendAppNotification(`¡Hay ${todayMatches.length} partidos hoy!`, `Revisa la sección de Deportes en Pregón 95.7 para ver los resultados y horarios.`);
-                  }
-                  sportsNotified.current = true;
-              }
-          }, [matches]);
-
           // ================== METADATOS MUSICALES ==================
           useEffect(() => {
             if (audioRef.current) audioRef.current.volume = volume;
@@ -706,7 +619,6 @@
                       else { title = streamTitle; }
                   }
                   
-                  // Detección mejorada de vacíos o info genérica
                   const isGeneric = !title || title.trim() === '' || title.toLowerCase().includes('pregon') || title.toLowerCase().includes('programación') || title.toLowerCase().includes('cuña') || artist.toLowerCase().includes('en vivo');
                   if (isGeneric) setSongInfo({ title: 'Programación En Vivo', artist: 'Pregón 95.7 FM' });
                   else setSongInfo({ title, artist });
@@ -716,79 +628,125 @@
             return () => eventSource.close();
           }, []);
 
-          // ================== CANVAS ONDAS ESTILO NEON/MODERNAS (OPTIMIZADO) ==================
+          // ================== ONDAS MINIMALISTAS (NUEVO DISEÑO) ==================
           const renderWaves = useCallback(() => {
-            animationRef.current = requestAnimationFrame(renderWaves);
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-            const width = rect.width; const height = rect.height;
-            ctx.clearRect(0, 0, width, height);
-            
-            const time = performance.now() / 1000;
-            // Calculamos el ritmo solo matemáticamente, SIN forzar a React a actualizarse 60 veces por seg
-            let simulatedBeat = isPlayingRef.current ? Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.5 + 0.5 : 0;
+              animationRef.current = requestAnimationFrame(renderWaves);
+              const canvas = canvasRef.current;
+              if (!canvas || !isPlayingRef.current) return;
+              
+              const ctx = canvas.getContext('2d');
+              const width = canvas.width;
+              const height = canvas.height;
+              
+              ctx.clearRect(0, 0, width, height);
+              
+              let freqs = [];
+              if (analyserRef.current) {
+                  analyserRef.current.getByteFrequencyData(dataArrayRef.current);
+                  freqs = dataArrayRef.current;
+              }
 
-            ctx.globalCompositeOperation = 'screen';
-            const numWaves = isPlayingRef.current ? 3 : 1; // Menos ondas, más FPS
-            const sliceWidth = width / 50; // Menos segmentos en la línea = menos uso de procesador
-            
-            const colors = [
-                { r: 239, g: 68, b: 68, a: isPlayingRef.current ? 0.7 : 0.3 },
-                { r: 59, g: 130, b: 246, a: isPlayingRef.current ? 0.6 : 0.2 },
-                { r: 168, g: 85, b: 247, a: isPlayingRef.current ? 0.6 : 0.2 }
-            ];
+              // Gradiente: Rojo (dominante) -> Azul -> Verde (acento final)
+              const gradient = ctx.createLinearGradient(0, 0, width, 0);
+              gradient.addColorStop(0, 'rgba(239, 68, 68, 0.9)');     // Rojo 
+              gradient.addColorStop(0.5, 'rgba(239, 68, 68, 0.9)');   // Rojo
+              gradient.addColorStop(0.85, 'rgba(59, 130, 246, 0.9)'); // Azul
+              gradient.addColorStop(1, 'rgba(34, 197, 94, 0.8)');     // Verde
 
-            for (let j = 0; j < numWaves; j++) {
-                ctx.beginPath();
-                let x = 0;
-                const phase = time * (1.5 + j * 0.5) + j * Math.PI / 2;
-                
-                for (let i = 0; i <= 50; i++) {
-                    let waveAmplitude = isPlayingRef.current ? 20 + ((Math.sin(i * 0.16 + phase) * 0.5 + 0.5) * simulatedBeat * height * 0.5) : 5;
-                    const y = height / 2 + Math.sin(i * 0.1 + phase) * waveAmplitude * (j % 2 === 0 ? 1 : -1);
-                    
-                    if (i === 0) ctx.moveTo(x, y); 
-                    else ctx.lineTo(x, y);
-                    x += sliceWidth;
-                }
+              ctx.lineWidth = 3; // Línea delgada y minimalista
+              ctx.strokeStyle = gradient;
+              ctx.shadowBlur = 15; // Brillo nítido
+              ctx.shadowColor = 'rgba(239, 68, 68, 0.4)';
+              ctx.lineCap = 'round';
+              ctx.lineJoin = 'round';
 
-                const color = colors[j];
-                const gradient = ctx.createLinearGradient(0, 0, width, 0);
-                gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
-                gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`);
-                gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+              const numPoints = 64; // Cantidad de puntos para suavidad
+              const sliceWidth = width / (numPoints - 1);
+              
+              const drawHalfWave = (direction) => {
+                  ctx.beginPath();
+                  for (let i = 0; i < numPoints; i++) {
+                      // Enfocar las frecuencias en el centro de la pantalla
+                      const centerDist = Math.abs(i - numPoints/2) / (numPoints/2);
+                      const freqIdx = Math.floor((1 - centerDist) * (freqs.length * 0.5));
+                      const fVal = (freqs[freqIdx] || 0) / 255;
+                      
+                      // Hace que la onda muera en los bordes
+                      const edgeMultiplier = Math.sin((i / (numPoints - 1)) * Math.PI);
+                      
+                      const time = performance.now() / 1000;
+                      const idleMotion = Math.sin(time * 3 + i * 0.2) * 4;
+                      
+                      // Altura final de este punto
+                      const yOffset = (fVal * height * 0.25 + idleMotion) * edgeMultiplier;
+                      
+                      const x = i * sliceWidth;
+                      const y = height / 2 + (yOffset * direction);
 
-                ctx.strokeStyle = gradient;
-                ctx.lineWidth = isPlayingRef.current ? 3 : 2;
-                ctx.stroke();
-            }
-            ctx.globalCompositeOperation = 'source-over';
+                      if (i === 0) ctx.moveTo(x, height / 2);
+                      else ctx.lineTo(x, y);
+                  }
+                  ctx.stroke();
+              };
+
+              // Dibujamos el reflejo simétrico (Hacia arriba y hacia abajo)
+              drawHalfWave(-1);
+              drawHalfWave(1);
+
           }, []);
 
           useEffect(() => {
+              if (canvasRef.current) {
+                  const dpr = window.devicePixelRatio || 1;
+                  const rect = canvasRef.current.getBoundingClientRect();
+                  canvasRef.current.width = rect.width * dpr;
+                  canvasRef.current.height = rect.height * dpr;
+              }
               animationRef.current = requestAnimationFrame(renderWaves);
               return () => cancelAnimationFrame(animationRef.current);
           }, [renderWaves]);
 
-          // ================== AUDIO CONTROLS ==================
+          // ================== AUDIO CONTROLS (INICIALIZA EL LECTOR DE RITMO) ==================
           const handlePlayToggle = () => {
+            if (!audioCtxRef.current) {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    audioCtxRef.current = new AudioContext();
+                    analyserRef.current = audioCtxRef.current.createAnalyser();
+                    analyserRef.current.fftSize = 128; // Resolución perfecta para curvas suaves
+                    const bufferLength = analyserRef.current.frequencyBinCount;
+                    dataArrayRef.current = new Uint8Array(bufferLength);
+                    
+                    const source = audioCtxRef.current.createMediaElementSource(audioRef.current);
+                    source.connect(analyserRef.current);
+                    analyserRef.current.connect(audioCtxRef.current.destination);
+                } catch (e) {}
+            }
+
+            if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
+                audioCtxRef.current.resume();
+            }
+
             if (isPlaying) {
-              audioRef.current.pause(); setIsPlaying(false); isPlayingRef.current = false;
-              setStatus('Radio en pausa'); setIsConnecting(false);
+              audioRef.current.pause(); 
+              setIsPlaying(false); 
+              isPlayingRef.current = false;
+              setStatus('Radio en pausa'); 
+              setIsConnecting(false);
             } else {
-              setStatus('Conectando...'); setIsConnecting(true);
+              setStatus('Conectando...'); 
+              setIsConnecting(true);
               audioRef.current.load();
               audioRef.current.play().then(() => {
-                    setIsPlaying(true); isPlayingRef.current = true;
-                    setIsConnecting(false); setStatus('Al Aire');
+                    setIsPlaying(true); 
+                    isPlayingRef.current = true;
+                    setIsConnecting(false); 
+                    setStatus('Al Aire');
               }).catch(() => {
-                    setStatus('Error de Conexión'); setIsPlaying(false);
-                    isPlayingRef.current = false; setIsConnecting(false);
+                    setStatus('Error de Conexión'); 
+                    setIsPlaying(false);
+                    isPlayingRef.current = false; 
+                    setIsConnecting(false);
               });
             }
           };
@@ -806,32 +764,13 @@
             if (audioRef.current) audioRef.current.muted = newMutedState;
           };
 
-          const handleViewModeChange = (mode) => {
-            setViewMode(mode);
-            if (mode === 'tv' && isPlaying && audioRef.current) {
-               audioRef.current.pause(); setIsPlaying(false); isPlayingRef.current = false;
-               setStatus('Radio en pausa'); setIsConnecting(false);
-            }
-          };
-
           return (
             <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-red-500/30 relative">
               
-              {/* FONDO DINÁMICO TIPO CUADRÍCULA TECNOLÓGICA (OPTIMIZADO) */}
-              <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex flex-col justify-end bg-black">
-                  <div className="absolute inset-0 opacity-20" style={{ 
-                      backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)', 
-                      backgroundSize: '25px 25px', 
-                      maskImage: 'radial-gradient(ellipse 80% 80% at 50% 30%, black 10%, transparent 80%)', 
-                      WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 30%, black 10%, transparent 80%)' 
-                  }}></div>
-                  
-                  {/* Simplificamos los filtros blur intensos y delegamos la animación al CSS de la tarjeta gráfica */}
-                  <div className={`absolute top-[-10%] left-[-20%] w-[80%] h-[80%] rounded-full mix-blend-screen transition-all duration-700 ease-in-out transform-gpu ${isPlaying && !isConnecting ? 'bg-blue-500 opacity-30 scale-110 animate-[slowPulse_3s_ease-in-out_infinite]' : 'bg-zinc-800 opacity-15 scale-100'}`} style={{ filter: 'blur(100px)' }}></div>
-                  <div className={`absolute bottom-[-10%] right-[-20%] w-[70%] h-[70%] rounded-full mix-blend-screen transition-all duration-700 ease-in-out transform-gpu ${isPlaying && !isConnecting ? 'bg-red-500 opacity-30 scale-110 animate-[slowPulse_2.5s_ease-in-out_infinite_alternate]' : 'bg-zinc-900 opacity-10 scale-100'}`} style={{ filter: 'blur(120px)' }}></div>
-                  
-                  {/* Se cambió el costoso backdrop-blur por un color sólido semitransparente */}
-                  <div className="absolute inset-0 bg-black/60"></div>
+              {/* FONDO LIMPIO Y LIGERO */}
+              <div className="fixed inset-0 z-0 pointer-events-none bg-black">
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'radial-gradient(circle at 50% 30%, rgba(220, 38, 38, 0.15) 0%, transparent 60%)' }}></div>
               </div>
 
               {/* BANNER AUTOMÁTICO DE INSTALACIÓN PWA */}
@@ -973,7 +912,6 @@
                           <button onClick={requestNotificationPermission} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                               <Bell size={16} />
                           </button>
-                          {/* Botón de Compartir Nativo */}
                           <button onClick={handleShareApp} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                               <ShareIcon size={16} />
                           </button>
@@ -989,32 +927,32 @@
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col items-center justify-start ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
                           
-                          {/* --- WIDGET DE CLIMA --- */}
-                          <div className="w-full flex justify-center mt-6 mb-2 z-10 shrink-0">
+                          {/* --- WIDGETS DE CLIMA Y HORA --- */}
+                          <div className="w-full flex justify-center mt-6 mb-2 z-10 shrink-0 gap-3">
                               <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
-                                  <CloudSun size={16} className="text-yellow-400" />
+                                  {weather ? getWeatherIcon(weather.weathercode) : <CloudSun size={16} className="text-yellow-400" />}
                                   <span className="text-[12px] font-bold text-white/90 tracking-wide">
                                       Mucutuy {weather ? `${Math.round(weather.temperature)}°C` : '...'}
                                   </span>
                               </div>
+                              <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                                  <ClockIcon size={16} className="text-white/70" />
+                                  <span className="text-[12px] font-bold text-white/90 tracking-wide w-[45px] text-center">
+                                      {timeVE || '--:--'}
+                                  </span>
+                              </div>
                           </div>
 
-                          {/* Reproductor Rediseñado (CSS Puro para el ritmo) */}
-                          <div className={`w-full mt-2 shrink-0 flex justify-center perspective-1000 relative transform-gpu transition-all duration-300 ${isPlaying && !isConnecting ? 'animate-[musicBeat_1s_ease-in-out_infinite]' : ''}`}>
+                          {/* REPRODUCTOR CENTRAL CON ONDAS ELEGANTES */}
+                          <div className="w-full mt-6 shrink-0 flex justify-center relative perspective-1000">
                               
-                              {/* Canvas de Ondas Centralizado y Superpuesto */}
-                              <canvas ref={canvasRef} className="absolute inset-0 w-full h-[150%] top-1/2 -translate-y-1/2 opacity-100 z-0 pointer-events-none"></canvas>
+                              {/* CANVAS DE ONDAS LINEALES */}
+                              <canvas ref={canvasRef} className="absolute inset-0 w-full h-[150%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none opacity-90"></canvas>
 
-                              <div className="relative z-10 w-full aspect-square max-w-[260px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center backdrop-blur-sm">
-                                  <div className={`absolute inset-0 w-full h-full rounded-full overflow-hidden bg-zinc-900 border-4 border-white/10 ${isPlaying && !isConnecting ? 'animate-[spin_6s_linear_infinite]' : ''}`}>
-                                      <div className="absolute inset-0 rounded-full border-[12px] border-zinc-950/80 z-10 pointer-events-none"></div>
-                                      <div className="absolute inset-0 rounded-full border-[24px] border-zinc-900/40 z-10 pointer-events-none mix-blend-overlay"></div>
-                                      <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=800&q=80" alt="Estudio" className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-50 scale-110' : 'opacity-20 scale-100 grayscale'}`} />
-                                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
-                                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-[60%] h-[60%] rounded-full overflow-hidden border-2 border-white/30 shadow-[0_0_30px_rgba(0,0,0,1)] bg-black">
-                                          <img src={logoUrl} alt="Logo Central" className="w-full h-full object-cover" />
-                                      </div>
-                                  </div>
+                              {/* LOGO CENTRAL ESTÁTICO PERO CON RESPLANDOR */}
+                              <div className={`relative z-10 w-full aspect-square max-w-[240px] rounded-full flex items-center justify-center transition-all duration-700 ${isPlaying && !isConnecting ? 'shadow-[0_0_60px_rgba(239,68,68,0.3)] scale-[1.02]' : 'shadow-2xl scale-100'}`}>
+                                  <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isPlaying && !isConnecting ? 'border-red-500/40' : 'border-white/5'}`}></div>
+                                  <img src={logoUrl} alt="Logo" className="w-[96%] h-[96%] object-cover rounded-full" />
                               </div>
                           </div>
 
@@ -1041,25 +979,14 @@
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 pt-2 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           
-                          <div className="w-full bg-zinc-900 rounded-[28px] overflow-hidden shadow-2xl relative border border-white/10 shrink-0 z-10 min-h-[220px] transform-gpu" style={{ WebkitTransform: 'translateZ(0)' }}>
-                              <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full z-10 flex items-center gap-2 shadow-lg">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> EN VIVO
-                              </div>
-                              <div className="absolute top-4 right-4 z-10 flex gap-2">
-                                  <button onClick={togglePiP} className="bg-black/70 p-2 rounded-full text-white/80 hover:text-white hover:bg-black transition"><PiPIcon size={16} /></button>
-                                  <button onClick={toggleFullScreen} className="bg-black/70 p-2 rounded-full text-white/80 hover:text-white hover:bg-black transition"><Maximize size={16} /></button>
-                              </div>
+                          <div className="w-full bg-black rounded-[20px] overflow-hidden shadow-xl border border-white/10 shrink-0 z-10 relative">
                               {tvError && (
                                 <div className="absolute inset-0 bg-zinc-950/95 z-20 flex flex-col items-center justify-center p-6 text-center">
                                    <AlertCircle size={44} className="text-red-500/80 mb-3" />
                                    <h3 className="text-lg font-bold text-white mb-1">Señal Expirada</h3>
                                 </div>
                               )}
-                              <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black transform-gpu ${tvError ? 'hidden' : 'block'}`} style={{ WebkitTransform: 'translateZ(0)' }} controls playsInline></video>
-                              <div className="p-5 flex flex-col gap-1 bg-gradient-to-t from-zinc-950 to-transparent">
-                                  <h3 className="text-xl font-bold text-white tracking-tight drop-shadow">{TV_CHANNELS.find(c => c.id === activeTvChannel)?.name}</h3>
-                                  <p className="text-[14px] text-red-400 font-medium">{TV_CHANNELS.find(c => c.id === activeTvChannel)?.type}</p>
-                              </div>
+                              <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
                           </div>
 
                           <div className="flex flex-col gap-3 shrink-0 z-10">
@@ -1230,8 +1157,6 @@
                 .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
                 .perspective-1000 { perspective: 1000px; }
                 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-                @keyframes musicBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
-                @keyframes slowPulse { 0%, 100% { opacity: 0.3; transform: scale(1.1); } 50% { opacity: 0.4; transform: scale(1.15); } }
               `}} />
             </div>
           );
