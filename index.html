@@ -246,14 +246,15 @@
               { id: 'rcn', name: 'RCN Más', type: 'Entretenimiento', url: 'https://rcntv-rcnmas-1-us.plex.wurl.tv/playlist.m3u8', color: 'bg-yellow-500', logo: './rcn.png' }
           ];
 
-          // ================== RELOJ DE VENEZUELA ==================
+          // ================== RELOJ DE VENEZUELA CON SEGUNDOS ==================
           useEffect(() => {
               const updateTime = () => {
                   const now = new Date();
-                  setTimeVE(now.toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit' }));
+                  setTimeVE(now.toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', second: '2-digit' }));
               };
               updateTime();
-              const interval = setInterval(updateTime, 10000); 
+              // Actualizar cada segundo para ver los segundos correr
+              const interval = setInterval(updateTime, 1000); 
               return () => clearInterval(interval);
           }, []);
 
@@ -645,7 +646,7 @@
             return () => eventSource.close();
           }, []);
 
-          // ================== ANIMACIÓN DE LOGO Y ONDAS ==================
+          // ================== ANIMACIÓN DE LOGO Y ONDAS INTELIGENTE (RESPALDO IPHONE) ==================
           const renderWaves = useCallback(() => {
               animationRef.current = requestAnimationFrame(renderWaves);
               const canvas = canvasRef.current;
@@ -658,13 +659,26 @@
               
               let beat = 0;
               let freqs = [];
+              let hasAudioData = false;
 
+              // Intentar extraer frecuencias reales
               if (analyserRef.current) {
                   analyserRef.current.getByteFrequencyData(dataArrayRef.current);
                   freqs = dataArrayRef.current;
                   let bassSum = 0;
-                  for(let i = 0; i < 8; i++) bassSum += freqs[i];
-                  beat = (bassSum / 8) / 255; 
+                  for(let i = 0; i < 8; i++) {
+                      bassSum += freqs[i];
+                      if (freqs[i] > 0) hasAudioData = true;
+                  }
+                  if (hasAudioData) beat = (bassSum / 8) / 255; 
+              }
+
+              // FALLBACK IPHONE: Si Apple bloqueó los datos de Zeno.fm (CORS), simulamos la onda matemáticamente
+              if (!hasAudioData && isPlayingRef.current) {
+                  const time = performance.now() / 1000;
+                  beat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.3; // Latido falso pero realista
+                  // Generamos frecuencias falsas suaves
+                  freqs = Array.from({length: 64}, (_, i) => Math.abs(Math.sin(time * 5 + i)) * (120 + Math.random() * 50));
               }
 
               if (logoRef.current) {
@@ -928,7 +942,8 @@
                       <button onClick={requestNotificationPermission} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                           <Bell size={16} />
                       </button>
-                      <button onClick={handleShareApp} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg hidden sm:flex">
+                      {/* BOTÓN COMPARTIR AHORA VISIBLE SIEMPRE */}
+                      <button onClick={handleShareApp} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                           <ShareIcon size={16} />
                       </button>
                       <button onClick={() => setShowAuthModal(true)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md overflow-hidden active:scale-95 ${user ? 'border-white/20' : 'bg-white/10 text-white hover:bg-white/20 border-white/10'}`}>
@@ -957,9 +972,9 @@
                                           Mucutuy {weather ? `${Math.round(weather.temperature)}°C` : '...'}
                                       </span>
                                   </div>
-                                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
+                                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
                                       <ClockIcon size={16} className="text-white/70 shrink-0" />
-                                      <span className="text-[12px] font-bold text-white/90 tracking-wide font-mono mt-0.5">
+                                      <span className="text-[12px] font-bold text-white/90 tracking-wide font-mono mt-0.5 text-center w-full">
                                           {timeVE || '--:--'}
                                       </span>
                                   </div>
