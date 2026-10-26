@@ -145,6 +145,7 @@
         const HistoryIcon = (props) => <Icon {...props} size={18}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></Icon>;
         const SparklesIcon = (props) => <Icon {...props} size={16}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></Icon>;
         const RefreshIcon = (props) => <Icon {...props} size={15}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></Icon>;
+        const ShieldIcon = (props) => <Icon {...props} size={18}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></Icon>;
 
         const WhatsAppIcon = ({ size = 16, className = "" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
@@ -202,13 +203,23 @@
         );
 
         // ==========================================
-        // LISTA CONSTANTE DE CANALES TV
+        // LISTA CONSTANTE DE CANALES TV (CON FUSIÓN DE VIDEO + AUDIO ESPAÑOL PARA ESPN)
         // ==========================================
-        const TV_CHANNELS = [
+        const DEFAULT_TV_CHANNELS = [
             { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600', logo: './venevision.png' },
             { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-red-600', logo: './cnn.png' },
             { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600', logo: './realmadrid.png' },
-            { id: 'espn', name: 'ESPN', type: 'Deportes', url: 'https://deportes.ksdjugfssddeports.com/playlist/43/tracks-v1a1/mono.m3u8?token=f7676745f69171c6afee4181eee2bd2d3a3e4c6b-4c8963d1b375d0175f69d45a47c21013-1793009221-1792987621', color: 'bg-red-700', logo: './espn.png' },
+            { 
+                id: 'espn', 
+                name: 'ESPN', 
+                type: 'Deportes', 
+                url: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/index.m3u8',
+                videoUrl: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-video=2400000.m3u8',
+                audioUrl: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-audio_spa=128000.m3u8',
+                backupUrl: 'https://deportes.ksdjugfssddeports.com/playlist/43/tracks-v1a1/mono.m3u8?token=f7676745f69171c6afee4181eee2bd2d3a3e4c6b-4c8963d1b375d0175f69d45a47c21013-1793009221-1792987621',
+                color: 'bg-red-700', 
+                logo: './espn.png' 
+            },
             { id: 'noticias', name: 'DW Español', type: 'Noticias', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-sky-500', logo: './dw.png' },
             { id: 'tam', name: 'TAM TV', type: 'Regional', url: 'https://rtmp.tamtv.com.ve/tmp_hls/stream/index.m3u8', color: 'bg-emerald-500', logo: './tam.png' },
             { id: 'chavo', name: 'El Chavo', type: 'Entretenimiento', url: 'https://live20.bozztv.com/giatvplayout7/giatv-211465/tracks-v1a1/mono.ts.m3u8', color: 'bg-orange-500', logo: './chavo.png' },
@@ -218,10 +229,38 @@
         // NOMBRE OFICIAL POR DEFECTO EN LETRAS ROJAS
         const DEFAULT_STATION_ARTIST = "Prégon 95.7 Fm";
 
+        // CONFIGURACIÓN GLOBAL POR DEFECTO (MODIFICABLE POR SUPERUSUARIO EN VIVO)
+        const DEFAULT_GLOBAL_CONFIG = {
+            enableTV: true,
+            enableSports: true,
+            enableLocation: true,
+            enableChat: true,
+            enableReactions: true,
+            enableShazamButton: true,
+            enableWhatsappButton: true,
+            forcedSongTitle: "",
+            forcedSongArtist: "",
+            customEspnVideo: "https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-video=2400000.m3u8",
+            customEspnAudio: "https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-audio_spa=128000.m3u8",
+            adminPass: "pregon2026"
+        };
+
         // ==========================================
         // APP PRINCIPAL
         // ==========================================
         const App = () => {
+          // ID ÚNICO DE SESIÓN PARA SINCRONIZAR EMOJIS SIN DUPLICARLOS EN PANTALLA PROPIA
+          const sessionIdRef = useRef("sess_" + Math.random().toString(36).substring(2, 10));
+
+          // ESTADO DE CONFIGURACIÓN GLOBAL (SINCRONIZADO CON FIREBASE PARA TODOS LOS USUARIOS)
+          const [globalConfig, setGlobalConfig] = useState(DEFAULT_GLOBAL_CONFIG);
+          const [showAdminModal, setShowAdminModal] = useState(false);
+          const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
+          const [adminPassInput, setAdminPassInput] = useState("");
+          const [adminPassError, setAdminPassError] = useState("");
+          const logoTapCountRef = useRef(0);
+          const logoTapTimerRef = useRef(null);
+
           // ESTADOS REPRODUCTOR Y CARÁTULA DINÁMICA
           const [isPlaying, setIsPlaying] = useState(false);
           const [isConnecting, setIsConnecting] = useState(false);
@@ -231,6 +270,7 @@
           const [viewMode, setViewMode] = useState('radio'); 
           const [songInfo, setSongInfo] = useState({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
           const [coverArt, setCoverArt] = useState('./logo.jpg');
+          const [ambientRgb, setAmbientRgb] = useState('220, 38, 38'); 
           const [songHistory, setSongHistory] = useState([]);
           const [isOfflineMode, setIsOfflineMode] = useState(false);
           const [isScanningAudio, setIsScanningAudio] = useState(false);
@@ -257,12 +297,14 @@
 
           // ESTADO REACCIONES FLOTANTES EN VIVO
           const [floatingReactions, setFloatingReactions] = useState([]);
+          const lastProcessedReactionIdRef = useRef(null);
 
           // ESTADOS DEPORTES Y TV
           const [matches, setMatches] = useState([]);
           const [loadingSports, setLoadingSports] = useState(false);
           const [tvError, setTvError] = useState(false);
           const [activeTvChannel, setActiveTvChannel] = useState('venevision');
+          const [espnUseBackup, setEspnUseBackup] = useState(false);
           
           // ESTADOS USUARIOS, CLIMA Y HORA
           const [onlineUsers, setOnlineUsers] = useState(1);
@@ -311,7 +353,125 @@
           // TOKEN OFICIAL DE AUDD INTEGRADO
           const AUDD_API_TOKEN = "4e203d99c5bbbc59efc1ea5a6aa8d57a";
 
-          // ================== SINCRONIZACIÓN DE CANCIÓN EN FIREBASE (AHORRA TOKENS AUDD) ==================
+          // ================== FUNCIÓN VISUAL PARA LANZAR EMOJI EN PANTALLA ==================
+          const spawnLocalEmoji = useCallback((emoji) => {
+              const id = Date.now() + Math.random();
+              const randomLeft = 18 + Math.floor(Math.random() * 64);
+              setFloatingReactions(prev => [...prev.slice(-14), { id, emoji, left: randomLeft }]);
+              setTimeout(() => {
+                  setFloatingReactions(prev => prev.filter(r => r.id !== id));
+              }, 2800);
+          }, []);
+
+          // ================== SINCRONIZACIÓN DE SUPERUSUARIO (CONFIGURACIÓN GLOBAL EN FIREBASE) ==================
+          useEffect(() => {
+              if (!dbInstance) return;
+              const configRef = dbInstance.ref('config_global');
+              const listener = configRef.on('value', (snap) => {
+                  const data = snap.val();
+                  if (data) {
+                      setGlobalConfig(prev => ({ ...prev, ...data }));
+                  }
+              });
+              return () => configRef.off('value', listener);
+          }, []);
+
+          // Si el superusuario desactiva la pestaña donde está un usuario, regresarlo a Radio
+          useEffect(() => {
+              if (viewMode === 'tv' && !globalConfig.enableTV) handleViewModeChange('radio');
+              if (viewMode === 'sports' && !globalConfig.enableSports) handleViewModeChange('radio');
+              if (viewMode === 'nasa' && !globalConfig.enableLocation) handleViewModeChange('radio');
+          }, [globalConfig.enableTV, globalConfig.enableSports, globalConfig.enableLocation, viewMode]);
+
+          // Acceso secreto tocando 5 veces el logo del encabezado
+          const handleSecretLogoTap = () => {
+              logoTapCountRef.current += 1;
+              if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
+              if (logoTapCountRef.current >= 5) {
+                  logoTapCountRef.current = 0;
+                  setShowAdminModal(true);
+              } else {
+                  logoTapTimerRef.current = setTimeout(() => {
+                      logoTapCountRef.current = 0;
+                  }, 1800);
+              }
+          };
+
+          const handleUnlockAdmin = (e) => {
+              e.preventDefault();
+              const currentSecret = globalConfig.adminPass || "pregon2026";
+              if (adminPassInput.trim() === currentSecret) {
+                  setIsAdminUnlocked(true);
+                  setAdminPassError("");
+              } else {
+                  setAdminPassError("Clave incorrecta.");
+              }
+          };
+
+          const updateGlobalSetting = (key, value) => {
+              const updated = { ...globalConfig, [key]: value };
+              setGlobalConfig(updated);
+              if (dbInstance) {
+                  dbInstance.ref('config_global').set(updated);
+                  // Respaldo adicional en chat_cabina por si config_global tiene restricción de reglas en Firebase
+                  dbInstance.ref('chat_cabina').push({
+                      isConfigSync: true,
+                      configPayload: updated,
+                      timestamp: window.firebase.database.ServerValue.TIMESTAMP
+                  });
+              }
+          };
+
+          // ================== EXTRACTOR DE COLOR DINÁMICO OSCURO (SIN TONOS BLANCOS) ==================
+          useEffect(() => {
+              if (!coverArt || coverArt === './logo.jpg' || coverArt === logoUrl) {
+                  setAmbientRgb('220, 38, 38'); 
+                  return;
+              }
+              const img = new Image();
+              img.crossOrigin = "Anonymous";
+              img.onload = () => {
+                  try {
+                      const canvas = document.createElement('canvas');
+                      canvas.width = 24;
+                      canvas.height = 24;
+                      const ctx = canvas.getContext('2d');
+                      ctx.drawImage(img, 0, 0, 24, 24);
+                      const data = ctx.getImageData(0, 0, 24, 24).data;
+                      let rSum = 0, gSum = 0, bSum = 0, count = 0;
+
+                      for (let i = 0; i < data.length; i += 4) {
+                          const r = data[i], g = data[i + 1], b = data[i + 2];
+                          const max = Math.max(r, g, b);
+                          const min = Math.min(r, g, b);
+                          const saturation = max === 0 ? 0 : (max - min) / max;
+
+                          if (max > 45 && min < 190 && saturation > 0.25) {
+                              rSum += r; gSum += g; bSum += b; count++;
+                          }
+                      }
+
+                      if (count > 0) {
+                          let r = Math.round(rSum / count);
+                          let g = Math.round(gSum / count);
+                          let b = Math.round(bSum / count);
+                          const maxC = Math.max(r, g, b, 1);
+                          r = Math.min(230, Math.round((r / maxC) * 210));
+                          g = Math.min(200, Math.round((g / maxC) * 190));
+                          b = Math.min(230, Math.round((b / maxC) * 210));
+                          setAmbientRgb(`${r}, ${g}, ${b}`);
+                      } else {
+                          setAmbientRgb('220, 38, 38');
+                      }
+                  } catch (e) {
+                      setAmbientRgb('220, 38, 38');
+                  }
+              };
+              img.onerror = () => setAmbientRgb('220, 38, 38');
+              img.src = coverArt;
+          }, [coverArt]);
+
+          // ================== SINCRONIZACIÓN DE CANCIÓN EN FIREBASE ==================
           useEffect(() => {
               if (!dbInstance) return;
               const songRef = dbInstance.ref('cancion_actual');
@@ -371,19 +531,14 @@
               });
           }, []);
 
-          // ================== ESCÁNER ACÚSTICO CON TU TOKEN AUDD + PROTECCIÓN DE CRÉDITOS ==================
-          const identifyAudioByFingerprint = useCallback(async (isManualTrigger = false) => {
+          // ================== ESCÁNER ACÚSTICO EXCLUSIVAMENTE MANUAL ==================
+          const identifyAudioByFingerprint = useCallback(async () => {
               if (!isPlayingRef.current || isScanningAudio) return;
-
-              // Si es un escaneo automático cada 60s y Zeno ya está dando el nombre o ya se identificó hace menos de 3 min, ahorramos el token
-              if (!isManualTrigger && (isZenoProvidingSongRef.current || Date.now() < shazamLockUntilRef.current - 30000)) {
-                  return;
-              }
 
               if (streamDestRef.current && window.MediaRecorder) {
                   try {
                       setIsScanningAudio(true);
-                      if (isManualTrigger) setScanFeedback('Escuchando señal (5s)...');
+                      setScanFeedback('Escuchando señal (5s)...');
 
                       const mediaStream = streamDestRef.current.stream;
                       const recorder = new MediaRecorder(mediaStream);
@@ -395,7 +550,7 @@
 
                       recorder.onstop = async () => {
                           try {
-                              if (isManualTrigger) setScanFeedback('Identificando canción...');
+                              setScanFeedback('Identificando canción...');
                               const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                               const formData = new FormData();
                               formData.append('file', audioBlob, 'sample.webm');
@@ -415,29 +570,22 @@
                                   
                                   await updateDetectedSong(detectedArtist, detectedTitle, 'IA Audio', directCover);
 
-                                  if (isManualTrigger) {
-                                      setScanFeedback('¡Canción identificada!');
-                                      setTimeout(() => setScanFeedback(''), 3000);
-                                  }
+                                  setScanFeedback('¡Canción identificada!');
+                                  setTimeout(() => setScanFeedback(''), 3000);
                               } else {
-                                  // Si no la reconoce ni Zeno ni la IA, aseguramos que abajo diga "Prégon 95.7 Fm"
                                   if (Date.now() > shazamLockUntilRef.current && !isZenoProvidingSongRef.current) {
                                       setSongInfo({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
                                       setCoverArt('./logo.jpg');
                                   }
-                                  if (isManualTrigger) {
-                                      setScanFeedback('Señal en vivo');
-                                      setTimeout(() => setScanFeedback(''), 2500);
-                                  }
+                                  setScanFeedback('No identificada / En Vivo');
+                                  setTimeout(() => setScanFeedback(''), 2500);
                               }
                           } catch (err) {
                               if (Date.now() > shazamLockUntilRef.current && !isZenoProvidingSongRef.current) {
                                   setSongInfo({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
                               }
-                              if (isManualTrigger) {
-                                  setScanFeedback('Señal en vivo');
-                                  setTimeout(() => setScanFeedback(''), 2000);
-                              }
+                              setScanFeedback('Señal en vivo');
+                              setTimeout(() => setScanFeedback(''), 2000);
                           } finally {
                               setIsScanningAudio(false);
                           }
@@ -449,19 +597,13 @@
                       }, 4800);
                   } catch (e) {
                       setIsScanningAudio(false);
-                      if (isManualTrigger) setScanFeedback('');
+                      setScanFeedback('');
                   }
+              } else {
+                  setScanFeedback('No soportado en este navegador');
+                  setTimeout(() => setScanFeedback(''), 2500);
               }
           }, [isScanningAudio, updateDetectedSong]);
-
-          useEffect(() => {
-              const scanInterval = setInterval(() => {
-                  if (isPlayingRef.current) {
-                      identifyAudioByFingerprint(false);
-                  }
-              }, 60000);
-              return () => clearInterval(scanInterval);
-          }, [identifyAudioByFingerprint]);
 
           // ================== RELOJ DE VENEZUELA CON SEGUNDOS ==================
           useEffect(() => {
@@ -532,38 +674,49 @@
               });
           };
 
-          // ================== REACCIONES EN VIVO (FIREBASE) ==================
+          // ================== REACCIONES EN VIVO MULTI-USUARIO (100% COMPATIBLE CON REGLAS DE FIREBASE) ==================
           useEffect(() => {
               if (!dbInstance) return;
-              const reactionsRef = dbInstance.ref('reacciones_vivo').limitToLast(1);
-              let initial = true;
-              const listener = reactionsRef.on('child_added', (snapshot) => {
-                  if (initial) { initial = false; return; }
-                  const data = snapshot.val();
-                  if (data && data.emoji) {
-                      const id = Date.now() + Math.random();
-                      const randomLeft = 15 + Math.floor(Math.random() * 70);
-                      setFloatingReactions(prev => [...prev.slice(-12), { id, emoji: data.emoji, left: randomLeft }]);
-                      setTimeout(() => {
-                          setFloatingReactions(prev => prev.filter(r => r.id !== id));
-                      }, 2800);
+              const reactionRef = dbInstance.ref('evento_reaccion');
+              let isFirst = true;
+              const listener = reactionRef.on('value', (snap) => {
+                  if (isFirst) { isFirst = false; return; }
+                  const data = snap.val();
+                  if (data && data.emoji && data.senderId !== sessionIdRef.current && data.id !== lastProcessedReactionIdRef.current) {
+                      lastProcessedReactionIdRef.current = data.id;
+                      spawnLocalEmoji(data.emoji);
                   }
               });
-              return () => reactionsRef.off('child_added', listener);
-          }, []);
+              return () => reactionRef.off('value', listener);
+          }, [spawnLocalEmoji]);
 
           const triggerReaction = (emoji) => {
-              const id = Date.now() + Math.random();
-              const randomLeft = 20 + Math.floor(Math.random() * 60);
-              setFloatingReactions(prev => [...prev.slice(-12), { id, emoji, left: randomLeft }]);
-              setTimeout(() => {
-                  setFloatingReactions(prev => prev.filter(r => r.id !== id));
-              }, 2800);
+              // Mostrar inmediatamente en la pantalla propia
+              spawnLocalEmoji(emoji);
+              const reactionEventId = "rx_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
+              lastProcessedReactionIdRef.current = reactionEventId;
+
               if (dbInstance) {
-                  dbInstance.ref('reacciones_vivo').push({
+                  // Vía 1: Nodo directo de baja latencia
+                  dbInstance.ref('evento_reaccion').set({
+                      id: reactionEventId,
                       emoji,
-                      timestamp: window.firebase.database.ServerValue.TIMESTAMP
+                      senderId: sessionIdRef.current,
+                      timestamp: Date.now()
+                  }).catch(() => {});
+
+                  // Vía 2: Canal garantizado dentro de chat_cabina (invisible en la lista de textos, pero dispara el emoji en todos los demás usuarios)
+                  const tempRef = dbInstance.ref('chat_cabina').push({
+                      isReaction: true,
+                      reactionId: reactionEventId,
+                      emoji,
+                      senderId: sessionIdRef.current,
+                      timestamp: Date.now()
                   });
+                  // Limpiar el evento efímero a los 4 segundos para no llenar el historial del chat
+                  setTimeout(() => {
+                      tempRef.remove().catch(() => {});
+                  }, 4000);
               }
           };
 
@@ -629,15 +782,15 @@
           useEffect(() => {
               if ('mediaSession' in navigator) {
                   navigator.mediaSession.metadata = new window.MediaMetadata({
-                      title: songInfo.title,
-                      artist: songInfo.artist || DEFAULT_STATION_ARTIST,
+                      title: globalConfig.forcedSongTitle || songInfo.title,
+                      artist: globalConfig.forcedSongArtist || songInfo.artist || DEFAULT_STATION_ARTIST,
                       album: DEFAULT_STATION_ARTIST,
                       artwork: [{ src: coverArt || './logo.jpg', sizes: '512x512', type: 'image/jpeg' }]
                   });
                   navigator.mediaSession.setActionHandler('play', () => handlePlayToggle());
                   navigator.mediaSession.setActionHandler('pause', () => handlePlayToggle());
               }
-          }, [songInfo, isPlaying, coverArt]);
+          }, [songInfo, isPlaying, coverArt, globalConfig.forcedSongTitle, globalConfig.forcedSongArtist]);
 
           // ================== CONTADOR Y CLIMA (DÍA/NOCHE) ==================
           useEffect(() => {
@@ -752,7 +905,7 @@
 
           const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
-          // ================== CHAT Y NOTIFICACIONES ==================
+          // ================== CHAT, REACCIONES REMOTAS Y CONFIGURACIÓN EN TIEMPO REAL ==================
           const isInitialChatLoad = useRef(true);
           const lastMessageId = useRef(null);
 
@@ -787,17 +940,33 @@
               const listener = chatRef.on('value', (snapshot) => {
                   const data = snapshot.val();
                   if (data) {
-                      const loadedMessages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                      setMessages(loadedMessages);
-                      if (!isInitialChatLoad.current && loadedMessages.length > 0) {
-                          const lastMsg = loadedMessages[loadedMessages.length - 1];
+                      const rawList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                      
+                      // Detectar si llegó una reacción o cambio de superusuario desde otro dispositivo
+                      if (!isInitialChatLoad.current && rawList.length > 0) {
+                          const newestItem = rawList[rawList.length - 1];
+                          if (newestItem.isReaction && newestItem.senderId !== sessionIdRef.current && newestItem.reactionId !== lastProcessedReactionIdRef.current) {
+                              lastProcessedReactionIdRef.current = newestItem.reactionId;
+                              spawnLocalEmoji(newestItem.emoji);
+                          }
+                          if (newestItem.isConfigSync && newestItem.configPayload) {
+                              setGlobalConfig(prev => ({ ...prev, ...newestItem.configPayload }));
+                          }
+                      }
+
+                      // Filtrar solo los mensajes reales de texto para mostrar en la ventana del chat
+                      const textMessages = rawList.filter(item => !item.isReaction && !item.isConfigSync && item.text);
+                      setMessages(textMessages.length > 0 ? textMessages : [{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos a la sintonía de los Pueblos del Sur!', time: '' }]);
+
+                      if (!isInitialChatLoad.current && textMessages.length > 0) {
+                          const lastMsg = textMessages[textMessages.length - 1];
                           if (lastMsg.id !== lastMessageId.current && (!user || lastMsg.user !== user.name)) {
                               if (!showChatRef.current) setUnreadCount(prev => prev + 1);
                               sendAppNotification(`Pregón 95.7`, `${lastMsg.user}: ${lastMsg.text}`);
                           }
                           lastMessageId.current = lastMsg.id;
                       } else {
-                           if(loadedMessages.length > 0) lastMessageId.current = loadedMessages[loadedMessages.length - 1].id;
+                           if(textMessages.length > 0) lastMessageId.current = textMessages[textMessages.length - 1].id;
                            isInitialChatLoad.current = false;
                       }
                   } else {
@@ -806,7 +975,7 @@
                   }
               });
               return () => chatRef.off('value', listener);
-          }, [user]);
+          }, [user, spawnLocalEmoji]);
 
           useEffect(() => {
               if (showChat && chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -852,14 +1021,40 @@
               setShowToolsModal(false);
           };
 
-          // ================== REPRODUCTOR DE TV ESTABLE ==================
+          // ================== REPRODUCTOR DE TV CON FUSIÓN DE VIDEO + AUDIO SEPARADOS PARA ESPN ==================
           useEffect(() => {
             if (viewMode === 'tv' && tvVideoRef.current) {
               setTvError(false);
               const video = tvVideoRef.current;
               let hls;
-              const currentChannel = TV_CHANNELS.find(c => c.id === activeTvChannel);
-              const currentTvUrl = currentChannel.url;
+              let masterBlobUrl = null;
+              const currentChannel = DEFAULT_TV_CHANNELS.find(c => c.id === activeTvChannel);
+              let currentTvUrl = currentChannel.url;
+
+              // Si es ESPN, creamos un Manifiesto Maestro HLS en memoria que une el link de video (2400000) y el de audio español (128000)
+              if (activeTvChannel === 'espn') {
+                  if (espnUseBackup && currentChannel.backupUrl) {
+                      currentTvUrl = currentChannel.backupUrl;
+                  } else {
+                      const vUrl = globalConfig.customEspnVideo || currentChannel.videoUrl;
+                      const aUrl = globalConfig.customEspnAudio || currentChannel.audioUrl;
+                      if (vUrl && aUrl && window.Hls && window.Hls.isSupported()) {
+                          const masterManifest = [
+                              '#EXTM3U',
+                              '#EXT-X-VERSION:4',
+                              `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio-spa",NAME="Espanol",DEFAULT=YES,AUTOSELECT=YES,LANGUAGE="es",URI="${aUrl}"`,
+                              `#EXT-X-STREAM-INF:BANDWIDTH=2528000,CODECS="avc1.4d401f,mp4a.40.2",AUDIO="audio-spa"`,
+                              vUrl
+                          ].join('\n');
+                          const blob = new Blob([masterManifest], { type: 'application/vnd.apple.mpegurl' });
+                          masterBlobUrl = URL.createObjectURL(blob);
+                          currentTvUrl = masterBlobUrl;
+                      } else if (vUrl) {
+                          // Para Safari/iOS nativo, usamos el manifiesto padre index.m3u8 del mismo servidor .isml
+                          currentTvUrl = vUrl.replace('ESPN_2-video=2400000.m3u8', 'index.m3u8');
+                      }
+                  }
+              }
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
@@ -873,12 +1068,22 @@
                   hls.on(window.Hls.Events.ERROR, function (e, data) {
                     if (data.fatal) {
                       if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
-                        hls.startLoad();
+                        if (activeTvChannel === 'espn' && !espnUseBackup) {
+                            hls.destroy();
+                            setEspnUseBackup(true);
+                        } else {
+                            hls.startLoad();
+                        }
                       } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
                         hls.recoverMediaError();
                       } else {
-                        setTvError(true);
-                        hls.destroy();
+                        if (activeTvChannel === 'espn' && !espnUseBackup) {
+                            hls.destroy();
+                            setEspnUseBackup(true);
+                        } else {
+                            setTvError(true);
+                            hls.destroy();
+                        }
                       }
                     }
                   });
@@ -887,7 +1092,10 @@
                   });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                   video.src = currentTvUrl;
-                  video.onerror = () => setTvError(true);
+                  video.onerror = () => {
+                      if (activeTvChannel === 'espn' && !espnUseBackup) setEspnUseBackup(true);
+                      else setTvError(true);
+                  };
                   video.addEventListener('loadedmetadata', function () { 
                     video.play().catch(()=>{}); 
                   });
@@ -897,10 +1105,11 @@
               if (window.Hls) initPlayer(); else setTimeout(initPlayer, 500);
               return () => { 
                 if (hls) hls.destroy(); 
-                else if (video) { video.removeAttribute('src'); video.load(); } 
+                else if (video) { video.removeAttribute('src'); video.load(); }
+                if (masterBlobUrl) URL.revokeObjectURL(masterBlobUrl);
               };
             }
-          }, [viewMode, activeTvChannel]);
+          }, [viewMode, activeTvChannel, espnUseBackup, globalConfig.customEspnVideo, globalConfig.customEspnAudio]);
 
           // ================== FETCH DEPORTES + GOLEADORES Y MINUTO EXACTO ==================
           const sportsNotified = useRef(false);
@@ -1031,7 +1240,6 @@
                   if (isGeneric) {
                       isZenoProvidingSongRef.current = false;
                       setIsOfflineMode(false);
-                      // Si la IA ya identificó una canción recientemente, mantenemos la de la IA
                       if (Date.now() < shazamLockUntilRef.current) {
                           return;
                       }
@@ -1136,7 +1344,7 @@
               return () => cancelAnimationFrame(animationRef.current);
           }, [renderWaves]);
 
-          // ================== AUDIO CONTROLS + DSP FILTERS + NODO GRABADOR SHAZAM ==================
+          // ================== AUDIO CONTROLS + DSP FILTERS ==================
           const handlePlayToggle = () => {
             if (!audioCtxRef.current) {
                 try {
@@ -1197,7 +1405,6 @@
                     isPlayingRef.current = true;
                     setIsConnecting(false); 
                     setStatus('Al Aire');
-                    setTimeout(() => identifyAudioByFingerprint(false), 5000);
               }).catch(() => {
                     setStatus('Reconectando...'); 
                     setIsPlaying(false);
@@ -1220,24 +1427,149 @@
             if (audioRef.current) audioRef.current.muted = newMutedState;
           };
 
+          const displayedTitle = globalConfig.forcedSongTitle && globalConfig.forcedSongTitle.trim() !== "" 
+              ? globalConfig.forcedSongTitle 
+              : songInfo.title;
+          const displayedArtist = globalConfig.forcedSongArtist && globalConfig.forcedSongArtist.trim() !== "" 
+              ? globalConfig.forcedSongArtist 
+              : (songInfo.artist || DEFAULT_STATION_ARTIST);
+
           return (
-            <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-red-500/30 relative">
+            <div className="flex flex-col h-[100dvh] w-full bg-black font-sans selection:bg-red-500/30 relative">
               
-              {/* FONDO AMBIENTAL DINÁMICO CON BLUR DE CARÁTULA */}
+              {/* FONDO NEGRO PURO + MALLA/GRID + RESPLANDOR DINÁMICO OSCURO (CERO TONOS BLANCOS) */}
               <div className="fixed inset-0 z-0 pointer-events-none bg-black overflow-hidden">
-                  <img src={coverArt} alt="" className={`absolute inset-0 w-full h-full object-cover scale-150 blur-[90px] transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-25' : 'opacity-10'}`} />
-                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'radial-gradient(circle at 50% 30%, rgba(220, 38, 38, 0.18) 0%, transparent 65%)' }}></div>
+                  <div 
+                      className={`absolute inset-0 transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-25'}`} 
+                      style={{ 
+                          background: `radial-gradient(circle at 50% 34%, rgba(${ambientRgb}, 0.28) 0%, rgba(${ambientRgb}, 0.08) 38%, rgba(0, 0, 0, 0.98) 70%, #000000 100%)` 
+                      }}
+                  ></div>
+                  <div 
+                      className="absolute inset-0 opacity-25" 
+                      style={{ 
+                          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px)', 
+                          backgroundSize: '30px 30px' 
+                      }}
+                  ></div>
               </div>
 
-              {/* LLUVIA DE REACCIONES EN VIVO */}
-              <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">
-                  {floatingReactions.map(r => (
-                      <div key={r.id} className="absolute bottom-24 text-2xl sm:text-3xl animate-floatUp select-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" style={{ left: `${r.left}%` }}>
-                          {r.emoji}
+              {/* LLUVIA DE REACCIONES EN VIVO (SINCRONIZADA ENTRE TODOS LOS USUARIOS) */}
+              {globalConfig.enableReactions && (
+                  <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">
+                      {floatingReactions.map(r => (
+                          <div key={r.id} className="absolute bottom-24 text-2xl sm:text-3xl animate-floatUp select-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" style={{ left: `${r.left}%` }}>
+                              {r.emoji}
+                          </div>
+                      ))}
+                  </div>
+              )}
+
+              {/* MODAL DE SUPERUSUARIO / ADMINISTRADOR GLOBAL */}
+              {showAdminModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-[fadeIn_0.25s_ease-out]">
+                      <div className="w-full max-w-md bg-zinc-900 border border-red-500/30 rounded-[32px] p-6 shadow-2xl relative max-h-[88vh] flex flex-col">
+                          <div className="flex justify-between items-center mb-4 shrink-0">
+                              <h3 className="text-lg font-black text-white flex items-center gap-2">
+                                  <ShieldIcon className="text-red-500" /> Panel Superusuario
+                              </h3>
+                              <button onClick={() => setShowAdminModal(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full"><XIcon size={20}/></button>
+                          </div>
+
+                          {!isAdminUnlocked ? (
+                              <form onSubmit={handleUnlockAdmin} className="flex flex-col gap-3 py-4">
+                                  <p className="text-xs text-white/60 text-center mb-1">Ingresa tu clave maestra para controlar las funciones de la aplicación para todos los oyentes en vivo:</p>
+                                  {adminPassError && <p className="text-xs text-red-400 bg-red-500/10 py-2 rounded-xl text-center font-bold">{adminPassError}</p>}
+                                  <input 
+                                      type="password" 
+                                      value={adminPassInput} 
+                                      onChange={e => setAdminPassInput(e.target.value)} 
+                                      placeholder="Clave de superusuario..." 
+                                      className="bg-black/60 border border-white/15 rounded-2xl px-4 py-3 text-sm text-white text-center focus:outline-none focus:border-red-500"
+                                      autoFocus
+                                  />
+                                  <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-2xl text-sm shadow-lg transition-all">
+                                      Desbloquear Configuración Global
+                                  </button>
+                              </form>
+                          ) : (
+                              <div className="overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-4">
+                                  <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 text-[11px] text-red-300 font-medium">
+                                      ⚡ Cualquier cambio que hagas aquí se aplica en tiempo real en los teléfonos y pantallas de todos los usuarios conectados.
+                                  </div>
+
+                                  {/* INTERRUPTORES DE FUNCIONES Y PESTAÑAS */}
+                                  <div className="flex flex-col gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
+                                      <h4 className="text-xs font-black uppercase tracking-wider text-white/60 mb-1">Activar / Desactivar Módulos</h4>
+                                      {[
+                                          { key: 'enableTV', label: 'Pestaña de TV en Vivo' },
+                                          { key: 'enableSports', label: 'Pestaña de Deportes y Goles' },
+                                          { key: 'enableLocation', label: 'Pestaña de Ubicación Satelital' },
+                                          { key: 'enableChat', label: 'Botón Flotante de Chat en Vivo' },
+                                          { key: 'enableReactions', label: 'Barra de Emojis / Reacciones' },
+                                          { key: 'enableShazamButton', label: 'Botón IA Identificar Canción' },
+                                          { key: 'enableWhatsappButton', label: 'Botón Cabina WhatsApp' }
+                                      ].map(item => (
+                                          <div key={item.key} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
+                                              <span className="text-xs font-bold text-white/90">{item.label}</span>
+                                              <button 
+                                                  type="button"
+                                                  onClick={() => updateGlobalSetting(item.key, !globalConfig[item.key])}
+                                                  className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 flex items-center ${globalConfig[item.key] ? 'bg-green-600 justify-end' : 'bg-zinc-700 justify-start'}`}
+                                              >
+                                                  <span className="w-4 h-4 rounded-full bg-white shadow"></span>
+                                              </button>
+                                          </div>
+                                      ))}
+                                  </div>
+
+                                  {/* FIJAR NOMBRE DE PROGRAMA O LOCUTOR EN VIVO */}
+                                  <div className="flex flex-col gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
+                                      <h4 className="text-xs font-black uppercase tracking-wider text-white/60">Fijar Texto en Vivo (Opcional)</h4>
+                                      <p className="text-[10px] text-white/40">Si los dejas vacíos, funciona automático con Zeno o la IA.</p>
+                                      <input 
+                                          type="text" 
+                                          value={globalConfig.forcedSongTitle || ""} 
+                                          onChange={e => updateGlobalSetting('forcedSongTitle', e.target.value)} 
+                                          placeholder="Título fijo (ej: Noticiero Pregón)" 
+                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
+                                      />
+                                      <input 
+                                          type="text" 
+                                          value={globalConfig.forcedSongArtist || ""} 
+                                          onChange={e => updateGlobalSetting('forcedSongArtist', e.target.value)} 
+                                          placeholder="Subtítulo rojo fijo (ej: Prégon 95.7 Fm)" 
+                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
+                                      />
+                                  </div>
+
+                                  {/* ENLACES DE VIDEO Y AUDIO ESPN */}
+                                  <div className="flex flex-col gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
+                                      <h4 className="text-xs font-black uppercase tracking-wider text-white/60">Enlaces de ESPN (Video + Audio)</h4>
+                                      <label className="text-[10px] text-white/50">Link de Video (.m3u8):</label>
+                                      <input 
+                                          type="text" 
+                                          value={globalConfig.customEspnVideo || ""} 
+                                          onChange={e => updateGlobalSetting('customEspnVideo', e.target.value)} 
+                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-[11px] text-white font-mono"
+                                      />
+                                      <label className="text-[10px] text-white/50">Link de Audio Español (.m3u8):</label>
+                                      <input 
+                                          type="text" 
+                                          value={globalConfig.customEspnAudio || ""} 
+                                          onChange={e => updateGlobalSetting('customEspnAudio', e.target.value)} 
+                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-[11px] text-white font-mono"
+                                      />
+                                  </div>
+
+                                  <button onClick={() => setShowAdminModal(false)} className="w-full bg-white text-black font-bold py-2.5 rounded-2xl text-xs">
+                                      Guardar y Cerrar Panel
+                                  </button>
+                              </div>
+                          )}
                       </div>
-                  ))}
-              </div>
+                  </div>
+              )}
 
               {/* BANNER DE INSTALACIÓN PWA */}
               {showInstallBanner && installPrompt && (
@@ -1264,7 +1596,12 @@
                               <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
                                   <SlidersIcon className="text-red-500" /> Centro de Control Pro
                               </h3>
-                              <button onClick={() => setShowToolsModal(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full"><XIcon size={20}/></button>
+                              <div className="flex items-center gap-2">
+                                  <button onClick={() => { setShowToolsModal(false); setShowAdminModal(true); }} title="Acceso Superusuario" className="text-white/30 hover:text-red-400 bg-white/5 p-1.5 rounded-full transition-colors">
+                                      <ShieldIcon size={18}/>
+                                  </button>
+                                  <button onClick={() => setShowToolsModal(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full"><XIcon size={20}/></button>
+                              </div>
                           </div>
 
                           <div className="grid grid-cols-4 gap-1.5 bg-black/50 p-1.5 rounded-2xl border border-white/10 mb-5 shrink-0">
@@ -1452,7 +1789,7 @@
               )}
 
               {/* MODAL CHAT FLOTANTE */}
-              {showChat && (
+              {showChat && globalConfig.enableChat && (
                   <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 animate-[fadeIn_0.3s_ease-out]">
                       <div className="w-full h-[85vh] sm:h-[600px] max-w-md bg-zinc-900/95 border-t sm:border border-white/10 sm:rounded-[32px] rounded-t-[32px] shadow-2xl relative flex flex-col overflow-hidden">
                           <div className="bg-black/60 px-5 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
@@ -1497,16 +1834,16 @@
                   </div>
               )}
 
-              {/* HEADER PRINCIPAL */}
-              <header className="flex justify-between items-center py-3.5 px-5 shrink-0 z-20 bg-gradient-to-b from-black/70 to-transparent max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full pt-safe">
+              {/* HEADER PRINCIPAL (5 TOQUES EN EL LOGO ABRE EL PANEL DE SUPERUSUARIO) */}
+              <header className="flex justify-between items-center py-3.5 px-5 shrink-0 z-20 bg-gradient-to-b from-black/80 to-transparent max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full pt-safe">
                   <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-white/15">
-                          <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                      <div onClick={handleSecretLogoTap} className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-white/15 cursor-pointer active:scale-95 transition-transform">
+                          <img src={logoUrl} alt="Logo" className="w-full h-full object-cover select-none" />
                       </div>
                       <div className="flex flex-col">
                           <h1 className="text-lg font-black tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-red-500">95.7</span></h1>
                           <div className="flex items-center gap-2 mt-0.5">
-                              <div className="flex items-center gap-1.5 bg-black/50 px-2.5 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
+                              <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
                                   <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span></span>
                                   <span className="text-[10px] font-bold tracking-wider text-white/90">{onlineUsers}</span><UsersIcon className="text-white/40" />
                               </div>
@@ -1547,13 +1884,13 @@
                               
                               {/* PÍLDORAS CLIMA (DÍA / NOCHE) Y RELOJ */}
                               <div className="w-full flex justify-center shrink-0 gap-2.5 mb-2 md:mb-6">
-                                  <div className="bg-black/45 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
+                                  <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
                                       {weather && weather.weathercode !== undefined ? getWeatherIcon(weather.weathercode, weather.is_day) : getWeatherIcon(0, undefined)}
                                       <span className="text-[11px] sm:text-[12px] font-bold text-white/90 tracking-wide">
                                           Mucutuy {weather ? `${Math.round(weather.temperature)}°C` : '...'}
                                       </span>
                                   </div>
-                                  <div className="bg-black/45 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
+                                  <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
                                       <ClockIcon size={16} className="text-white/70 shrink-0" />
                                       <span className="text-[11px] sm:text-[12px] font-bold text-white/90 tracking-wide font-mono mt-0.5 text-center w-full">
                                           {timeVE || '--:--:--'}
@@ -1564,8 +1901,18 @@
                               {/* DISCO / CARÁTULA DINÁMICA Y ONDAS */}
                               <div className="flex-1 w-full flex items-center justify-center relative min-h-0 perspective-1000">
                                   <canvas ref={canvasRef} className="absolute inset-0 w-[110%] h-[160%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"></canvas>
-                                  <div ref={logoRef} className={`relative z-10 w-full max-w-[190px] sm:max-w-[230px] md:max-w-[270px] aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${isPlaying && !isConnecting ? 'shadow-[0_0_65px_rgba(239,68,68,0.35)]' : 'shadow-2xl'}`} style={{ transform: 'scale(1)' }}>
-                                      <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isScanningAudio ? 'border-cyan-400 animate-pulse' : isPlaying && !isConnecting ? 'border-red-500/50' : 'border-white/10'}`}></div>
+                                  <div 
+                                      ref={logoRef} 
+                                      className="relative z-10 w-full max-w-[190px] sm:max-w-[230px] md:max-w-[270px] aspect-square rounded-full flex items-center justify-center transition-all duration-500" 
+                                      style={{ 
+                                          transform: 'scale(1)',
+                                          boxShadow: isPlaying && !isConnecting ? `0 0 60px rgba(${ambientRgb}, 0.35)` : '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
+                                      }}
+                                  >
+                                      <div 
+                                          className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isScanningAudio ? 'border-cyan-400 animate-pulse' : ''}`}
+                                          style={{ borderColor: !isScanningAudio ? (isPlaying && !isConnecting ? `rgba(${ambientRgb}, 0.55)` : 'rgba(255,255,255,0.1)') : undefined }}
+                                      ></div>
                                       <img src={coverArt} onError={(e) => { e.target.onerror = null; e.target.src = logoUrl; }} alt="Carátula" className="w-[95%] h-[95%] object-cover rounded-full transition-all duration-700" />
                                   </div>
                               </div>
@@ -1579,21 +1926,23 @@
                                           <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isOfflineMode ? 'bg-yellow-400' : 'bg-red-500'}`}></span>
                                           {isOfflineMode ? 'AutoDJ Musical' : 'Señal En Vivo'}
                                       </span>
-                                      <button 
-                                          onClick={() => identifyAudioByFingerprint(true)} 
-                                          disabled={!isPlaying || isScanningAudio}
-                                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-all ${isScanningAudio ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40 animate-pulse' : 'bg-white/10 text-white/80 border-white/15 hover:bg-white/20 active:scale-95 disabled:opacity-40'}`}
-                                          title="Escanear audio en vivo"
-                                      >
-                                          <SparklesIcon size={11} className="text-cyan-400" />
-                                          {scanFeedback || (isScanningAudio ? 'Detectando...' : 'Identificar Canción')}
-                                      </button>
+                                      {globalConfig.enableShazamButton && (
+                                          <button 
+                                              onClick={identifyAudioByFingerprint} 
+                                              disabled={!isPlaying || isScanningAudio}
+                                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-all ${isScanningAudio ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40 animate-pulse' : 'bg-white/10 text-white/80 border-white/15 hover:bg-white/20 active:scale-95 disabled:opacity-40'}`}
+                                              title="Presiona para identificar la canción que está sonando"
+                                          >
+                                              <SparklesIcon size={11} className="text-cyan-400" />
+                                              {scanFeedback || (isScanningAudio ? 'Detectando...' : 'Identificar Canción')}
+                                          </button>
+                                      )}
                                   </div>
                                   <h2 className={`text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>
-                                      {isConnecting ? 'Conectando señal...' : songInfo.title}
+                                      {isConnecting ? 'Conectando señal...' : displayedTitle}
                                   </h2>
                                   <p className="text-sm sm:text-base md:text-lg text-red-400 font-semibold tracking-tight truncate w-full mt-0.5 drop-shadow-md">
-                                      {isConnecting ? DEFAULT_STATION_ARTIST : (songInfo.artist || DEFAULT_STATION_ARTIST)}
+                                      {isConnecting ? DEFAULT_STATION_ARTIST : displayedArtist}
                                   </p>
                               </div>
                               
@@ -1613,25 +1962,46 @@
                                   </div>
                               </div>
 
-                              {/* BARRA DE ACCIONES RÁPIDAS (WHATSAPP CABINA +584165755857 Y REACCIONES) */}
-                              <div className="w-full max-w-[330px] flex items-center justify-between gap-2 mt-3">
-                                  <button onClick={() => { setActiveToolTab('request'); setShowToolsModal(true); }} className="flex-1 bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 rounded-full py-2 px-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-green-300 active:scale-95 transition-all shadow-[0_0_12px_rgba(34,197,94,0.2)]">
-                                      <WhatsAppIcon size={14} className="text-green-400" /> Cabina WhatsApp
-                                  </button>
-                                  <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-full p-1 px-2">
-                                      {['❤️', '🔥', '👏', '🇻🇪'].map(emoji => (
-                                          <button key={emoji} onClick={() => triggerReaction(emoji)} className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-sm active:scale-125 transition-transform" title="Enviar reacción en vivo">
-                                              {emoji}
+                              {/* BARRA DE ACCIONES RÁPIDAS (WHATSAPP CABINA Y REACCIONES MULTI-USUARIO) */}
+                              {(globalConfig.enableWhatsappButton || globalConfig.enableReactions) && (
+                                  <div className="w-full max-w-[330px] flex items-center justify-between gap-2 mt-3">
+                                      {globalConfig.enableWhatsappButton && (
+                                          <button onClick={() => { setActiveToolTab('request'); setShowToolsModal(true); }} className="flex-1 bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 rounded-full py-2 px-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-green-300 active:scale-95 transition-all shadow-[0_0_12px_rgba(34,197,94,0.2)]">
+                                              <WhatsAppIcon size={14} className="text-green-400" /> Cabina WhatsApp
                                           </button>
-                                      ))}
+                                      )}
+                                      {globalConfig.enableReactions && (
+                                          <div className={`flex items-center justify-center gap-1 bg-white/5 border border-white/10 rounded-full p-1 px-2 ${!globalConfig.enableWhatsappButton ? 'w-full' : ''}`}>
+                                              {['❤️', '🔥', '👏', '🇻🇪'].map(emoji => (
+                                                  <button key={emoji} onClick={() => triggerReaction(emoji)} className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-sm active:scale-125 transition-transform" title="Enviar reacción en vivo a todos">
+                                                      {emoji}
+                                                  </button>
+                                              ))}
+                                          </div>
+                                      )}
                                   </div>
-                              </div>
+                              )}
                           </div>
                       </div>
 
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 pt-2 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           
+                          {activeTvChannel === 'espn' && (
+                              <div className="w-full max-w-4xl mx-auto flex items-center justify-between bg-white/5 border border-white/10 px-4 py-2 rounded-2xl shrink-0">
+                                  <span className="text-xs font-bold text-white/80 flex items-center gap-2">
+                                      <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
+                                      ESPN ({espnUseBackup ? 'Señal 2 Respaldo' : 'Señal 1 HD + Audio Español'})
+                                  </span>
+                                  <button 
+                                      onClick={() => { setTvError(false); setEspnUseBackup(prev => !prev); }}
+                                      className="flex items-center gap-1.5 bg-red-600/30 hover:bg-red-600 border border-red-500/40 text-white px-3 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95"
+                                  >
+                                      <RefreshIcon /> Cambiar Señal ESPN
+                                  </button>
+                              </div>
+                          )}
+
                           <div className="w-full max-w-4xl mx-auto bg-black rounded-[20px] overflow-hidden shadow-xl border border-white/10 shrink-0 z-10 relative">
                               {tvError && (
                                 <div className="absolute inset-0 bg-zinc-950/95 z-20 flex flex-col items-center justify-center p-6 text-center">
@@ -1645,12 +2015,12 @@
                           <div className="flex flex-col gap-3 shrink-0 z-10 w-full max-w-4xl mx-auto">
                               <h3 className="text-[13px] font-bold text-white/50 uppercase tracking-wider ml-1">Canales Disponibles</h3>
                               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8">
-                                  {TV_CHANNELS.map(channel => {
+                                  {DEFAULT_TV_CHANNELS.map(channel => {
                                       const isActive = activeTvChannel === channel.id;
                                       return (
                                           <button
                                               key={channel.id}
-                                              onClick={() => setActiveTvChannel(channel.id)}
+                                              onClick={() => { setActiveTvChannel(channel.id); setEspnUseBackup(false); }}
                                               className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-[24px] transition-all duration-500 overflow-hidden group backdrop-blur-2xl ${
                                                   isActive
                                                       ? 'border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] scale-[1.02]'
@@ -1800,35 +2170,41 @@
               </main>
 
               {/* BOTÓN FLOTANTE DEL CHAT */}
-              <button 
-                  onClick={() => setShowChat(true)} 
-                  className="fixed bottom-[82px] md:bottom-6 right-5 md:right-8 w-14 h-14 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center text-white z-40 hover:bg-red-500 transition-transform active:scale-95 border border-white/20"
-              >
-                  <MessageIcon size={24} />
-                  {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-red-600 shadow-md animate-bounce">
-                          {unreadCount > 9 ? '+9' : unreadCount}
-                      </span>
-                  )}
-              </button>
+              {globalConfig.enableChat && (
+                  <button 
+                      onClick={() => setShowChat(true)} 
+                      className="fixed bottom-[82px] md:bottom-6 right-5 md:right-8 w-14 h-14 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center text-white z-40 hover:bg-red-500 transition-transform active:scale-95 border border-white/20"
+                  >
+                      <MessageIcon size={24} />
+                      {unreadCount > 0 && (
+                          <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-red-600 shadow-md animate-bounce">
+                              {unreadCount > 9 ? '+9' : unreadCount}
+                          </span>
+                      )}
+                  </button>
+              )}
 
-              {/* === BARRA DE NAVEGACIÓN INFERIOR === */}
-              <nav className="w-full bg-zinc-950/85 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
-                  <div className="flex justify-between items-center max-w-md md:max-w-2xl lg:max-w-3xl mx-auto h-[62px] relative">
-                      <div className="absolute top-0 h-1 bg-red-500 rounded-b-full transition-all duration-300 shadow-[0_0_10px_red]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
-                      
-                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+              {/* === BARRA DE NAVEGACIÓN INFERIOR DINÁMICA === */}
+              <nav className="w-full bg-zinc-950/90 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
+                  <div className="flex justify-around items-center max-w-md md:max-w-2xl lg:max-w-3xl mx-auto h-[62px] relative">
+                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <RadioIcon size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Radio</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-1/4 gap-1 transition-all duration-300 ${viewMode === 'tv' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                          <Tv size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">TV</span>
-                      </button>
-                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-1/4 gap-1 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                          <Trophy size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Deportes</span>
-                      </button>
-                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-1/4 gap-1 transition-all duration-300 ${viewMode === 'nasa' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                          <MapPin size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Ubicación</span>
-                      </button>
+                      {globalConfig.enableTV && (
+                          <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'tv' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                              <Tv size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">TV</span>
+                          </button>
+                      )}
+                      {globalConfig.enableSports && (
+                          <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                              <Trophy size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Deportes</span>
+                          </button>
+                      )}
+                      {globalConfig.enableLocation && (
+                          <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'nasa' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                              <MapPin size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Ubicación</span>
+                          </button>
+                      )}
                   </div>
                   <div className="w-full text-center text-[10px] text-white/30 font-medium uppercase tracking-widest mt-1 mb-0.5">
                       Derechos reservados Pregón 95.7 FM © 2026
