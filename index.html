@@ -60,11 +60,11 @@
       }
     </script>
 </head>
-<body class="bg-black text-white overflow-hidden font-sans antialiased selection:bg-red-500/30 overscroll-none">
+<body class="bg-black text-white overflow-hidden font-sans antialiased selection:bg-sky-300/30 overscroll-none">
 
     <div id="root">
         <div id="fallback-loading">
-            <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #7dd3fc; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <p style="margin-top: 20px; color: rgba(255,255,255,0.5);">Cargando experiencia...</p>
             <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
         </div>
@@ -104,8 +104,8 @@
                 if (this.state.hasError) {
                     return (
                         <div className="p-8 h-screen w-full bg-black text-white flex flex-col items-center justify-center text-center">
-                            <h2 className="text-2xl font-bold text-red-500 mb-4">Ups, algo falló.</h2>
-                            <div className="bg-zinc-900 p-4 rounded-xl text-left text-xs font-mono text-red-300 w-full overflow-auto max-h-[50vh] border border-red-900/50">{this.state.errorInfo}</div>
+                            <h2 className="text-2xl font-bold text-sky-400 mb-4">Ups, algo falló.</h2>
+                            <div className="bg-zinc-900 p-4 rounded-xl text-left text-xs font-mono text-sky-200 w-full overflow-auto max-h-[50vh] border border-sky-900/50">{this.state.errorInfo}</div>
                             <button onClick={() => window.location.reload()} className="mt-8 bg-white text-black px-6 py-2 rounded-full font-bold">Recargar Página</button>
                         </div>
                     );
@@ -140,6 +140,15 @@
         const Bell = (props) => <Icon {...props} size={18}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></Icon>;
         const ShareIcon = (props) => <Icon {...props} size={18}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></Icon>;
         
+        // ÍCONO ECUALIZADOR Y WHATSAPP
+        const SlidersIcon = (props) => <Icon {...props} size={18}><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></Icon>;
+        
+        const WhatsAppIcon = ({ size = 18, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.122 1.529 5.854l-1.529 5.586 5.719-1.5c1.685.915 3.613 1.44 5.681 1.44 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/>
+            </svg>
+        );
+
         // ÍCONOS DINÁMICOS DE CLIMA Y HORA
         const ClockIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
         const Sun = (props) => <Icon {...props}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></Icon>;
@@ -152,8 +161,8 @@
             if (code === 0) return <Sun size={18} className="text-yellow-400 shrink-0" />;
             if (code >= 1 && code <= 2) return <CloudSun size={18} className="text-yellow-400 shrink-0" />;
             if (code === 3) return <Cloud size={18} className="text-white/80 shrink-0" />;
-            if (code >= 50 && code <= 69) return <CloudRain size={18} className="text-blue-400 shrink-0" />;
-            if (code >= 80 && code <= 82) return <CloudRain size={18} className="text-blue-400 shrink-0" />;
+            if (code >= 50 && code <= 69) return <CloudRain size={18} className="text-sky-300 shrink-0" />;
+            if (code >= 80 && code <= 82) return <CloudRain size={18} className="text-sky-300 shrink-0" />;
             if (code >= 95) return <CloudLightning size={18} className="text-yellow-500 shrink-0" />;
             return <CloudSun size={18} className="text-white/70 shrink-0" />;
         };
@@ -188,6 +197,17 @@
           const [isOfflineMode, setIsOfflineMode] = useState(false);
           const lastRawTitle = useRef(""); 
 
+          // ESTADOS ECUALIZADOR 3 BANDAS
+          const [showEq, setShowEq] = useState(false);
+          const [eqBands, setEqBands] = useState({ bass: 0, mid: 0, treble: 0 });
+          const bassFilterRef = useRef(null);
+          const midFilterRef = useRef(null);
+          const trebleFilterRef = useRef(null);
+
+          // ESTADOS WHATSAPP CABINA
+          const [showWaModal, setShowWaModal] = useState(false);
+          const [waMessage, setWaMessage] = useState("");
+
           // ESTADOS DEPORTES Y TV
           const [matches, setMatches] = useState([]);
           const [loadingSports, setLoadingSports] = useState(false);
@@ -218,6 +238,7 @@
           // REFERENCIAS 
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
+          const tvAudioRef = useRef(null); // Referencia para el audio sincronizado de ESPN / Disney+
           const isPlayingRef = useRef(false);
 
           // REFERENCIAS BARRAS Y LOGO (WEB AUDIO)
@@ -234,16 +255,24 @@
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe"; 
           const logoUrl = "./logo.jpg";
 
-          // CANALES (NUEVO LINK ESPN APLICADO)
+          // CANALES (CON LINK SINCRONIZADO VIDEO + AUDIO DE DISNEY+ / ESPN)
           const TV_CHANNELS = [
-              { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600', logo: './venevision.png' },
-              { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-red-600', logo: './cnn.png' },
-              { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600', logo: './realmadrid.png' },
-              { id: 'espn', name: 'ESPN', type: 'Deportes', url: 'https://razen.futlivehd.com/espnar/tracks-v1a1/mono.m3u8?ip=190.6.11.162&token=669c106940bf0effbecc1daa91143e98e42e9123-ab-1792027880-1791973880', color: 'bg-red-700', logo: './espn.png' },
+              { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-sky-500', logo: './venevision.png' },
+              { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-sky-600', logo: './cnn.png' },
+              { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-500', logo: './realmadrid.png' },
+              { 
+                  id: 'espn', 
+                  name: 'ESPN / Disney+', 
+                  type: 'Deportes', 
+                  url: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-video=2400000.m3u8', 
+                  audioUrl: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-audio_spa=128000.m3u8',
+                  color: 'bg-sky-400', 
+                  logo: './espn.png' 
+              },
               { id: 'noticias', name: 'DW Español', type: 'Noticias', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-sky-500', logo: './dw.png' },
               { id: 'tam', name: 'TAM TV', type: 'Regional', url: 'https://rtmp.tamtv.com.ve/tmp_hls/stream/index.m3u8', color: 'bg-emerald-500', logo: './tam.png' },
-              { id: 'chavo', name: 'El Chavo', type: 'Entretenimiento', url: 'https://live20.bozztv.com/giatvplayout7/giatv-211465/tracks-v1a1/mono.ts.m3u8', color: 'bg-orange-500', logo: './chavo.png' },
-              { id: 'rcn', name: 'RCN Más', type: 'Entretenimiento', url: 'https://rcntv-rcnmas-1-us.plex.wurl.tv/playlist.m3u8', color: 'bg-yellow-500', logo: './rcn.png' }
+              { id: 'chavo', name: 'El Chavo', type: 'Entretenimiento', url: 'https://live20.bozztv.com/giatvplayout7/giatv-211465/tracks-v1a1/mono.ts.m3u8', color: 'bg-amber-500', logo: './chavo.png' },
+              { id: 'rcn', name: 'RCN Más', type: 'Entretenimiento', url: 'https://rcntv-rcnmas-1-us.plex.wurl.tv/playlist.m3u8', color: 'bg-cyan-500', logo: './rcn.png' }
           ];
 
           // ================== RELOJ DE VENEZUELA CON SEGUNDOS ==================
@@ -253,7 +282,6 @@
                   setTimeVE(now.toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', second: '2-digit' }));
               };
               updateTime();
-              // Actualizar cada segundo para ver los segundos correr
               const interval = setInterval(updateTime, 1000); 
               return () => clearInterval(interval);
           }, []);
@@ -516,43 +544,144 @@
               };
               if (dbInstance) dbInstance.ref('chat_cabina').push(newMsg);
               setChatMessage("");
-          }
+          };
 
-          // ================== REPRODUCTOR DE TV ==================
+          // ================== WHATSAPP CABINA ==================
+          const handleSendWhatsApp = (e) => {
+              e.preventDefault();
+              if (!waMessage.trim()) return;
+              const phone = "584165755857";
+              const encodedText = encodeURIComponent(waMessage.trim());
+              window.open(`https://wa.me/${phone}?text=${encodedText}`, '_blank');
+              setWaMessage("");
+              setShowWaModal(false);
+          };
+
+          // ================== REPRODUCTOR DE TV (SOPORTE DUAL AUDIO + VIDEO SINCRONIZADO) ==================
           useEffect(() => {
             if (viewMode === 'tv' && tvVideoRef.current) {
               setTvError(false);
               const video = tvVideoRef.current;
-              let hls;
+              const audio = tvAudioRef.current;
+              let hlsVideo = null;
+              let hlsAudio = null;
+              let syncInterval = null;
+
               const currentChannel = TV_CHANNELS.find(c => c.id === activeTvChannel);
               const currentTvUrl = currentChannel.url;
+              const currentAudioUrl = currentChannel.audioUrl || null;
+
+              // Funciones de sincronización cuando hay pista de audio separada
+              const handleVideoPlay = () => {
+                if (currentAudioUrl && audio) {
+                  audio.play().catch(() => {});
+                }
+              };
+              const handleVideoPause = () => {
+                if (currentAudioUrl && audio) {
+                  audio.pause();
+                }
+              };
+              const handleVideoVolume = () => {
+                if (currentAudioUrl && audio) {
+                  audio.muted = video.muted;
+                  audio.volume = video.volume;
+                }
+              };
+              const handleVideoSeek = () => {
+                if (currentAudioUrl && audio && !isNaN(video.currentTime)) {
+                  audio.currentTime = video.currentTime;
+                }
+              };
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
-                  hls = new window.Hls({ enableWorker: true, lowLatencyMode: true });
-                  hls.loadSource(currentTvUrl);
-                  hls.attachMedia(video);
-                  hls.on(window.Hls.Events.ERROR, function (e, data) {
+                  // 1. Inicializar Video
+                  hlsVideo = new window.Hls({ enableWorker: true, lowLatencyMode: true });
+                  hlsVideo.loadSource(currentTvUrl);
+                  hlsVideo.attachMedia(video);
+
+                  // 2. Si el canal tiene Audio separado (Disney+ / ESPN), inicializar y sincronizar
+                  if (currentAudioUrl && audio) {
+                    hlsAudio = new window.Hls({ enableWorker: true, lowLatencyMode: true });
+                    hlsAudio.loadSource(currentAudioUrl);
+                    hlsAudio.attachMedia(audio);
+
+                    video.addEventListener('play', handleVideoPlay);
+                    video.addEventListener('pause', handleVideoPause);
+                    video.addEventListener('volumechange', handleVideoVolume);
+                    video.addEventListener('seeking', handleVideoSeek);
+
+                    // Sincronizador continuo de desfase (drift correction)
+                    syncInterval = setInterval(() => {
+                      if (!video.paused && !audio.paused && audio.readyState >= 2 && video.readyState >= 2) {
+                        const diff = Math.abs(video.currentTime - audio.currentTime);
+                        if (diff > 0.35) {
+                          audio.currentTime = video.currentTime;
+                        }
+                      }
+                    }, 1000);
+                  } else if (audio) {
+                    audio.pause();
+                    audio.removeAttribute('src');
+                    audio.load();
+                  }
+
+                  hlsVideo.on(window.Hls.Events.ERROR, function (e, data) {
                     if (data.fatal) {
-                      if(data.type === window.Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
-                      else if(data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
-                      else { setTvError(true); hls.destroy(); }
+                      if(data.type === window.Hls.ErrorTypes.NETWORK_ERROR) hlsVideo.startLoad();
+                      else if(data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hlsVideo.recoverMediaError();
+                      else { setTvError(true); hlsVideo.destroy(); }
                     }
                   });
-                  hls.on(window.Hls.Events.MANIFEST_PARSED, function () { video.play().catch(()=>{}); });
+
+                  hlsVideo.on(window.Hls.Events.MANIFEST_PARSED, function () {
+                    video.play().then(() => {
+                      if (currentAudioUrl && audio) {
+                        audio.volume = video.volume;
+                        audio.muted = video.muted;
+                        audio.play().catch(() => {});
+                      }
+                    }).catch(() => {});
+                  });
+
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                   video.src = currentTvUrl;
+                  if (currentAudioUrl && audio) {
+                    audio.src = currentAudioUrl;
+                    video.addEventListener('play', handleVideoPlay);
+                    video.addEventListener('pause', handleVideoPause);
+                    video.addEventListener('volumechange', handleVideoVolume);
+                    video.addEventListener('seeking', handleVideoSeek);
+                  }
                   video.onerror = () => setTvError(true);
-                  video.addEventListener('loadedmetadata', function () { video.play().catch(()=>{}); });
+                  video.addEventListener('loadedmetadata', function () {
+                    video.play().then(() => {
+                      if (currentAudioUrl && audio) audio.play().catch(() => {});
+                    }).catch(() => {});
+                  });
                 }
               };
 
               if (window.Hls) initPlayer(); else setTimeout(initPlayer, 500);
-              return () => { if (hls) hls.destroy(); else if (video) { video.removeAttribute('src'); video.load(); } };
+
+              return () => {
+                if (syncInterval) clearInterval(syncInterval);
+                video.removeEventListener('play', handleVideoPlay);
+                video.removeEventListener('pause', handleVideoPause);
+                video.removeEventListener('volumechange', handleVideoVolume);
+                video.removeEventListener('seeking', handleVideoSeek);
+
+                if (hlsVideo) hlsVideo.destroy();
+                else if (video) { video.removeAttribute('src'); video.load(); }
+
+                if (hlsAudio) hlsAudio.destroy();
+                else if (audio) { audio.pause(); audio.removeAttribute('src'); audio.load(); }
+              };
             }
           }, [viewMode, activeTvChannel]);
 
-          // ================== FETCH DEPORTES ==================
+          // ================== FETCH DEPORTES (CON GOLES Y MINUTO EXACTO) ==================
           const sportsNotified = useRef(false);
           useEffect(() => {
             if (viewMode === 'sports' && matches.length === 0) {
@@ -563,10 +692,36 @@
                       const comp = ev.competitions[0];
                       const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
                       const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
+                      
+                      // Extraer goles y minuto exacto
+                      const rawDetails = comp.details || [];
+                      const extractGoals = (teamId) => {
+                          return rawDetails
+                              .filter(d => d.scoringPlay && d.team && d.team.id === teamId)
+                              .map(d => {
+                                  const scorer = d.athletesInvolved?.[0]?.displayName || d.athletesInvolved?.[0]?.shortName || 'Gol';
+                                  const clock = d.clock?.displayValue || '';
+                                  const suffix = d.ownGoal ? ' (EC)' : d.penaltyKick ? ' (P)' : '';
+                                  return { scorer, clock, suffix };
+                              });
+                      };
+
                       return {
                           id: ev.id, phase: leagueName || comp.notes?.[0]?.headline || "Fase Regular",
-                          home: { name: homeTeam.team.shortDisplayName || homeTeam.team.name, score: homeTeam.score, logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png' },
-                          away: { name: awayTeam.team.shortDisplayName || awayTeam.team.name, score: awayTeam.score, logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png' },
+                          home: { 
+                              id: homeTeam.team.id,
+                              name: homeTeam.team.shortDisplayName || homeTeam.team.name, 
+                              score: homeTeam.score, 
+                              logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
+                              goals: extractGoals(homeTeam.team.id)
+                          },
+                          away: { 
+                              id: awayTeam.team.id,
+                              name: awayTeam.team.shortDisplayName || awayTeam.team.name, 
+                              score: awayTeam.score, 
+                              logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
+                              goals: extractGoals(awayTeam.team.id)
+                          },
                           status: ev.status.type.state, detail: ev.status.type.shortDetail, date: ev.date
                       };
                   });
@@ -647,7 +802,7 @@
             return () => eventSource.close();
           }, []);
 
-          // ================== ANIMACIÓN DE LOGO Y ONDAS INTELIGENTE (RESPALDO IPHONE) ==================
+          // ================== ANIMACIÓN DE LOGO Y ONDAS INTELIGENTE (COLORES INTACTOS) ==================
           const renderWaves = useCallback(() => {
               animationRef.current = requestAnimationFrame(renderWaves);
               const canvas = canvasRef.current;
@@ -662,7 +817,6 @@
               let freqs = [];
               let hasAudioData = false;
 
-              // Intentar extraer frecuencias reales
               if (analyserRef.current) {
                   analyserRef.current.getByteFrequencyData(dataArrayRef.current);
                   freqs = dataArrayRef.current;
@@ -674,11 +828,9 @@
                   if (hasAudioData) beat = (bassSum / 8) / 255; 
               }
 
-              // FALLBACK IPHONE: Si Apple bloqueó los datos de Zeno.fm (CORS), simulamos la onda matemáticamente
               if (!hasAudioData && isPlayingRef.current) {
                   const time = performance.now() / 1000;
-                  beat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.3; // Latido falso pero realista
-                  // Generamos frecuencias falsas suaves
+                  beat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.3;
                   freqs = Array.from({length: 64}, (_, i) => Math.abs(Math.sin(time * 5 + i)) * (120 + Math.random() * 50));
               }
 
@@ -687,6 +839,7 @@
                   logoRef.current.style.transform = `scale(${scale})`;
               }
 
+              // COLORES DE ONDA ORIGINALES SIN TOCAR
               const gradient = ctx.createLinearGradient(0, 0, width, 0);
               gradient.addColorStop(0, 'rgba(239, 68, 68, 0.9)');    
               gradient.addColorStop(0.5, 'rgba(239, 68, 68, 0.9)');  
@@ -738,7 +891,7 @@
               return () => cancelAnimationFrame(animationRef.current);
           }, [renderWaves]);
 
-          // ================== AUDIO CONTROLS ==================
+          // ================== AUDIO CONTROLS & ECUALIZADOR 3 BANDAS ==================
           const handlePlayToggle = () => {
             if (!audioCtxRef.current) {
                 try {
@@ -749,8 +902,32 @@
                     const bufferLength = analyserRef.current.frequencyBinCount;
                     dataArrayRef.current = new Uint8Array(bufferLength);
                     
+                    // Nodos del Ecualizador de 3 bandas
+                    const bass = audioCtxRef.current.createBiquadFilter();
+                    bass.type = 'lowshelf';
+                    bass.frequency.value = 200;
+                    bass.gain.value = eqBands.bass;
+
+                    const mid = audioCtxRef.current.createBiquadFilter();
+                    mid.type = 'peaking';
+                    mid.Q.value = 1;
+                    mid.frequency.value = 1000;
+                    mid.gain.value = eqBands.mid;
+
+                    const treble = audioCtxRef.current.createBiquadFilter();
+                    treble.type = 'highshelf';
+                    treble.frequency.value = 3000;
+                    treble.gain.value = eqBands.treble;
+
+                    bassFilterRef.current = bass;
+                    midFilterRef.current = mid;
+                    trebleFilterRef.current = treble;
+
                     const source = audioCtxRef.current.createMediaElementSource(audioRef.current);
-                    source.connect(analyserRef.current);
+                    source.connect(bass);
+                    bass.connect(mid);
+                    mid.connect(treble);
+                    treble.connect(analyserRef.current);
                     analyserRef.current.connect(audioCtxRef.current.destination);
                 } catch (e) {}
             }
@@ -784,6 +961,21 @@
             }
           };
 
+          const handleEqChange = (band, value) => {
+            const numVal = parseFloat(value);
+            setEqBands(prev => ({ ...prev, [band]: numVal }));
+            if (band === 'bass' && bassFilterRef.current) bassFilterRef.current.gain.value = numVal;
+            if (band === 'mid' && midFilterRef.current) midFilterRef.current.gain.value = numVal;
+            if (band === 'treble' && trebleFilterRef.current) trebleFilterRef.current.gain.value = numVal;
+          };
+
+          const resetEq = () => {
+            setEqBands({ bass: 0, mid: 0, treble: 0 });
+            if (bassFilterRef.current) bassFilterRef.current.gain.value = 0;
+            if (midFilterRef.current) midFilterRef.current.gain.value = 0;
+            if (trebleFilterRef.current) trebleFilterRef.current.gain.value = 0;
+          };
+
           const handleVolumeChange = (e) => {
             const val = parseFloat(e.target.value);
             setVolume(val);
@@ -798,17 +990,17 @@
           };
 
           return (
-            <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-red-500/30 relative">
+            <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-sky-300/30 relative">
               
-              {/* FONDO LIMPIO Y LIGERO */}
-              <div className="fixed inset-0 z-0 pointer-events-none bg-black">
-                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'radial-gradient(circle at 50% 30%, rgba(220, 38, 38, 0.15) 0%, transparent 60%)' }}></div>
+              {/* FONDO CON CUADRÍCULA EN MOVIMIENTO Y RESPLANDOR AZUL CELESTE BLANQUECINO */}
+              <div className="fixed inset-0 z-0 pointer-events-none bg-black overflow-hidden">
+                  <div className="absolute inset-0 opacity-40 moving-grid"></div>
+                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'radial-gradient(circle at 50% 35%, rgba(186, 230, 253, 0.24) 0%, rgba(56, 189, 248, 0.09) 45%, transparent 70%)' }}></div>
               </div>
 
-              {/* MODALES PWA Y AUTH... */}
+              {/* BANNER INSTALAR PWA */}
               {showInstallBanner && installPrompt && (
-                  <div className="fixed inset-x-4 bottom-24 z-50 bg-zinc-900/95 backdrop-blur-xl border border-white/10 p-4 rounded-[24px] shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-between animate-[fadeIn_0.5s_ease-out] md:max-w-sm md:mx-auto md:bottom-28">
+                  <div className="fixed inset-x-4 bottom-24 z-50 bg-zinc-900/95 backdrop-blur-xl border border-sky-200/20 p-4 rounded-[24px] shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-between animate-[fadeIn_0.5s_ease-out] md:max-w-sm md:mx-auto md:bottom-28">
                       <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-[14px] overflow-hidden shrink-0 border border-white/10 shadow-lg">
                               <img src={logoUrl} className="w-full h-full object-cover" />
@@ -818,11 +1010,95 @@
                               <p className="text-[11px] text-white/50 mt-0.5 leading-tight">Agrega la app a tu inicio.</p>
                           </div>
                       </div>
-                      <button onClick={handleInstallApp} className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold transition-transform active:scale-95 shrink-0 ml-2 shadow-[0_0_15px_rgba(220,38,38,0.4)]">Instalar</button>
+                      <button onClick={handleInstallApp} className="bg-sky-400 hover:bg-sky-300 text-slate-950 px-4 py-2 rounded-full text-xs font-bold transition-transform active:scale-95 shrink-0 ml-2 shadow-[0_0_15px_rgba(125,211,252,0.4)]">Instalar</button>
                       <button onClick={() => setShowInstallBanner(false)} className="absolute -top-2 -right-2 bg-zinc-800 text-white/50 hover:text-white rounded-full p-1 border border-white/10 transition-colors"><XIcon size={14}/></button>
                   </div>
               )}
 
+              {/* MODAL WHATSAPP CABINA */}
+              {showWaModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-[fadeIn_0.25s_ease-out]">
+                      <div className="w-full max-w-sm bg-zinc-900/95 border border-sky-200/20 p-6 rounded-[28px] shadow-[0_0_40px_rgba(125,211,252,0.15)] relative">
+                          <button onClick={() => setShowWaModal(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors bg-white/5 p-1.5 rounded-full"><XIcon size={18} /></button>
+                          <div className="flex items-center gap-3 mb-3">
+                              <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
+                                  <WhatsAppIcon size={20} />
+                              </div>
+                              <div>
+                                  <h3 className="text-base font-bold text-white leading-tight">Contactar con Cabina</h3>
+                                  <p className="text-[11px] text-sky-200/60">+58 416-5755857</p>
+                              </div>
+                          </div>
+                          <p className="text-xs text-white/60 mb-3">Envía tus saludos, complacencias o reportes directamente al locutor en cabina:</p>
+                          <form onSubmit={handleSendWhatsApp} className="flex flex-col gap-3">
+                              <textarea 
+                                  rows="3"
+                                  value={waMessage}
+                                  onChange={(e) => setWaMessage(e.target.value)}
+                                  placeholder="Hola amigos de Pregón 95.7, les escribo desde..."
+                                  required
+                                  className="w-full bg-black/60 border border-white/15 rounded-2xl p-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-sky-300 transition-colors resize-none"
+                              ></textarea>
+                              <button type="submit" className="w-full bg-sky-300 hover:bg-sky-200 text-slate-950 font-bold py-3 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(125,211,252,0.35)] active:scale-95">
+                                  <WhatsAppIcon size={18} /> Enviar a WhatsApp
+                              </button>
+                          </form>
+                      </div>
+                  </div>
+              )}
+
+              {/* MODAL ECUALIZADOR 3 BANDAS */}
+              {showEq && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-[fadeIn_0.25s_ease-out]">
+                      <div className="w-full max-w-xs bg-zinc-900/95 border border-sky-200/20 p-6 rounded-[28px] shadow-[0_0_40px_rgba(125,211,252,0.15)] relative">
+                          <button onClick={() => setShowEq(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors bg-white/5 p-1.5 rounded-full"><XIcon size={18} /></button>
+                          <div className="flex items-center gap-2.5 mb-5">
+                              <SlidersIcon className="text-sky-300" />
+                              <h3 className="text-base font-bold text-white tracking-tight">Ecualizador de Audio</h3>
+                          </div>
+
+                          <div className="flex flex-col gap-4">
+                              {/* BAJOS */}
+                              <div className="flex flex-col gap-1.5">
+                                  <div className="flex justify-between text-xs font-bold">
+                                      <span className="text-sky-100/80">Bajos (200Hz)</span>
+                                      <span className="text-sky-300 font-mono">{eqBands.bass > 0 ? `+${eqBands.bass}` : eqBands.bass} dB</span>
+                                  </div>
+                                  <input type="range" min="-12" max="12" step="1" value={eqBands.bass} onChange={(e) => handleEqChange('bass', e.target.value)} className="w-full accent-sky-300 bg-black/60 h-2 rounded-lg cursor-pointer" />
+                              </div>
+
+                              {/* MEDIOS */}
+                              <div className="flex flex-col gap-1.5">
+                                  <div className="flex justify-between text-xs font-bold">
+                                      <span className="text-sky-100/80">Medios (1kHz)</span>
+                                      <span className="text-sky-300 font-mono">{eqBands.mid > 0 ? `+${eqBands.mid}` : eqBands.mid} dB</span>
+                                  </div>
+                                  <input type="range" min="-12" max="12" step="1" value={eqBands.mid} onChange={(e) => handleEqChange('mid', e.target.value)} className="w-full accent-sky-300 bg-black/60 h-2 rounded-lg cursor-pointer" />
+                              </div>
+
+                              {/* AGUDOS */}
+                              <div className="flex flex-col gap-1.5">
+                                  <div className="flex justify-between text-xs font-bold">
+                                      <span className="text-sky-100/80">Agudos (3kHz)</span>
+                                      <span className="text-sky-300 font-mono">{eqBands.treble > 0 ? `+${eqBands.treble}` : eqBands.treble} dB</span>
+                                  </div>
+                                  <input type="range" min="-12" max="12" step="1" value={eqBands.treble} onChange={(e) => handleEqChange('treble', e.target.value)} className="w-full accent-sky-300 bg-black/60 h-2 rounded-lg cursor-pointer" />
+                              </div>
+                          </div>
+
+                          <div className="flex gap-2 mt-6">
+                              <button onClick={resetEq} className="flex-1 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white text-xs font-bold py-2.5 rounded-xl border border-white/10 transition-colors">
+                                  Restablecer
+                              </button>
+                              <button onClick={() => setShowEq(false)} className="flex-1 bg-sky-300 hover:bg-sky-200 text-slate-950 text-xs font-bold py-2.5 rounded-xl transition-colors shadow-[0_0_15px_rgba(125,211,252,0.3)]">
+                                  Listo
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              )}
+
+              {/* MODAL AUTH */}
               {showAuthModal && (
                   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
                       <div className="w-full max-w-sm bg-zinc-900/90 border border-white/10 p-6 rounded-[32px] shadow-2xl relative animate-[fadeIn_0.3s_ease-out]">
@@ -831,9 +1107,9 @@
                           {user ? (
                               <div className="text-center py-4">
                                   {user.photo ? (
-                                      <img src={user.photo} alt="Perfil" className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.3)] object-cover" />
+                                      <img src={user.photo} alt="Perfil" className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-sky-300/50 shadow-[0_0_15px_rgba(125,211,252,0.3)] object-cover" />
                                   ) : (
-                                      <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center border border-green-500/30 mx-auto mb-4"><UserIcon size={32} /></div>
+                                      <div className="w-20 h-20 bg-sky-400/20 text-sky-300 rounded-full flex items-center justify-center border border-sky-300/30 mx-auto mb-4"><UserIcon size={32} /></div>
                                   )}
                                   <h3 className="text-2xl font-bold text-white tracking-tight mb-1">¡Hola, {user.name}!</h3>
                                   <p className="text-sm text-white/50 mb-6">{user.email}</p>
@@ -855,10 +1131,10 @@
                                   </div>
 
                                   <form className="flex flex-col gap-3" onSubmit={handleAuthSubmit}>
-                                      {authError && <p className="text-red-400 text-xs text-center font-medium bg-red-500/10 py-2 rounded-lg">{authError}</p>}
-                                      {authMode === 'register' && (<input name="name" type="text" placeholder="Tu Nombre" required className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors" />)}
-                                      <input name="email" type="email" placeholder="Correo electrónico" required className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors" />
-                                      <input name="password" type="password" placeholder="Contraseña" required minLength="6" className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-red-500 transition-colors" />
+                                      {authError && <p className="text-sky-300 text-xs text-center font-medium bg-sky-500/10 py-2 rounded-lg">{authError}</p>}
+                                      {authMode === 'register' && (<input name="name" type="text" placeholder="Tu Nombre" required className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-sky-300 transition-colors" />)}
+                                      <input name="email" type="email" placeholder="Correo electrónico" required className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-sky-300 transition-colors" />
+                                      <input name="password" type="password" placeholder="Contraseña" required minLength="6" className="bg-black/50 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-sky-300 transition-colors" />
                                       
                                       {authMode === 'login' && (
                                           <div className="text-right mt-1">
@@ -866,7 +1142,7 @@
                                           </div>
                                       )}
 
-                                      <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3.5 rounded-2xl transition-colors mt-2 shadow-[0_0_15px_rgba(220,38,38,0.4)]">{authMode === 'register' ? 'Registrarse' : 'Ingresar'}</button>
+                                      <button type="submit" className="w-full bg-sky-300 hover:bg-sky-200 text-slate-950 font-bold py-3.5 rounded-2xl transition-colors mt-2 shadow-[0_0_15px_rgba(125,211,252,0.4)]">{authMode === 'register' ? 'Registrarse' : 'Ingresar'}</button>
                                   </form>
                                   <div className="mt-5 text-center">
                                       <button onClick={() => {setAuthMode(authMode === 'register' ? 'login' : 'register'); setAuthError("");}} className="text-sm text-white/50 hover:text-white transition-colors">{authMode === 'register' ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}</button>
@@ -883,12 +1159,12 @@
                       <div className="w-full h-[85vh] sm:h-[600px] max-w-md bg-zinc-900/95 border-t sm:border border-white/10 sm:rounded-[32px] rounded-t-[32px] shadow-2xl relative flex flex-col overflow-hidden">
                           <div className="bg-black/60 px-5 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
                               <div className="flex items-center gap-3">
-                                  <MessageIcon className="text-red-500" />
+                                  <MessageIcon className="text-sky-300" />
                                   <h3 className="text-base font-bold text-white tracking-wide">Chat en Vivo</h3>
                               </div>
                               <div className="flex items-center gap-4">
                                   <div className="flex items-center gap-1.5">
-                                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>
+                                      <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-sky-400"></span></span>
                                       <span className="text-[10px] text-white/50 font-bold uppercase">Conectados</span>
                                   </div>
                                   <button onClick={() => setShowChat(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full transition-colors"><XIcon size={20} /></button>
@@ -903,9 +1179,9 @@
                                           <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden border border-white/10">
                                               {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
                                           </div>
-                                          <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
+                                          <div className={`p-3 rounded-2xl border ${isMe ? 'bg-sky-400/20 border-sky-300/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
                                               <div className={`flex justify-between items-end mb-1 gap-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                                                  <span className={`text-[11px] font-bold ${isMe ? 'text-red-400' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
+                                                  <span className={`text-[11px] font-bold ${isMe ? 'text-sky-300' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
                                                   <span className="text-[9px] text-white/30">{msg.time}</span>
                                               </div>
                                               <p className={`text-[13px] leading-tight ${isMe ? 'text-white' : 'text-white/90'}`}>{msg.text}</p>
@@ -916,8 +1192,8 @@
                               <div ref={chatEndRef} />
                           </div>
                           <form onSubmit={handleSendMessage} className="p-3 bg-black/60 border-t border-white/10 flex gap-2 pb-safe">
-                              <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50 transition-all" />
-                              <button type="submit" disabled={!user || !chatMessage.trim()} className="w-11 h-11 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600 shadow-[0_0_10px_rgba(239,68,68,0.4)]"><SendIcon /></button>
+                              <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-sky-300 disabled:opacity-50 transition-all" />
+                              <button type="submit" disabled={!user || !chatMessage.trim()} className="w-11 h-11 rounded-full bg-sky-300 flex items-center justify-center text-slate-950 shrink-0 hover:bg-sky-200 transition-colors disabled:opacity-50 shadow-[0_0_10px_rgba(125,211,252,0.4)]"><SendIcon /></button>
                           </form>
                       </div>
                   </div>
@@ -926,14 +1202,14 @@
               {/* HEADER PRINCIPAL */}
               <header className="flex justify-between items-center py-4 px-6 shrink-0 z-20 bg-gradient-to-b from-black/50 to-transparent max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full pt-safe">
                   <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-white/10">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-sky-200/20">
                           <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex flex-col">
-                          <h1 className="text-lg font-bold tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-red-500">95.7</span></h1>
+                          <h1 className="text-lg font-bold tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-sky-300">95.7</span></h1>
                           <div className="flex items-center gap-2 mt-0.5">
                               <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
-                                  <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span></span>
+                                  <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sky-400"></span></span>
                                   <span className="text-[10px] font-bold tracking-wider text-white/90">{onlineUsers}</span><UsersIcon className="text-white/40" />
                               </div>
                           </div>
@@ -946,7 +1222,7 @@
                       <button onClick={handleShareApp} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                           <ShareIcon size={16} />
                       </button>
-                      <button onClick={() => setShowAuthModal(true)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md overflow-hidden active:scale-95 ${user ? 'border-white/20' : 'bg-white/10 text-white hover:bg-white/20 border-white/10'}`}>
+                      <button onClick={() => setShowAuthModal(true)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md overflow-hidden active:scale-95 ${user ? 'border-sky-300/40' : 'bg-white/10 text-white hover:bg-white/20 border-white/10'}`}>
                           {user && user.photo ? <img src={user.photo} className="w-full h-full object-cover"/> : <UserIcon size={18} />}
                       </button>
                   </div>
@@ -964,14 +1240,14 @@
                           <div className="w-full md:w-1/2 flex flex-col items-center justify-between flex-1 min-h-0 md:justify-center">
                               
                               <div className="w-full flex justify-center shrink-0 gap-3 mb-2 md:mb-8">
-                                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
+                                  <div className="bg-black/40 backdrop-blur-md border border-sky-200/15 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
                                       {weather && weather.weathercode !== undefined ? getWeatherIcon(weather.weathercode) : <CloudSun size={16} className="text-yellow-400 shrink-0" />}
                                       <span className="text-[12px] font-bold text-white/90 tracking-wide">
                                           Mucutuy {weather ? `${Math.round(weather.temperature)}°C` : '...'}
                                       </span>
                                   </div>
-                                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
-                                      <ClockIcon size={16} className="text-white/70 shrink-0" />
+                                  <div className="bg-black/40 backdrop-blur-md border border-sky-200/15 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
+                                      <ClockIcon size={16} className="text-sky-200/80 shrink-0" />
                                       <span className="text-[12px] font-bold text-white/90 tracking-wide font-mono mt-0.5 text-center w-full">
                                           {timeVE || '--:--:--'}
                                       </span>
@@ -980,55 +1256,70 @@
 
                               <div className="flex-1 w-full flex items-center justify-center relative min-h-0 perspective-1000">
                                   <canvas ref={canvasRef} className="absolute inset-0 w-[110%] h-[160%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"></canvas>
-                                  <div ref={logoRef} className={`relative z-10 w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${isPlaying && !isConnecting ? 'shadow-[0_0_60px_rgba(239,68,68,0.3)]' : 'shadow-2xl'}`} style={{ transform: 'scale(1)' }}>
-                                      <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isPlaying && !isConnecting ? 'border-red-500/40' : 'border-white/5'}`}></div>
+                                  <div ref={logoRef} className={`relative z-10 w-full max-w-[190px] sm:max-w-[230px] md:max-w-[270px] aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${isPlaying && !isConnecting ? 'shadow-[0_0_65px_rgba(186,230,253,0.35)]' : 'shadow-2xl'}`} style={{ transform: 'scale(1)' }}>
+                                      <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isPlaying && !isConnecting ? 'border-sky-300/50' : 'border-white/5'}`}></div>
                                       <img src={logoUrl} alt="Logo" className="w-[96%] h-[96%] object-cover rounded-full" />
                                   </div>
                               </div>
                           </div>
 
-                          <div className="w-full md:w-1/2 flex flex-col items-center justify-end md:justify-center shrink-0 z-10 mt-2 mb-4 md:my-0">
+                          <div className="w-full md:w-1/2 flex flex-col items-center justify-end md:justify-center shrink-0 z-10 mt-2 mb-3 md:my-0">
                               <div className="flex flex-col items-center text-center w-full">
                                   <h2 className={`text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>{isConnecting ? 'Conectando...' : songInfo.title}</h2>
-                                  <p className="text-sm sm:text-base md:text-lg text-red-400 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
+                                  <p className="text-sm sm:text-base md:text-lg text-sky-300 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
                               </div>
                               
-                              <div className={`transition-all duration-500 overflow-hidden ${isOfflineMode ? 'max-h-[50px] opacity-100 mt-3' : 'max-h-0 opacity-0 mt-0'}`}>
-                                  <div className="px-4 py-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full flex items-center justify-center gap-2 shadow-inner">
+                              <div className={`transition-all duration-500 overflow-hidden ${isOfflineMode ? 'max-h-[50px] opacity-100 mt-2.5' : 'max-h-0 opacity-0 mt-0'}`}>
+                                  <div className="px-4 py-1 bg-sky-400/10 border border-sky-300/30 rounded-full flex items-center justify-center gap-2 shadow-inner">
                                       <div className="relative flex h-2 w-2">
-                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                          <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span>
+                                          <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-400"></span>
                                       </div>
-                                      <span className="text-[10px] md:text-[11px] font-black text-yellow-500 uppercase tracking-widest mt-0.5">Pregón Offline (Auto DJ)</span>
+                                      <span className="text-[10px] md:text-[11px] font-black text-sky-200 uppercase tracking-widest mt-0.5">Pregón Offline (Auto DJ)</span>
                                   </div>
                               </div>
                               
-                              <div className="w-full max-w-[320px] flex items-center justify-between gap-4 mt-4 bg-white/5 p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
-                                  <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] sm:w-[56px] sm:h-[56px] bg-red-600/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'w-[50px] h-[50px] sm:w-[56px] sm:h-[56px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
+                              {/* CONTROLES DE REPRODUCCIÓN + VOLUMEN + ECUALIZADOR */}
+                              <div className="w-full max-w-[340px] flex items-center justify-between gap-3 mt-3.5 bg-white/5 p-2.5 sm:p-3 pr-3.5 sm:pr-4 rounded-full backdrop-blur-md border border-sky-200/15 shadow-lg">
+                                  <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full shrink-0 transition-all duration-300 ${isPlaying || isConnecting ? 'w-[48px] h-[48px] sm:w-[54px] sm:h-[54px] bg-sky-300/20 text-sky-200 border border-sky-300/50 shadow-[0_0_20px_rgba(125,211,252,0.35)]' : 'w-[48px] h-[48px] sm:w-[54px] sm:h-[54px] bg-sky-100 text-slate-950 hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
                                       {isPlaying || isConnecting ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
                                   </button>
-                                  <div className="flex items-center gap-3 w-full">
+                                  <div className="flex items-center gap-2.5 w-full">
                                       <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors"><Volume2 size={18} /></button>
                                       <div className="relative w-full h-2 flex items-center bg-black/60 rounded-full overflow-hidden border border-white/5">
-                                          <div className="absolute left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
+                                          <div className="absolute left-0 h-full bg-gradient-to-r from-sky-400 to-sky-200 rounded-full shadow-[0_0_10px_rgba(125,211,252,0.8)]" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
                                           <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                       </div>
+                                      <button onClick={() => setShowEq(true)} title="Ecualizador de 3 bandas" className={`p-2 rounded-full border transition-all shrink-0 ${(eqBands.bass !== 0 || eqBands.mid !== 0 || eqBands.treble !== 0) ? 'bg-sky-300/20 border-sky-300/50 text-sky-200' : 'bg-white/5 border-white/10 text-white/70 hover:text-white'}`}>
+                                          <SlidersIcon size={16} />
+                                      </button>
                                   </div>
                               </div>
+
+                              {/* BOTÓN MINIMALISTA WHATSAPP CABINA */}
+                              <button 
+                                  onClick={() => setShowWaModal(true)}
+                                  className="mt-3 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] hover:bg-sky-300/10 border border-sky-200/15 hover:border-sky-300/30 text-sky-100/80 hover:text-white text-xs font-semibold tracking-wide transition-all backdrop-blur-md active:scale-95 shadow-sm"
+                              >
+                                  <WhatsAppIcon size={14} className="text-emerald-400" />
+                                  <span>Contactar con cabina</span>
+                              </button>
                           </div>
                       </div>
 
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 pt-2 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           
-                          <div className="w-full max-w-4xl mx-auto bg-black rounded-[20px] overflow-hidden shadow-xl border border-white/10 shrink-0 z-10 relative">
+                          <div className="w-full max-w-4xl mx-auto bg-black rounded-[20px] overflow-hidden shadow-xl border border-sky-200/15 shrink-0 z-10 relative">
                               {tvError && (
                                 <div className="absolute inset-0 bg-zinc-950/95 z-20 flex flex-col items-center justify-center p-6 text-center">
-                                   <AlertCircle size={44} className="text-red-500/80 mb-3" />
+                                   <AlertCircle size={44} className="text-sky-300/80 mb-3" />
                                    <h3 className="text-lg font-bold text-white mb-1">Señal Expirada</h3>
                                 </div>
                               )}
                               <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
+                              {/* Elemento de audio oculto para sincronizar streams duales (ESPN / Disney+) */}
+                              <audio ref={tvAudioRef} className="hidden" preload="auto" />
                           </div>
 
                           <div className="flex flex-col gap-3 shrink-0 z-10 w-full max-w-4xl mx-auto">
@@ -1042,14 +1333,14 @@
                                               onClick={() => setActiveTvChannel(channel.id)}
                                               className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-[24px] transition-all duration-500 overflow-hidden group backdrop-blur-2xl ${
                                                   isActive
-                                                      ? 'border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] scale-[1.02]'
+                                                      ? 'border border-sky-300/50 shadow-[0_8px_32px_rgba(125,211,252,0.25),inset_0_1px_2px_rgba(255,255,255,0.4)] scale-[1.02]'
                                                       : 'border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:border-white/20 hover:scale-[1.01]'
                                               }`}
                                           >
                                               <div className={`absolute inset-0 transition-opacity duration-500 mix-blend-overlay ${isActive ? channel.color : 'bg-white'} ${isActive ? 'opacity-50' : 'opacity-[0.03]'}`}></div>
                                               <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-50 pointer-events-none"></div>
                                               {isActive && (
-                                                  <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-60"></div>
+                                                  <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-sky-200 to-transparent opacity-80"></div>
                                               )}
                                               
                                               <div className="relative z-10 w-12 h-10 flex items-center justify-center mt-1">
@@ -1064,7 +1355,7 @@
                                                     />
                                               </div>
                                               
-                                              <span className={`relative z-10 text-[12px] font-black text-center leading-tight tracking-wide drop-shadow-md transition-colors duration-500 ${isActive ? 'text-white' : 'text-white/50 group-hover:text-white/80'}`}>{channel.name}</span>
+                                              <span className={`relative z-10 text-[12px] font-black text-center leading-tight tracking-wide drop-shadow-md transition-colors duration-500 ${isActive ? 'text-sky-100' : 'text-white/50 group-hover:text-white/80'}`}>{channel.name}</span>
                                           </button>
                                       );
                                   })}
@@ -1072,7 +1363,7 @@
                           </div>
                           
                           <a href={tvLiveUrl} target="_blank" rel="noopener noreferrer" className="w-full max-w-4xl mx-auto bg-white/5 backdrop-blur-xl rounded-[24px] border border-white/10 relative shadow-lg flex items-center p-4 active:scale-95 transition-all cursor-pointer shrink-0 mt-2 mb-8 z-10 group hover:bg-white/10">
-                              <div className="w-12 h-12 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-colors"><Youtube size={26} /></div>
+                              <div className="w-12 h-12 rounded-full bg-sky-400/20 text-sky-300 flex items-center justify-center shrink-0 group-hover:bg-sky-400 group-hover:text-slate-950 transition-colors"><Youtube size={26} /></div>
                               <div className="ml-4 flex-1">
                                   <h3 className="text-[16px] font-bold text-white tracking-tight">Canal YouTube</h3>
                                   <p className="text-white/50 text-[13px] mt-0.5 font-medium">Suscríbete a @MucutuyVe</p>
@@ -1083,19 +1374,19 @@
 
                       {/* --- VISTA DEPORTES --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-4 ${viewMode === 'sports' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
-                          <div className="flex items-center justify-center pb-2 pt-2 shrink-0 z-10 mt-2 mb-2 bg-white/5 backdrop-blur-md rounded-full mx-auto px-6 border border-white/10">
-                              <h2 className="text-white font-bold text-[15px] tracking-wide flex items-center gap-2 py-2"><Activity size={18} className="text-red-500" /> Partidos de Hoy</h2>
+                          <div className="flex items-center justify-center pb-2 pt-2 shrink-0 z-10 mt-2 mb-2 bg-white/5 backdrop-blur-md rounded-full mx-auto px-6 border border-sky-200/15">
+                              <h2 className="text-white font-bold text-[15px] tracking-wide flex items-center gap-2 py-2"><Activity size={18} className="text-sky-300" /> Partidos de Hoy</h2>
                           </div>
                           {loadingSports ? (
                               <div className="flex flex-col items-center justify-center py-16 shrink-0 z-10">
-                                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-transparent border-t-red-500 mb-4"></div>
+                                  <div className="animate-spin rounded-full h-10 w-10 border-4 border-transparent border-t-sky-300 mb-4"></div>
                                   <p className="text-sm font-medium text-white/50">Sincronizando marcador...</p>
                               </div>
                           ) : matches.length > 0 ? (
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                                   {matches.map((match, i) => (
                                       <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-[28px] p-5 flex flex-col gap-4 shadow-xl relative overflow-hidden z-10">
-                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-2 h-full bg-red-600 shadow-[0_0_10px_red]"></div>}
+                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-2 h-full bg-sky-400 shadow-[0_0_10px_#38bdf8]"></div>}
                                           <div className="flex justify-between items-center border-b border-white/10 pb-3">
                                               <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest truncate flex items-center gap-1">{match.phase}</p>
                                               <p className="text-[11px] text-white/40 font-bold bg-white/10 px-2 py-1 rounded-md">{new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}</p>
@@ -1113,7 +1404,7 @@
                                                           <div className="flex items-center justify-center gap-2 bg-black/40 px-3 py-1.5 rounded-2xl border border-white/10">
                                                               <span className="text-2xl font-black text-white tracking-tighter">{match.home.score !== undefined ? match.home.score : 0}</span><span className="text-sm font-bold text-white/30">-</span><span className="text-2xl font-black text-white tracking-tighter">{match.away.score !== undefined ? match.away.score : 0}</span>
                                                           </div>
-                                                          <span className={`text-[9px] font-bold px-2 py-1 rounded-full mt-2 uppercase tracking-wider ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'bg-white/10 text-white/50'}`}>{match.detail}</span>
+                                                          <span className={`text-[9px] font-bold px-2 py-1 rounded-full mt-2 uppercase tracking-wider ${match.status === 'in' ? 'bg-sky-400/20 text-sky-200 border border-sky-300/30 animate-pulse' : 'bg-white/10 text-white/50'}`}>{match.detail}</span>
                                                       </div>
                                                   )}
                                               </div>
@@ -1122,6 +1413,28 @@
                                                   <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.away.name}</span>
                                               </div>
                                           </div>
+
+                                          {/* DETALLE DE GOLES Y MINUTO EXACTO */}
+                                          {(match.home.goals?.length > 0 || match.away.goals?.length > 0) && (
+                                              <div className="border-t border-white/10 pt-2.5 mt-1 grid grid-cols-2 gap-2 text-[10px] text-sky-100/80">
+                                                  <div className="flex flex-col gap-1 pr-1">
+                                                      {match.home.goals.map((g, idx) => (
+                                                          <div key={idx} className="flex items-center gap-1 truncate">
+                                                              <span className="text-sky-300 font-bold">⚽ {g.clock}</span>
+                                                              <span className="truncate">{g.scorer}{g.suffix}</span>
+                                                          </div>
+                                                      ))}
+                                                  </div>
+                                                  <div className="flex flex-col gap-1 pl-1 items-end text-right">
+                                                      {match.away.goals.map((g, idx) => (
+                                                          <div key={idx} className="flex items-center justify-end gap-1 truncate w-full">
+                                                              <span className="truncate">{g.scorer}{g.suffix}</span>
+                                                              <span className="text-sky-300 font-bold">{g.clock} ⚽</span>
+                                                          </div>
+                                                      ))}
+                                                  </div>
+                                              </div>
+                                          )}
                                       </div>
                                   ))}
                               </div>
@@ -1139,7 +1452,7 @@
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-4 ${viewMode === 'nasa' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[28px] p-5 flex flex-col shrink-0 z-10 shadow-lg mt-2">
                               <div className="flex items-center gap-3 mb-1">
-                                  <div className="p-2 bg-blue-500/20 rounded-full text-blue-400"><Globe size={20}/></div>
+                                  <div className="p-2 bg-sky-400/20 rounded-full text-sky-300"><Globe size={20}/></div>
                                   <span className="text-[15px] font-bold text-white tracking-wide">Satélite Mucutuy</span>
                               </div>
                               <p className="text-[12px] font-medium text-white/50 mt-1 ml-[44px]">8.2456° N, -71.2864° W</p>
@@ -1148,8 +1461,8 @@
                               <div className="w-full h-full rounded-[24px] overflow-hidden relative">
                                 <iframe src="https://maps.google.com/maps?q=8.245647,-71.286413&t=k&z=15&ie=UTF8&iwloc=&output=embed" className="w-full h-full border-0 opacity-90 hover:opacity-100 transition-opacity duration-700" allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
                                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-                                    <div className="w-3 h-3 bg-blue-500 rounded-full z-10 shadow-[0_0_20px_rgba(59,130,246,1)] border-2 border-white"></div>
-                                    <div className="absolute w-[60px] h-[60px] bg-blue-500/30 rounded-full animate-ping"></div>
+                                    <div className="w-3 h-3 bg-sky-400 rounded-full z-10 shadow-[0_0_20px_rgba(56,189,248,1)] border-2 border-white"></div>
+                                    <div className="absolute w-[60px] h-[60px] bg-sky-400/30 rounded-full animate-ping"></div>
                                 </div>
                               </div>
                           </div>
@@ -1161,11 +1474,11 @@
               {/* BOTÓN FLOTANTE DEL CHAT */}
               <button 
                   onClick={() => setShowChat(true)} 
-                  className="fixed bottom-[80px] md:bottom-6 right-5 md:right-8 w-14 h-14 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center text-white z-40 hover:bg-red-500 transition-transform active:scale-95 border border-white/20"
+                  className="fixed bottom-[80px] md:bottom-6 right-5 md:right-8 w-14 h-14 bg-sky-300 rounded-full shadow-[0_0_25px_rgba(125,211,252,0.5)] flex items-center justify-center text-slate-950 z-40 hover:bg-sky-200 transition-transform active:scale-95 border border-white/40"
               >
                   <MessageIcon size={24} />
                   {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-red-600 shadow-md animate-bounce">
+                      <span className="absolute -top-1 -right-1 bg-white text-slate-950 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-sky-400 shadow-md animate-bounce">
                           {unreadCount > 9 ? '+9' : unreadCount}
                       </span>
                   )}
@@ -1174,18 +1487,18 @@
               {/* === BARRA DE NAVEGACIÓN INFERIOR === */}
               <nav className="w-full bg-zinc-950/80 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
                   <div className="flex justify-between items-center max-w-md md:max-w-2xl lg:max-w-3xl mx-auto h-[64px] relative">
-                      <div className="absolute top-0 h-1 bg-red-500 rounded-b-full transition-all duration-300 shadow-[0_0_10px_red]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
+                      <div className="absolute top-0 h-1 bg-sky-300 rounded-b-full transition-all duration-300 shadow-[0_0_12px_#7dd3fc]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
                       
-                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'radio' ? 'text-sky-300 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <RadioIcon size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Radio</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'tv' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'tv' ? 'text-sky-300 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <Tv size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">TV</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'sports' ? 'text-sky-300 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <Trophy size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Deportes</span>
                       </button>
-                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'nasa' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'nasa' ? 'text-sky-300 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <MapPin size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Ubicación</span>
                       </button>
                   </div>
@@ -1201,6 +1514,15 @@
                 .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
                 .perspective-1000 { perspective: 1000px; }
                 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+                @keyframes gridMove {
+                  0% { background-position: 0px 0px; }
+                  100% { background-position: 32px 32px; }
+                }
+                .moving-grid {
+                  background-image: linear-gradient(rgba(186, 230, 253, 0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(186, 230, 253, 0.12) 1px, transparent 1px);
+                  background-size: 32px 32px;
+                  animation: gridMove 3.5s linear infinite;
+                }
               `}} />
             </div>
           );
