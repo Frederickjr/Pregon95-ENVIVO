@@ -238,7 +238,7 @@
           // REFERENCIAS 
           const audioRef = useRef(null);
           const tvVideoRef = useRef(null); 
-          const tvAudioRef = useRef(null); // Referencia para el audio sincronizado de ESPN / Disney+
+          const tvAudioRef = useRef(null);
           const isPlayingRef = useRef(false);
 
           // REFERENCIAS BARRAS Y LOGO (WEB AUDIO)
@@ -301,7 +301,7 @@
                       isPlayingRef.current = false;
                       setStatus('Radio en pausa'); 
                       setIsConnecting(false);
-                      if (logoRef.current) logoRef.current.style.transform = `scale(1)`;
+                      if (logoRef.current) logoRef.current.style.transform = `translateZ(0) scale(1)`;
                   }
               };
 
@@ -571,7 +571,6 @@
               const currentTvUrl = currentChannel.url;
               const currentAudioUrl = currentChannel.audioUrl || null;
 
-              // Funciones de sincronización cuando hay pista de audio separada
               const handleVideoPlay = () => {
                 if (currentAudioUrl && audio) {
                   audio.play().catch(() => {});
@@ -596,12 +595,10 @@
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
-                  // 1. Inicializar Video
                   hlsVideo = new window.Hls({ enableWorker: true, lowLatencyMode: true });
                   hlsVideo.loadSource(currentTvUrl);
                   hlsVideo.attachMedia(video);
 
-                  // 2. Si el canal tiene Audio separado (Disney+ / ESPN), inicializar y sincronizar
                   if (currentAudioUrl && audio) {
                     hlsAudio = new window.Hls({ enableWorker: true, lowLatencyMode: true });
                     hlsAudio.loadSource(currentAudioUrl);
@@ -612,7 +609,6 @@
                     video.addEventListener('volumechange', handleVideoVolume);
                     video.addEventListener('seeking', handleVideoSeek);
 
-                    // Sincronizador continuo de desfase (drift correction)
                     syncInterval = setInterval(() => {
                       if (!video.paused && !audio.paused && audio.readyState >= 2 && video.readyState >= 2) {
                         const diff = Math.abs(video.currentTime - audio.currentTime);
@@ -693,7 +689,6 @@
                       const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
                       const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
                       
-                      // Extraer goles y minuto exacto
                       const rawDetails = comp.details || [];
                       const extractGoals = (teamId) => {
                           return rawDetails
@@ -802,7 +797,7 @@
             return () => eventSource.close();
           }, []);
 
-          // ================== ANIMACIÓN DE LOGO Y ONDAS INTELIGENTE (COLORES INTACTOS) ==================
+          // ================== ANIMACIÓN DE LOGO ESTABLE (SIN TITILAR EN PC) Y ONDAS ==================
           const renderWaves = useCallback(() => {
               animationRef.current = requestAnimationFrame(renderWaves);
               const canvas = canvasRef.current;
@@ -835,8 +830,8 @@
               }
 
               if (logoRef.current) {
-                  const scale = 1 + (beat * 0.05);
-                  logoRef.current.style.transform = `scale(${scale})`;
+                  const scale = (1 + (beat * 0.045)).toFixed(4);
+                  logoRef.current.style.transform = `translateZ(0) scale(${scale})`;
               }
 
               // COLORES DE ONDA ORIGINALES SIN TOCAR
@@ -881,14 +876,23 @@
           }, []);
 
           useEffect(() => {
-              if (canvasRef.current) {
-                  const dpr = window.devicePixelRatio || 1;
-                  const rect = canvasRef.current.getBoundingClientRect();
-                  canvasRef.current.width = rect.width * dpr;
-                  canvasRef.current.height = rect.height * dpr;
-              }
+              const updateCanvasSize = () => {
+                  if (canvasRef.current) {
+                      const dpr = window.devicePixelRatio || 1;
+                      const rect = canvasRef.current.getBoundingClientRect();
+                      if (rect.width > 0 && rect.height > 0) {
+                          canvasRef.current.width = rect.width * dpr;
+                          canvasRef.current.height = rect.height * dpr;
+                      }
+                  }
+              };
+              updateCanvasSize();
+              window.addEventListener('resize', updateCanvasSize);
               animationRef.current = requestAnimationFrame(renderWaves);
-              return () => cancelAnimationFrame(animationRef.current);
+              return () => {
+                  window.removeEventListener('resize', updateCanvasSize);
+                  cancelAnimationFrame(animationRef.current);
+              };
           }, [renderWaves]);
 
           // ================== AUDIO CONTROLS & ECUALIZADOR 3 BANDAS ==================
@@ -902,7 +906,6 @@
                     const bufferLength = analyserRef.current.frequencyBinCount;
                     dataArrayRef.current = new Uint8Array(bufferLength);
                     
-                    // Nodos del Ecualizador de 3 bandas
                     const bass = audioCtxRef.current.createBiquadFilter();
                     bass.type = 'lowshelf';
                     bass.frequency.value = 200;
@@ -942,7 +945,7 @@
               isPlayingRef.current = false;
               setStatus('Radio en pausa'); 
               setIsConnecting(false);
-              if (logoRef.current) logoRef.current.style.transform = `scale(1)`;
+              if (logoRef.current) logoRef.current.style.transform = `translateZ(0) scale(1)`;
             } else {
               setStatus('Conectando...'); 
               setIsConnecting(true);
@@ -992,10 +995,13 @@
           return (
             <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-sky-300/30 relative">
               
-              {/* FONDO CON CUADRÍCULA EN MOVIMIENTO Y RESPLANDOR AZUL CELESTE BLANQUECINO */}
+              {/* FONDO CON CUADRÍCULA EN MOVIMIENTO Y ONDAS DE COLOR LÍQUIDAS AL REPRODUCIR */}
               <div className="fixed inset-0 z-0 pointer-events-none bg-black overflow-hidden">
                   <div className="absolute inset-0 opacity-40 moving-grid"></div>
-                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'radial-gradient(circle at 50% 35%, rgba(186, 230, 253, 0.24) 0%, rgba(56, 189, 248, 0.09) 45%, transparent 70%)' }}></div>
+                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`}>
+                      <div className="aurora-wave-1"></div>
+                      <div className="aurora-wave-2"></div>
+                  </div>
               </div>
 
               {/* BANNER INSTALAR PWA */}
@@ -1199,14 +1205,14 @@
                   </div>
               )}
 
-              {/* HEADER PRINCIPAL */}
+              {/* HEADER PRINCIPAL (95.7 EN ROJO) */}
               <header className="flex justify-between items-center py-4 px-6 shrink-0 z-20 bg-gradient-to-b from-black/50 to-transparent max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full pt-safe">
                   <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-sky-200/20">
                           <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex flex-col">
-                          <h1 className="text-lg font-bold tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-sky-300">95.7</span></h1>
+                          <h1 className="text-lg font-bold tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-red-500">95.7</span></h1>
                           <div className="flex items-center gap-2 mt-0.5">
                               <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
                                   <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-300 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sky-400"></span></span>
@@ -1254,11 +1260,21 @@
                                   </div>
                               </div>
 
-                              <div className="flex-1 w-full flex items-center justify-center relative min-h-0 perspective-1000">
+                              {/* CONTENEDOR DEL LOGO ESTABILIZADO PARA PC */}
+                              <div className="flex-1 w-full flex items-center justify-center relative min-h-0">
                                   <canvas ref={canvasRef} className="absolute inset-0 w-[110%] h-[160%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"></canvas>
-                                  <div ref={logoRef} className={`relative z-10 w-full max-w-[190px] sm:max-w-[230px] md:max-w-[270px] aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${isPlaying && !isConnecting ? 'shadow-[0_0_65px_rgba(186,230,253,0.35)]' : 'shadow-2xl'}`} style={{ transform: 'scale(1)' }}>
-                                      <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isPlaying && !isConnecting ? 'border-sky-300/50' : 'border-white/5'}`}></div>
-                                      <img src={logoUrl} alt="Logo" className="w-[96%] h-[96%] object-cover rounded-full" />
+                                  <div 
+                                      ref={logoRef} 
+                                      className={`relative z-10 w-full max-w-[190px] sm:max-w-[230px] md:max-w-[270px] aspect-square rounded-full flex items-center justify-center transition-shadow duration-500 ${isPlaying && !isConnecting ? 'shadow-[0_0_65px_rgba(186,230,253,0.38)]' : 'shadow-2xl'}`} 
+                                      style={{ transform: 'translateZ(0) scale(1)', willChange: 'transform', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+                                  >
+                                      <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 pointer-events-none ${isPlaying && !isConnecting ? 'border-sky-300/50' : 'border-white/5'}`}></div>
+                                      <img 
+                                          src={logoUrl} 
+                                          alt="Logo" 
+                                          className="w-[96%] h-[96%] object-cover rounded-full block select-none pointer-events-none" 
+                                          style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+                                      />
                                   </div>
                               </div>
                           </div>
@@ -1318,7 +1334,6 @@
                                 </div>
                               )}
                               <video ref={tvVideoRef} className={`w-full aspect-video object-cover bg-black ${tvError ? 'hidden' : 'block'}`} controls playsInline></video>
-                              {/* Elemento de audio oculto para sincronizar streams duales (ESPN / Disney+) */}
                               <audio ref={tvAudioRef} className="hidden" preload="auto" />
                           </div>
 
@@ -1512,7 +1527,6 @@
                 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1.5rem); }
                 .custom-scrollbar::-webkit-scrollbar { width: 0px; background: transparent; }
                 .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-                .perspective-1000 { perspective: 1000px; }
                 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
                 @keyframes gridMove {
                   0% { background-position: 0px 0px; }
@@ -1522,6 +1536,29 @@
                   background-image: linear-gradient(rgba(186, 230, 253, 0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(186, 230, 253, 0.12) 1px, transparent 1px);
                   background-size: 32px 32px;
                   animation: gridMove 3.5s linear infinite;
+                }
+                @keyframes auroraWave1 {
+                  0%, 100% { transform: translate(-8%, -6%) scale(1) rotate(0deg); }
+                  33% { transform: translate(8%, 4%) scale(1.15) rotate(6deg); }
+                  66% { transform: translate(-4%, 8%) scale(0.92) rotate(-6deg); }
+                }
+                @keyframes auroraWave2 {
+                  0%, 100% { transform: translate(8%, 6%) scale(1.05) rotate(0deg); }
+                  50% { transform: translate(-10%, -5%) scale(1.22) rotate(-8deg); }
+                }
+                .aurora-wave-1 {
+                  position: absolute;
+                  inset: -25%;
+                  background: radial-gradient(ellipse 55% 42% at 50% 38%, rgba(186, 230, 253, 0.28) 0%, rgba(56, 189, 248, 0.12) 45%, transparent 72%);
+                  animation: auroraWave1 7s ease-in-out infinite;
+                  filter: blur(28px);
+                }
+                .aurora-wave-2 {
+                  position: absolute;
+                  inset: -25%;
+                  background: radial-gradient(ellipse 45% 55% at 48% 42%, rgba(224, 242, 254, 0.22) 0%, rgba(125, 211, 252, 0.10) 50%, transparent 72%);
+                  animation: auroraWave2 10s ease-in-out infinite;
+                  filter: blur(34px);
                 }
               `}} />
             </div>
