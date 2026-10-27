@@ -65,7 +65,7 @@
     <div id="root">
         <div id="fallback-loading">
             <div style="width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ef4444; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <p style="margin-top: 20px; color: rgba(255,255,255,0.5);">Cargando experiencia Prégon 95.7 Fm...</p>
+            <p style="margin-top: 20px; color: rgba(255,255,255,0.5);">Cargando experiencia...</p>
             <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
         </div>
     </div>
@@ -115,7 +115,7 @@
         }
 
         // ==========================================
-        // ICONOS SVG
+        // ICONOS
         // ==========================================
         const Icon = ({ children, size = 28, className = "", fill = "none" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
@@ -124,7 +124,6 @@
         const Play = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></Icon>;
         const Pause = (props) => <Icon {...props} strokeWidth="0" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></Icon>;
         const Volume2 = (props) => <Icon {...props} size={20}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></Icon>;
-        const VolumeX = (props) => <Icon {...props} size={20}><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></Icon>;
         const RadioIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M4.9 19.1a10 10 0 0 1 0-14.2"/><path d="M19.1 4.9a10 10 0 0 1 0 14.2"/><path d="M8.5 15.5a5 5 0 0 1 0-7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></Icon>;
         const Tv = (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>;
         const Trophy = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></Icon>;
@@ -140,51 +139,23 @@
         const Activity = (props) => <Icon {...props} size={16}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Icon>;
         const Bell = (props) => <Icon {...props} size={18}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></Icon>;
         const ShareIcon = (props) => <Icon {...props} size={18}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></Icon>;
-        const SlidersIcon = (props) => <Icon {...props} size={18}><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></Icon>;
-        const MoonIcon = (props) => <Icon {...props} size={18}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></Icon>;
-        const HistoryIcon = (props) => <Icon {...props} size={18}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></Icon>;
-        const SparklesIcon = (props) => <Icon {...props} size={16}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></Icon>;
-        const RefreshIcon = (props) => <Icon {...props} size={15}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></Icon>;
-        const ShieldIcon = (props) => <Icon {...props} size={18}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></Icon>;
-
-        const WhatsAppIcon = ({ size = 16, className = "" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.625.846 5.059 2.284 7.033l-1.492 5.448 5.601-1.469c1.908 1.258 4.192 1.988 6.607 1.988 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/>
-            </svg>
-        );
-
-        // ÍCONOS DINÁMICOS DE CLIMA (DÍA Y NOCHE) Y HORA
+        
+        // ÍCONOS DINÁMICOS DE CLIMA Y HORA
         const ClockIcon = (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
         const Sun = (props) => <Icon {...props}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></Icon>;
         const CloudSun = (props) => <Icon {...props}><path d="M12 2v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="M20 12h2"/><path d="m19.07 4.93-1.41 1.41"/><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"/><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></Icon>;
-        const CloudMoon = (props) => <Icon {...props}><path d="M10.188 8.5A6 6 0 0 1 16 4a1 1 0 0 0 6 6 6 6 0 0 1-3 5.197"/><path d="M13 16a3 3 0 1 1 0 6H7a5 5 0 1 1 4.9-6Z"/></Icon>;
         const Cloud = (props) => <Icon {...props}><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></Icon>;
         const CloudRain = (props) => <Icon {...props}><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></Icon>;
         const CloudLightning = (props) => <Icon {...props}><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/><polyline points="13 11 9 17 15 17 11 23"/></Icon>;
 
-        const getWeatherIcon = (code, isDayFlag) => {
-            const veHourStr = new Date().toLocaleString('en-US', { timeZone: 'America/Caracas', hour: 'numeric', hour12: false });
-            const veHour = parseInt(veHourStr, 10);
-            const isNightByClock = veHour >= 18 || veHour < 6;
-            const isNight = isDayFlag !== undefined ? isDayFlag === 0 : isNightByClock;
-
-            if (code === 0) {
-                return isNight 
-                    ? <MoonIcon size={17} className="text-indigo-300 shrink-0" /> 
-                    : <Sun size={18} className="text-yellow-400 shrink-0" />;
-            }
-            if (code >= 1 && code <= 2) {
-                return isNight 
-                    ? <CloudMoon size={18} className="text-indigo-300 shrink-0" /> 
-                    : <CloudSun size={18} className="text-yellow-400 shrink-0" />;
-            }
+        const getWeatherIcon = (code) => {
+            if (code === 0) return <Sun size={18} className="text-yellow-400 shrink-0" />;
+            if (code >= 1 && code <= 2) return <CloudSun size={18} className="text-yellow-400 shrink-0" />;
             if (code === 3) return <Cloud size={18} className="text-white/80 shrink-0" />;
             if (code >= 50 && code <= 69) return <CloudRain size={18} className="text-blue-400 shrink-0" />;
             if (code >= 80 && code <= 82) return <CloudRain size={18} className="text-blue-400 shrink-0" />;
             if (code >= 95) return <CloudLightning size={18} className="text-yellow-500 shrink-0" />;
-            return isNight 
-                ? <MoonIcon size={17} className="text-indigo-300 shrink-0" /> 
-                : <CloudSun size={18} className="text-white/70 shrink-0" />;
+            return <CloudSun size={18} className="text-white/70 shrink-0" />;
         };
 
         const GoogleIcon = () => (
@@ -203,108 +174,25 @@
         );
 
         // ==========================================
-        // LISTA CONSTANTE DE CANALES TV (CON FUSIÓN DE VIDEO + AUDIO ESPAÑOL PARA ESPN)
-        // ==========================================
-        const DEFAULT_TV_CHANNELS = [
-            { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600', logo: './venevision.png' },
-            { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-red-600', logo: './cnn.png' },
-            { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600', logo: './realmadrid.png' },
-            { 
-                id: 'espn', 
-                name: 'ESPN', 
-                type: 'Deportes', 
-                url: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/index.m3u8',
-                videoUrl: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-video=2400000.m3u8',
-                audioUrl: 'https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-audio_spa=128000.m3u8',
-                backupUrl: 'https://deportes.ksdjugfssddeports.com/playlist/43/tracks-v1a1/mono.m3u8?token=f7676745f69171c6afee4181eee2bd2d3a3e4c6b-4c8963d1b375d0175f69d45a47c21013-1793009221-1792987621',
-                color: 'bg-red-700', 
-                logo: './espn.png' 
-            },
-            { id: 'noticias', name: 'DW Español', type: 'Noticias', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-sky-500', logo: './dw.png' },
-            { id: 'tam', name: 'TAM TV', type: 'Regional', url: 'https://rtmp.tamtv.com.ve/tmp_hls/stream/index.m3u8', color: 'bg-emerald-500', logo: './tam.png' },
-            { id: 'chavo', name: 'El Chavo', type: 'Entretenimiento', url: 'https://live20.bozztv.com/giatvplayout7/giatv-211465/tracks-v1a1/mono.ts.m3u8', color: 'bg-orange-500', logo: './chavo.png' },
-            { id: 'rcn', name: 'RCN Más', type: 'Entretenimiento', url: 'https://rcntv-rcnmas-1-us.plex.wurl.tv/playlist.m3u8', color: 'bg-yellow-500', logo: './rcn.png' }
-        ];
-
-        // NOMBRE OFICIAL POR DEFECTO EN LETRAS ROJAS
-        const DEFAULT_STATION_ARTIST = "Prégon 95.7 Fm";
-
-        // CONFIGURACIÓN GLOBAL POR DEFECTO (MODIFICABLE POR SUPERUSUARIO EN VIVO)
-        const DEFAULT_GLOBAL_CONFIG = {
-            enableTV: true,
-            enableSports: true,
-            enableLocation: true,
-            enableChat: true,
-            enableReactions: true,
-            enableShazamButton: true,
-            enableWhatsappButton: true,
-            forcedSongTitle: "",
-            forcedSongArtist: "",
-            customEspnVideo: "https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-video=2400000.m3u8",
-            customEspnAudio: "https://barinaslive1.boldmss.com/ESPN_2/ESPN_2.isml/ESPN_2-audio_spa=128000.m3u8",
-            adminPass: "pregon2026"
-        };
-
-        // ==========================================
         // APP PRINCIPAL
         // ==========================================
         const App = () => {
-          // ID ÚNICO DE SESIÓN PARA SINCRONIZAR EMOJIS SIN DUPLICARLOS EN PANTALLA PROPIA
-          const sessionIdRef = useRef("sess_" + Math.random().toString(36).substring(2, 10));
-
-          // ESTADO DE CONFIGURACIÓN GLOBAL (SINCRONIZADO CON FIREBASE PARA TODOS LOS USUARIOS)
-          const [globalConfig, setGlobalConfig] = useState(DEFAULT_GLOBAL_CONFIG);
-          const [showAdminModal, setShowAdminModal] = useState(false);
-          const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
-          const [adminPassInput, setAdminPassInput] = useState("");
-          const [adminPassError, setAdminPassError] = useState("");
-          const logoTapCountRef = useRef(0);
-          const logoTapTimerRef = useRef(null);
-
-          // ESTADOS REPRODUCTOR Y CARÁTULA DINÁMICA
+          // ESTADOS REPRODUCTOR
           const [isPlaying, setIsPlaying] = useState(false);
           const [isConnecting, setIsConnecting] = useState(false);
-          const [volume, setVolume] = useState(0.85);
+          const [volume, setVolume] = useState(0.8);
           const [isMuted, setIsMuted] = useState(false);
           const [status, setStatus] = useState('Radio Apagada');
           const [viewMode, setViewMode] = useState('radio'); 
-          const [songInfo, setSongInfo] = useState({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
-          const [coverArt, setCoverArt] = useState('./logo.jpg');
-          const [ambientRgb, setAmbientRgb] = useState('220, 38, 38'); 
-          const [songHistory, setSongHistory] = useState([]);
+          const [songInfo, setSongInfo] = useState({ title: 'Programación En Vivo', artist: 'Pregón 95.7 FM' });
           const [isOfflineMode, setIsOfflineMode] = useState(false);
-          const [isScanningAudio, setIsScanningAudio] = useState(false);
-          const [scanFeedback, setScanFeedback] = useState('');
-          
-          // CANDADO ANTI-BORRADO Y CONTROL DE ZENO
-          const lastRawTitle = useRef("");
-          const shazamLockUntilRef = useRef(0);
-          const isZenoProvidingSongRef = useRef(false);
-
-          // ESTADOS ECUALIZADOR DSP Y SLEEP TIMER
-          const [showToolsModal, setShowToolsModal] = useState(false);
-          const [activeToolTab, setActiveToolTab] = useState('eq'); 
-          const [eqPreset, setEqPreset] = useState('normal');
-          const [eqGains, setEqGains] = useState({ bass: 0, mid: 0, treble: 0 });
-          const [sleepTimer, setSleepTimer] = useState(null); 
-          const [sleepSecondsLeft, setSleepSecondsLeft] = useState(0);
-
-          // ESTADO PETICIONES / CABINA WHATSAPP (+584165755857)
-          const CABIN_WHATSAPP = "584165755857";
-          const [reqName, setReqName] = useState('');
-          const [reqLocation, setReqLocation] = useState('Mucutuy');
-          const [reqSong, setReqSong] = useState('');
-
-          // ESTADO REACCIONES FLOTANTES EN VIVO
-          const [floatingReactions, setFloatingReactions] = useState([]);
-          const lastProcessedReactionIdRef = useRef(null);
+          const lastRawTitle = useRef(""); 
 
           // ESTADOS DEPORTES Y TV
           const [matches, setMatches] = useState([]);
           const [loadingSports, setLoadingSports] = useState(false);
           const [tvError, setTvError] = useState(false);
           const [activeTvChannel, setActiveTvChannel] = useState('venevision');
-          const [espnUseBackup, setEspnUseBackup] = useState(false);
           
           // ESTADOS USUARIOS, CLIMA Y HORA
           const [onlineUsers, setOnlineUsers] = useState(1);
@@ -332,16 +220,12 @@
           const tvVideoRef = useRef(null); 
           const isPlayingRef = useRef(false);
 
-          // REFERENCIAS WEB AUDIO, FILTROS EQ Y ESCÁNER ACÚSTICO
+          // REFERENCIAS BARRAS Y LOGO (WEB AUDIO)
           const canvasRef = useRef(null);
           const animationRef = useRef(null);
           const audioCtxRef = useRef(null);
           const analyserRef = useRef(null);
-          const streamDestRef = useRef(null);
           const dataArrayRef = useRef(null);
-          const bassFilterRef = useRef(null);
-          const midFilterRef = useRef(null);
-          const trebleFilterRef = useRef(null);
           const logoRef = useRef(null);
 
           // DATOS (URLs)
@@ -350,260 +234,17 @@
           const tvLiveUrl = "https://www.youtube.com/@MucutuyVe"; 
           const logoUrl = "./logo.jpg";
 
-          // TOKEN OFICIAL DE AUDD INTEGRADO
-          const AUDD_API_TOKEN = "4e203d99c5bbbc59efc1ea5a6aa8d57a";
-
-          // ================== FUNCIÓN VISUAL PARA LANZAR EMOJI EN PANTALLA ==================
-          const spawnLocalEmoji = useCallback((emoji) => {
-              const id = Date.now() + Math.random();
-              const randomLeft = 18 + Math.floor(Math.random() * 64);
-              setFloatingReactions(prev => [...prev.slice(-14), { id, emoji, left: randomLeft }]);
-              setTimeout(() => {
-                  setFloatingReactions(prev => prev.filter(r => r.id !== id));
-              }, 2800);
-          }, []);
-
-          // ================== SINCRONIZACIÓN DE SUPERUSUARIO (CONFIGURACIÓN GLOBAL EN FIREBASE) ==================
-          useEffect(() => {
-              if (!dbInstance) return;
-              const configRef = dbInstance.ref('config_global');
-              const listener = configRef.on('value', (snap) => {
-                  const data = snap.val();
-                  if (data) {
-                      setGlobalConfig(prev => ({ ...prev, ...data }));
-                  }
-              });
-              return () => configRef.off('value', listener);
-          }, []);
-
-          // Si el superusuario desactiva la pestaña donde está un usuario, regresarlo a Radio
-          useEffect(() => {
-              if (viewMode === 'tv' && !globalConfig.enableTV) handleViewModeChange('radio');
-              if (viewMode === 'sports' && !globalConfig.enableSports) handleViewModeChange('radio');
-              if (viewMode === 'nasa' && !globalConfig.enableLocation) handleViewModeChange('radio');
-          }, [globalConfig.enableTV, globalConfig.enableSports, globalConfig.enableLocation, viewMode]);
-
-          // Acceso secreto tocando 5 veces el logo del encabezado
-          const handleSecretLogoTap = () => {
-              logoTapCountRef.current += 1;
-              if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
-              if (logoTapCountRef.current >= 5) {
-                  logoTapCountRef.current = 0;
-                  setShowAdminModal(true);
-              } else {
-                  logoTapTimerRef.current = setTimeout(() => {
-                      logoTapCountRef.current = 0;
-                  }, 1800);
-              }
-          };
-
-          const handleUnlockAdmin = (e) => {
-              e.preventDefault();
-              const currentSecret = globalConfig.adminPass || "pregon2026";
-              if (adminPassInput.trim() === currentSecret) {
-                  setIsAdminUnlocked(true);
-                  setAdminPassError("");
-              } else {
-                  setAdminPassError("Clave incorrecta.");
-              }
-          };
-
-          const updateGlobalSetting = (key, value) => {
-              const updated = { ...globalConfig, [key]: value };
-              setGlobalConfig(updated);
-              if (dbInstance) {
-                  dbInstance.ref('config_global').set(updated);
-                  // Respaldo adicional en chat_cabina por si config_global tiene restricción de reglas en Firebase
-                  dbInstance.ref('chat_cabina').push({
-                      isConfigSync: true,
-                      configPayload: updated,
-                      timestamp: window.firebase.database.ServerValue.TIMESTAMP
-                  });
-              }
-          };
-
-          // ================== EXTRACTOR DE COLOR DINÁMICO OSCURO (SIN TONOS BLANCOS) ==================
-          useEffect(() => {
-              if (!coverArt || coverArt === './logo.jpg' || coverArt === logoUrl) {
-                  setAmbientRgb('220, 38, 38'); 
-                  return;
-              }
-              const img = new Image();
-              img.crossOrigin = "Anonymous";
-              img.onload = () => {
-                  try {
-                      const canvas = document.createElement('canvas');
-                      canvas.width = 24;
-                      canvas.height = 24;
-                      const ctx = canvas.getContext('2d');
-                      ctx.drawImage(img, 0, 0, 24, 24);
-                      const data = ctx.getImageData(0, 0, 24, 24).data;
-                      let rSum = 0, gSum = 0, bSum = 0, count = 0;
-
-                      for (let i = 0; i < data.length; i += 4) {
-                          const r = data[i], g = data[i + 1], b = data[i + 2];
-                          const max = Math.max(r, g, b);
-                          const min = Math.min(r, g, b);
-                          const saturation = max === 0 ? 0 : (max - min) / max;
-
-                          if (max > 45 && min < 190 && saturation > 0.25) {
-                              rSum += r; gSum += g; bSum += b; count++;
-                          }
-                      }
-
-                      if (count > 0) {
-                          let r = Math.round(rSum / count);
-                          let g = Math.round(gSum / count);
-                          let b = Math.round(bSum / count);
-                          const maxC = Math.max(r, g, b, 1);
-                          r = Math.min(230, Math.round((r / maxC) * 210));
-                          g = Math.min(200, Math.round((g / maxC) * 190));
-                          b = Math.min(230, Math.round((b / maxC) * 210));
-                          setAmbientRgb(`${r}, ${g}, ${b}`);
-                      } else {
-                          setAmbientRgb('220, 38, 38');
-                      }
-                  } catch (e) {
-                      setAmbientRgb('220, 38, 38');
-                  }
-              };
-              img.onerror = () => setAmbientRgb('220, 38, 38');
-              img.src = coverArt;
-          }, [coverArt]);
-
-          // ================== SINCRONIZACIÓN DE CANCIÓN EN FIREBASE ==================
-          useEffect(() => {
-              if (!dbInstance) return;
-              const songRef = dbInstance.ref('cancion_actual');
-              const listener = songRef.on('value', (snap) => {
-                  const data = snap.val();
-                  if (data && data.title && data.timestamp) {
-                      const ageMs = Date.now() - data.timestamp;
-                      if (ageMs < 210000) {
-                          shazamLockUntilRef.current = Date.now() + (210000 - ageMs);
-                          const artistName = data.artist && data.artist.trim() !== '' ? data.artist : DEFAULT_STATION_ARTIST;
-                          lastRawTitle.current = `${artistName} - ${data.title}`;
-                          setSongInfo({ title: data.title, artist: artistName });
-                          setCoverArt(data.cover || './logo.jpg');
-                      }
-                  }
-              });
-              return () => songRef.off('value', listener);
-          }, []);
-
-          // ================== FUNCIÓN CENTRAL PARA ACTUALIZAR CANCIÓN Y CARÁTULA HD ==================
-          const updateDetectedSong = useCallback(async (rawArtist, rawTitle, sourceLabel = 'Auto', overrideCover = null) => {
-              const cleanTitle = (rawTitle || '').trim();
-              const cleanArtist = (rawArtist && rawArtist.trim() !== '') ? rawArtist.trim() : DEFAULT_STATION_ARTIST;
-              if (!cleanTitle) return;
-
-              shazamLockUntilRef.current = Date.now() + 210000;
-              lastRawTitle.current = `${cleanArtist} - ${cleanTitle}`;
-
-              setSongInfo({ title: cleanTitle, artist: cleanArtist });
-
-              let foundCover = overrideCover || './logo.jpg';
-              try {
-                  const query = encodeURIComponent(`${cleanArtist === DEFAULT_STATION_ARTIST ? '' : cleanArtist} ${cleanTitle}`.trim());
-                  const itunesRes = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`);
-                  const itunesData = await itunesRes.json();
-                  if (itunesData.results && itunesData.results.length > 0 && itunesData.results[0].artworkUrl100) {
-                      foundCover = itunesData.results[0].artworkUrl100.replace('100x100bb', '600x600bb');
-                  }
-              } catch (e) {}
-
-              setCoverArt(foundCover);
-
-              if (dbInstance) {
-                  dbInstance.ref('cancion_actual').set({
-                      title: cleanTitle,
-                      artist: cleanArtist,
-                      cover: foundCover,
-                      source: sourceLabel,
-                      timestamp: Date.now()
-                  });
-              }
-
-              const timeStr = new Date().toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit' });
-              setSongHistory(prev => {
-                  const filtered = prev.filter(item => item.title.toLowerCase() !== cleanTitle.toLowerCase());
-                  return [{ title: cleanTitle, artist: cleanArtist, cover: foundCover, time: timeStr, source: sourceLabel }, ...filtered].slice(0, 12);
-              });
-          }, []);
-
-          // ================== ESCÁNER ACÚSTICO EXCLUSIVAMENTE MANUAL ==================
-          const identifyAudioByFingerprint = useCallback(async () => {
-              if (!isPlayingRef.current || isScanningAudio) return;
-
-              if (streamDestRef.current && window.MediaRecorder) {
-                  try {
-                      setIsScanningAudio(true);
-                      setScanFeedback('Escuchando señal (5s)...');
-
-                      const mediaStream = streamDestRef.current.stream;
-                      const recorder = new MediaRecorder(mediaStream);
-                      const audioChunks = [];
-
-                      recorder.ondataavailable = (e) => {
-                          if (e.data && e.data.size > 0) audioChunks.push(e.data);
-                      };
-
-                      recorder.onstop = async () => {
-                          try {
-                              setScanFeedback('Identificando canción...');
-                              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                              const formData = new FormData();
-                              formData.append('file', audioBlob, 'sample.webm');
-                              formData.append('api_token', AUDD_API_TOKEN);
-                              formData.append('return', 'apple_music,spotify');
-
-                              const res = await fetch('https://api.audd.io/', {
-                                  method: 'POST',
-                                  body: formData
-                              });
-                              const data = await res.json();
-
-                              if (data && data.status === 'success' && data.result) {
-                                  const detectedTitle = data.result.title;
-                                  const detectedArtist = data.result.artist || DEFAULT_STATION_ARTIST;
-                                  const directCover = data.result.apple_music?.artwork?.url?.replace('{w}x{h}', '600x600') || data.result.spotify?.album?.images?.[0]?.url || null;
-                                  
-                                  await updateDetectedSong(detectedArtist, detectedTitle, 'IA Audio', directCover);
-
-                                  setScanFeedback('¡Canción identificada!');
-                                  setTimeout(() => setScanFeedback(''), 3000);
-                              } else {
-                                  if (Date.now() > shazamLockUntilRef.current && !isZenoProvidingSongRef.current) {
-                                      setSongInfo({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
-                                      setCoverArt('./logo.jpg');
-                                  }
-                                  setScanFeedback('No identificada / En Vivo');
-                                  setTimeout(() => setScanFeedback(''), 2500);
-                              }
-                          } catch (err) {
-                              if (Date.now() > shazamLockUntilRef.current && !isZenoProvidingSongRef.current) {
-                                  setSongInfo({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
-                              }
-                              setScanFeedback('Señal en vivo');
-                              setTimeout(() => setScanFeedback(''), 2000);
-                          } finally {
-                              setIsScanningAudio(false);
-                          }
-                      };
-
-                      recorder.start();
-                      setTimeout(() => {
-                          if (recorder.state === 'recording') recorder.stop();
-                      }, 4800);
-                  } catch (e) {
-                      setIsScanningAudio(false);
-                      setScanFeedback('');
-                  }
-              } else {
-                  setScanFeedback('No soportado en este navegador');
-                  setTimeout(() => setScanFeedback(''), 2500);
-              }
-          }, [isScanningAudio, updateDetectedSong]);
+          // CANALES (NUEVO LINK ESPN APLICADO)
+          const TV_CHANNELS = [
+              { id: 'venevision', name: 'Venevisión', type: 'Nacional', url: 'https://venevision-blocked-cdn.encoders.immergo.tv/3/streamPlaylist.m3u8', color: 'bg-blue-600', logo: './venevision.png' },
+              { id: 'cnn', name: 'CNN Fast', type: 'Noticias 24/7', url: 'https://amg00803-cnnfast-amg00803c3-lg-es-5477.playouts.now.amagi.tv/playlist1080p.m3u8', color: 'bg-red-600', logo: './cnn.png' },
+              { id: 'deportes', name: 'Real Madrid', type: 'Deportes 24/7', url: 'https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8', color: 'bg-indigo-600', logo: './realmadrid.png' },
+              { id: 'espn', name: 'ESPN', type: 'Deportes', url: 'https://razen.futlivehd.com/espnar/tracks-v1a1/mono.m3u8?ip=190.6.11.162&token=669c106940bf0effbecc1daa91143e98e42e9123-ab-1792027880-1791973880', color: 'bg-red-700', logo: './espn.png' },
+              { id: 'noticias', name: 'DW Español', type: 'Noticias', url: 'https://dwamdstream104.akamaized.net/hls/live/2015530/dwstream104/index.m3u8', color: 'bg-sky-500', logo: './dw.png' },
+              { id: 'tam', name: 'TAM TV', type: 'Regional', url: 'https://rtmp.tamtv.com.ve/tmp_hls/stream/index.m3u8', color: 'bg-emerald-500', logo: './tam.png' },
+              { id: 'chavo', name: 'El Chavo', type: 'Entretenimiento', url: 'https://live20.bozztv.com/giatvplayout7/giatv-211465/tracks-v1a1/mono.ts.m3u8', color: 'bg-orange-500', logo: './chavo.png' },
+              { id: 'rcn', name: 'RCN Más', type: 'Entretenimiento', url: 'https://rcntv-rcnmas-1-us.plex.wurl.tv/playlist.m3u8', color: 'bg-yellow-500', logo: './rcn.png' }
+          ];
 
           // ================== RELOJ DE VENEZUELA CON SEGUNDOS ==================
           useEffect(() => {
@@ -612,113 +253,10 @@
                   setTimeVE(now.toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', second: '2-digit' }));
               };
               updateTime();
+              // Actualizar cada segundo para ver los segundos correr
               const interval = setInterval(updateTime, 1000); 
               return () => clearInterval(interval);
           }, []);
-
-          // ================== TEMPORIZADOR DE APAGADO (SLEEP TIMER) ==================
-          useEffect(() => {
-              if (!sleepTimer) {
-                  setSleepSecondsLeft(0);
-                  return;
-              }
-              setSleepSecondsLeft(sleepTimer * 60);
-              const timerInterval = setInterval(() => {
-                  setSleepSecondsLeft(prev => {
-                      if (prev <= 1) {
-                          if (audioRef.current && isPlayingRef.current) {
-                              audioRef.current.pause();
-                              setIsPlaying(false);
-                              isPlayingRef.current = false;
-                              setStatus('Apagado automático');
-                              if (logoRef.current) logoRef.current.style.transform = `scale(1)`;
-                          }
-                          setSleepTimer(null);
-                          clearInterval(timerInterval);
-                          return 0;
-                      }
-                      return prev - 1;
-                  });
-              }, 1000);
-              return () => clearInterval(timerInterval);
-          }, [sleepTimer]);
-
-          const formatTimer = (secs) => {
-              const m = Math.floor(secs / 60);
-              const s = secs % 60;
-              return `${m}:${s < 10 ? '0' : ''}${s}`;
-          };
-
-          // ================== CONTROL DE ECUALIZADOR DSP ==================
-          const applyEqPreset = (presetName) => {
-              setEqPreset(presetName);
-              let gains = { bass: 0, mid: 0, treble: 0 };
-              if (presetName === 'campesino') gains = { bass: 5, mid: 2, treble: 6 }; 
-              if (presetName === 'voz') gains = { bass: -4, mid: 6, treble: 2 };       
-              if (presetName === 'bajos') gains = { bass: 9, mid: -1, treble: 2 };    
-              setEqGains(gains);
-              if (bassFilterRef.current) bassFilterRef.current.gain.value = gains.bass;
-              if (midFilterRef.current) midFilterRef.current.gain.value = gains.mid;
-              if (trebleFilterRef.current) trebleFilterRef.current.gain.value = gains.treble;
-          };
-
-          const handleManualEqChange = (band, val) => {
-              const numVal = parseFloat(val);
-              setEqPreset('custom');
-              setEqGains(prev => {
-                  const next = { ...prev, [band]: numVal };
-                  if (band === 'bass' && bassFilterRef.current) bassFilterRef.current.gain.value = numVal;
-                  if (band === 'mid' && midFilterRef.current) midFilterRef.current.gain.value = numVal;
-                  if (band === 'treble' && trebleFilterRef.current) trebleFilterRef.current.gain.value = numVal;
-                  return next;
-              });
-          };
-
-          // ================== REACCIONES EN VIVO MULTI-USUARIO (100% COMPATIBLE CON REGLAS DE FIREBASE) ==================
-          useEffect(() => {
-              if (!dbInstance) return;
-              const reactionRef = dbInstance.ref('evento_reaccion');
-              let isFirst = true;
-              const listener = reactionRef.on('value', (snap) => {
-                  if (isFirst) { isFirst = false; return; }
-                  const data = snap.val();
-                  if (data && data.emoji && data.senderId !== sessionIdRef.current && data.id !== lastProcessedReactionIdRef.current) {
-                      lastProcessedReactionIdRef.current = data.id;
-                      spawnLocalEmoji(data.emoji);
-                  }
-              });
-              return () => reactionRef.off('value', listener);
-          }, [spawnLocalEmoji]);
-
-          const triggerReaction = (emoji) => {
-              // Mostrar inmediatamente en la pantalla propia
-              spawnLocalEmoji(emoji);
-              const reactionEventId = "rx_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7);
-              lastProcessedReactionIdRef.current = reactionEventId;
-
-              if (dbInstance) {
-                  // Vía 1: Nodo directo de baja latencia
-                  dbInstance.ref('evento_reaccion').set({
-                      id: reactionEventId,
-                      emoji,
-                      senderId: sessionIdRef.current,
-                      timestamp: Date.now()
-                  }).catch(() => {});
-
-                  // Vía 2: Canal garantizado dentro de chat_cabina (invisible en la lista de textos, pero dispara el emoji en todos los demás usuarios)
-                  const tempRef = dbInstance.ref('chat_cabina').push({
-                      isReaction: true,
-                      reactionId: reactionEventId,
-                      emoji,
-                      senderId: sessionIdRef.current,
-                      timestamp: Date.now()
-                  });
-                  // Limpiar el evento efímero a los 4 segundos para no llenar el historial del chat
-                  setTimeout(() => {
-                      tempRef.remove().catch(() => {});
-                  }, 4000);
-              }
-          };
 
           // ================== RUTAS / NAVEGACIÓN ==================
           useEffect(() => {
@@ -772,7 +310,7 @@
                   try {
                       await navigator.share({
                           title: 'Pregón 95.7 FM - Mucutuy',
-                          text: `🎵 Escuchando "${songInfo.title}" - ${songInfo.artist} en vivo por Pregón 95.7 FM.`,
+                          text: 'Escucha la radio en vivo, chatea y mira la TV.',
                           url: window.location.href,
                       });
                   } catch (err) {}
@@ -782,17 +320,17 @@
           useEffect(() => {
               if ('mediaSession' in navigator) {
                   navigator.mediaSession.metadata = new window.MediaMetadata({
-                      title: globalConfig.forcedSongTitle || songInfo.title,
-                      artist: globalConfig.forcedSongArtist || songInfo.artist || DEFAULT_STATION_ARTIST,
-                      album: DEFAULT_STATION_ARTIST,
-                      artwork: [{ src: coverArt || './logo.jpg', sizes: '512x512', type: 'image/jpeg' }]
+                      title: songInfo.title,
+                      artist: songInfo.artist,
+                      album: 'Pregón 95.7 FM',
+                      artwork: [{ src: './logo.jpg', sizes: '512x512', type: 'image/jpeg' }]
                   });
                   navigator.mediaSession.setActionHandler('play', () => handlePlayToggle());
                   navigator.mediaSession.setActionHandler('pause', () => handlePlayToggle());
               }
-          }, [songInfo, isPlaying, coverArt, globalConfig.forcedSongTitle, globalConfig.forcedSongArtist]);
+          }, [songInfo, isPlaying]);
 
-          // ================== CONTADOR Y CLIMA (DÍA/NOCHE) ==================
+          // ================== CONTADOR Y CLIMA ==================
           useEffect(() => {
               const fetchWeather = async () => {
                   try {
@@ -802,7 +340,7 @@
                   } catch(e) {}
               };
               fetchWeather(); 
-              const weatherInterval = setInterval(fetchWeather, 15 * 60 * 1000); 
+              const weatherInterval = setInterval(fetchWeather, 30 * 60 * 1000); 
 
               let connectedRef, myConnectionsRef, newConnectionRef, connectedListener, connectionsListener;
               if (dbInstance) {
@@ -835,14 +373,12 @@
               if (!authInstance) return;
               const unsubscribe = authInstance.onAuthStateChanged((firebaseUser) => {
                   if (firebaseUser) {
-                      const uName = firebaseUser.displayName || firebaseUser.email.split('@')[0];
                       setUser({
                           uid: firebaseUser.uid,
-                          name: uName,
+                          name: firebaseUser.displayName || firebaseUser.email.split('@')[0],
                           email: firebaseUser.email,
                           photo: firebaseUser.photoURL || null
                       });
-                      setReqName(uName);
                       setShowAuthModal(false);
                   } else {
                       setUser(null);
@@ -905,7 +441,7 @@
 
           const handleLogout = () => { if(authInstance) authInstance.signOut(); };
 
-          // ================== CHAT, REACCIONES REMOTAS Y CONFIGURACIÓN EN TIEMPO REAL ==================
+          // ================== CHAT Y NOTIFICACIONES ==================
           const isInitialChatLoad = useRef(true);
           const lastMessageId = useRef(null);
 
@@ -940,42 +476,26 @@
               const listener = chatRef.on('value', (snapshot) => {
                   const data = snapshot.val();
                   if (data) {
-                      const rawList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                      
-                      // Detectar si llegó una reacción o cambio de superusuario desde otro dispositivo
-                      if (!isInitialChatLoad.current && rawList.length > 0) {
-                          const newestItem = rawList[rawList.length - 1];
-                          if (newestItem.isReaction && newestItem.senderId !== sessionIdRef.current && newestItem.reactionId !== lastProcessedReactionIdRef.current) {
-                              lastProcessedReactionIdRef.current = newestItem.reactionId;
-                              spawnLocalEmoji(newestItem.emoji);
-                          }
-                          if (newestItem.isConfigSync && newestItem.configPayload) {
-                              setGlobalConfig(prev => ({ ...prev, ...newestItem.configPayload }));
-                          }
-                      }
-
-                      // Filtrar solo los mensajes reales de texto para mostrar en la ventana del chat
-                      const textMessages = rawList.filter(item => !item.isReaction && !item.isConfigSync && item.text);
-                      setMessages(textMessages.length > 0 ? textMessages : [{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos a la sintonía de los Pueblos del Sur!', time: '' }]);
-
-                      if (!isInitialChatLoad.current && textMessages.length > 0) {
-                          const lastMsg = textMessages[textMessages.length - 1];
+                      const loadedMessages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                      setMessages(loadedMessages);
+                      if (!isInitialChatLoad.current && loadedMessages.length > 0) {
+                          const lastMsg = loadedMessages[loadedMessages.length - 1];
                           if (lastMsg.id !== lastMessageId.current && (!user || lastMsg.user !== user.name)) {
                               if (!showChatRef.current) setUnreadCount(prev => prev + 1);
                               sendAppNotification(`Pregón 95.7`, `${lastMsg.user}: ${lastMsg.text}`);
                           }
                           lastMessageId.current = lastMsg.id;
                       } else {
-                           if(textMessages.length > 0) lastMessageId.current = textMessages[textMessages.length - 1].id;
+                           if(loadedMessages.length > 0) lastMessageId.current = loadedMessages[loadedMessages.length - 1].id;
                            isInitialChatLoad.current = false;
                       }
                   } else {
-                      setMessages([{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos a la sintonía de los Pueblos del Sur!', time: '' }]);
+                      setMessages([{ id: 'welcome', user: 'Pregón 95.7', text: '¡Bienvenidos!', time: '' }]);
                       isInitialChatLoad.current = false;
                   }
               });
               return () => chatRef.off('value', listener);
-          }, [user, spawnLocalEmoji]);
+          }, [user]);
 
           useEffect(() => {
               if (showChat && chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -996,175 +516,62 @@
               };
               if (dbInstance) dbInstance.ref('chat_cabina').push(newMsg);
               setChatMessage("");
-          };
+          }
 
-          // ENVIAR PETICIÓN DIRECTO AL WHATSAPP DE CABINA (+584165755857)
-          const handleSendCabinRequest = (e) => {
-              e.preventDefault();
-              if (!reqSong.trim()) return;
-              const sender = reqName.trim() || (user ? user.name : 'Oyente');
-              const whatsappText = `Hola cabina de *Pregón 95.7 FM* 📻.\nSoy *${sender}* desde *${reqLocation}*.\n\nPor favor complázcanme con / saludo:\n"${reqSong}"`;
-              
-              if (dbInstance) {
-                  dbInstance.ref('chat_cabina').push({
-                      user: sender,
-                      photo: user ? user.photo : null,
-                      text: `🎙️ [WhatsApp Cabina - ${reqLocation}]: "${reqSong}"`,
-                      timestamp: window.firebase.database.ServerValue.TIMESTAMP,
-                      time: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
-                  });
-              }
-
-              const waUrl = `https://wa.me/${CABIN_WHATSAPP}?text=${encodeURIComponent(whatsappText)}`;
-              window.open(waUrl, '_blank', 'noopener,noreferrer');
-              setReqSong('');
-              setShowToolsModal(false);
-          };
-
-          // ================== REPRODUCTOR DE TV CON FUSIÓN DE VIDEO + AUDIO SEPARADOS PARA ESPN ==================
+          // ================== REPRODUCTOR DE TV ==================
           useEffect(() => {
             if (viewMode === 'tv' && tvVideoRef.current) {
               setTvError(false);
               const video = tvVideoRef.current;
               let hls;
-              let masterBlobUrl = null;
-              const currentChannel = DEFAULT_TV_CHANNELS.find(c => c.id === activeTvChannel);
-              let currentTvUrl = currentChannel.url;
-
-              // Si es ESPN, creamos un Manifiesto Maestro HLS en memoria que une el link de video (2400000) y el de audio español (128000)
-              if (activeTvChannel === 'espn') {
-                  if (espnUseBackup && currentChannel.backupUrl) {
-                      currentTvUrl = currentChannel.backupUrl;
-                  } else {
-                      const vUrl = globalConfig.customEspnVideo || currentChannel.videoUrl;
-                      const aUrl = globalConfig.customEspnAudio || currentChannel.audioUrl;
-                      if (vUrl && aUrl && window.Hls && window.Hls.isSupported()) {
-                          const masterManifest = [
-                              '#EXTM3U',
-                              '#EXT-X-VERSION:4',
-                              `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio-spa",NAME="Espanol",DEFAULT=YES,AUTOSELECT=YES,LANGUAGE="es",URI="${aUrl}"`,
-                              `#EXT-X-STREAM-INF:BANDWIDTH=2528000,CODECS="avc1.4d401f,mp4a.40.2",AUDIO="audio-spa"`,
-                              vUrl
-                          ].join('\n');
-                          const blob = new Blob([masterManifest], { type: 'application/vnd.apple.mpegurl' });
-                          masterBlobUrl = URL.createObjectURL(blob);
-                          currentTvUrl = masterBlobUrl;
-                      } else if (vUrl) {
-                          // Para Safari/iOS nativo, usamos el manifiesto padre index.m3u8 del mismo servidor .isml
-                          currentTvUrl = vUrl.replace('ESPN_2-video=2400000.m3u8', 'index.m3u8');
-                      }
-                  }
-              }
+              const currentChannel = TV_CHANNELS.find(c => c.id === activeTvChannel);
+              const currentTvUrl = currentChannel.url;
 
               const initPlayer = () => {
                 if (window.Hls && window.Hls.isSupported()) {
-                  hls = new window.Hls({ 
-                    enableWorker: true,
-                    maxBufferLength: 30,
-                    maxMaxBufferLength: 60
-                  });
+                  hls = new window.Hls({ enableWorker: true, lowLatencyMode: true });
                   hls.loadSource(currentTvUrl);
                   hls.attachMedia(video);
                   hls.on(window.Hls.Events.ERROR, function (e, data) {
                     if (data.fatal) {
-                      if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
-                        if (activeTvChannel === 'espn' && !espnUseBackup) {
-                            hls.destroy();
-                            setEspnUseBackup(true);
-                        } else {
-                            hls.startLoad();
-                        }
-                      } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
-                        hls.recoverMediaError();
-                      } else {
-                        if (activeTvChannel === 'espn' && !espnUseBackup) {
-                            hls.destroy();
-                            setEspnUseBackup(true);
-                        } else {
-                            setTvError(true);
-                            hls.destroy();
-                        }
-                      }
+                      if(data.type === window.Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+                      else if(data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+                      else { setTvError(true); hls.destroy(); }
                     }
                   });
-                  hls.on(window.Hls.Events.MANIFEST_PARSED, function () { 
-                    video.play().catch(()=>{}); 
-                  });
+                  hls.on(window.Hls.Events.MANIFEST_PARSED, function () { video.play().catch(()=>{}); });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                   video.src = currentTvUrl;
-                  video.onerror = () => {
-                      if (activeTvChannel === 'espn' && !espnUseBackup) setEspnUseBackup(true);
-                      else setTvError(true);
-                  };
-                  video.addEventListener('loadedmetadata', function () { 
-                    video.play().catch(()=>{}); 
-                  });
+                  video.onerror = () => setTvError(true);
+                  video.addEventListener('loadedmetadata', function () { video.play().catch(()=>{}); });
                 }
               };
 
               if (window.Hls) initPlayer(); else setTimeout(initPlayer, 500);
-              return () => { 
-                if (hls) hls.destroy(); 
-                else if (video) { video.removeAttribute('src'); video.load(); }
-                if (masterBlobUrl) URL.revokeObjectURL(masterBlobUrl);
-              };
+              return () => { if (hls) hls.destroy(); else if (video) { video.removeAttribute('src'); video.load(); } };
             }
-          }, [viewMode, activeTvChannel, espnUseBackup, globalConfig.customEspnVideo, globalConfig.customEspnAudio]);
+          }, [viewMode, activeTvChannel]);
 
-          // ================== FETCH DEPORTES + GOLEADORES Y MINUTO EXACTO ==================
+          // ================== FETCH DEPORTES ==================
           const sportsNotified = useRef(false);
-          const fetchSportsData = useCallback(async (showSpinner = false) => {
-              if (showSpinner) setLoadingSports(true);
-              try {
+          useEffect(() => {
+            if (viewMode === 'sports' && matches.length === 0) {
+              const fetchSports = async () => {
+                setLoadingSports(true);
+                try {
                   const formatMatches = (events, leagueName) => events.map(ev => {
                       const comp = ev.competitions[0];
                       const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
                       const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
-                      
-                      const rawDetails = comp.details || [];
-                      const goalsList = rawDetails
-                          .filter(d => d.scoringPlay)
-                          .map(d => {
-                              const player = d.athletesInvolved?.[0]?.displayName || d.athletesInvolved?.[0]?.shortName || 'Gol';
-                              const minute = d.clock?.displayValue || '';
-                              const teamId = d.team?.id;
-                              const isPenalty = d.penaltyKick;
-                              const isOwnGoal = d.ownGoal;
-                              return {
-                                  player,
-                                  minute,
-                                  teamId,
-                                  tag: isPenalty ? ' (P)' : isOwnGoal ? ' (EC)' : ''
-                              };
-                          });
-
-                      const homeGoals = goalsList.filter(g => g.teamId === homeTeam.team.id);
-                      const awayGoals = goalsList.filter(g => g.teamId === awayTeam.team.id);
-
                       return {
-                          id: ev.id,
-                          phase: leagueName || comp.notes?.[0]?.headline || "Fase Regular",
-                          home: {
-                              id: homeTeam.team.id,
-                              name: homeTeam.team.shortDisplayName || homeTeam.team.name,
-                              score: homeTeam.score,
-                              logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
-                              goals: homeGoals
-                          },
-                          away: {
-                              id: awayTeam.team.id,
-                              name: awayTeam.team.shortDisplayName || awayTeam.team.name,
-                              score: awayTeam.score,
-                              logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png',
-                              goals: awayGoals
-                          },
-                          status: ev.status.type.state,
-                          detail: ev.status.type.shortDetail,
-                          date: ev.date
+                          id: ev.id, phase: leagueName || comp.notes?.[0]?.headline || "Fase Regular",
+                          home: { name: homeTeam.team.shortDisplayName || homeTeam.team.name, score: homeTeam.score, logo: homeTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png' },
+                          away: { name: awayTeam.team.shortDisplayName || awayTeam.team.name, score: awayTeam.score, logo: awayTeam.team.logo || 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png' },
+                          status: ev.status.type.state, detail: ev.status.type.shortDetail, date: ev.date
                       };
                   });
                   
-                  const leagues = ['esp.1', 'uefa.champions', 'conmebol.libertadores', 'ven.1', 'fifa.worldq.conmebol', 'eng.1', 'ita.1'];
+                  const leagues = ['esp.1', 'uefa.champions', 'conmebol.libertadores', 'ven.1', 'fifa.worldq.conmebol'];
                   const fetchPromises = leagues.map(league =>
                       fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`).then(res => res.json()).catch(() => ({}))
                   );
@@ -1182,17 +589,12 @@
                   });
                   filteredMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
                   setMatches(filteredMatches);
-              } catch (err) {}
-              if (showSpinner) setLoadingSports(false);
-          }, []);
-
-          useEffect(() => {
-              if (viewMode === 'sports') {
-                  fetchSportsData(matches.length === 0);
-                  const sportsRefresh = setInterval(() => fetchSportsData(false), 60000);
-                  return () => clearInterval(sportsRefresh);
-              }
-          }, [viewMode, fetchSportsData]);
+                } catch (err) {}
+                setLoadingSports(false);
+              };
+              fetchSports();
+            }
+          }, [viewMode, matches.length]);
 
           useEffect(() => {
               if (matches.length > 0 && !sportsNotified.current) {
@@ -1203,13 +605,13 @@
                   });
                   
                   if (todayMatches.length > 0) {
-                      sendAppNotification(`¡Hay ${todayMatches.length} partidos hoy!`, `Mira los goles y minutos en vivo en Pregón 95.7.`);
+                      sendAppNotification(`¡Hay ${todayMatches.length} partidos hoy!`, `Revisa la sección de Deportes en Pregón 95.7.`);
                   }
                   sportsNotified.current = true;
               }
           }, [matches]);
 
-          // ================== METADATOS ZENO + FALLBACK A "Prégon 95.7 Fm" ==================
+          // ================== METADATOS MUSICALES Y DETECTOR AUTODJ ==================
           useEffect(() => {
             if (audioRef.current) audioRef.current.volume = volume;
             const eventSource = new EventSource(zenoMetadataUrl);
@@ -1218,45 +620,34 @@
                 if (!event.data || typeof event.data !== 'string' || event.data.trim().startsWith('<')) return;
                 const data = JSON.parse(event.data);
                 if (data && typeof data.streamTitle !== 'undefined') {
-                  const streamTitle = (data.streamTitle || '').trim();
-                  let title = 'Programación En Vivo';
-                  let artist = DEFAULT_STATION_ARTIST;
+                  const streamTitle = data.streamTitle;
+                  if (streamTitle === lastRawTitle.current) return;
+                  lastRawTitle.current = streamTitle;
 
-                  if (streamTitle !== '') {
+                  let title = 'Programación En Vivo';
+                  let artist = 'Pregón 95.7 FM';
+                  if (streamTitle && streamTitle.trim() !== '') {
                       const parts = streamTitle.split(' - ');
-                      if (parts.length > 1) { 
-                          artist = parts[0].trim() || DEFAULT_STATION_ARTIST; 
-                          title = parts.slice(1).join(' - ').trim(); 
-                      } else { 
-                          title = streamTitle; 
-                          artist = DEFAULT_STATION_ARTIST;
-                      }
+                      if (parts.length > 1) { artist = parts[0].trim(); title = parts.slice(1).join(' - ').trim(); } 
+                      else { title = streamTitle; }
                   }
                   
-                  const lowerTitle = title.toLowerCase();
-                  const lowerArtist = artist.toLowerCase();
-                  const isGeneric = !title || title.trim() === '' || lowerTitle.includes('pregon') || lowerTitle.includes('pregón') || lowerTitle.includes('programación') || lowerTitle.includes('programacion') || lowerTitle.includes('cuña') || lowerArtist.includes('en vivo') || lowerTitle.includes('unknown');
+                  const isGeneric = !title || title.trim() === '' || title.toLowerCase().includes('pregon') || title.toLowerCase().includes('programación') || title.toLowerCase().includes('cuña') || artist.toLowerCase().includes('en vivo');
                   
                   if (isGeneric) {
-                      isZenoProvidingSongRef.current = false;
-                      setIsOfflineMode(false);
-                      if (Date.now() < shazamLockUntilRef.current) {
-                          return;
-                      }
-                      setSongInfo({ title: 'Programación En Vivo', artist: DEFAULT_STATION_ARTIST });
-                      setCoverArt('./logo.jpg');
+                      setSongInfo({ title: 'Programación En Vivo', artist: 'Pregón 95.7 FM' });
+                      setIsOfflineMode(false); 
                   } else {
-                      isZenoProvidingSongRef.current = true;
-                      setIsOfflineMode(true);
-                      await updateDetectedSong(artist, title, 'Zeno AutoDJ');
+                      setSongInfo({ title, artist });
+                      setIsOfflineMode(true); 
                   }
                 }
               } catch (err) {}
             };
             return () => eventSource.close();
-          }, [updateDetectedSong]);
+          }, []);
 
-          // ================== ANIMACIÓN DE LOGO Y ONDAS INTELIGENTE ==================
+          // ================== ANIMACIÓN DE LOGO Y ONDAS INTELIGENTE (RESPALDO IPHONE) ==================
           const renderWaves = useCallback(() => {
               animationRef.current = requestAnimationFrame(renderWaves);
               const canvas = canvasRef.current;
@@ -1271,6 +662,7 @@
               let freqs = [];
               let hasAudioData = false;
 
+              // Intentar extraer frecuencias reales
               if (analyserRef.current) {
                   analyserRef.current.getByteFrequencyData(dataArrayRef.current);
                   freqs = dataArrayRef.current;
@@ -1282,14 +674,16 @@
                   if (hasAudioData) beat = (bassSum / 8) / 255; 
               }
 
+              // FALLBACK IPHONE: Si Apple bloqueó los datos de Zeno.fm (CORS), simulamos la onda matemáticamente
               if (!hasAudioData && isPlayingRef.current) {
                   const time = performance.now() / 1000;
-                  beat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.3;
+                  beat = Math.pow(Math.sin(time * Math.PI * (120 / 60)), 4) * 0.3; // Latido falso pero realista
+                  // Generamos frecuencias falsas suaves
                   freqs = Array.from({length: 64}, (_, i) => Math.abs(Math.sin(time * 5 + i)) * (120 + Math.random() * 50));
               }
 
               if (logoRef.current) {
-                  const scale = 1 + (beat * 0.055);
+                  const scale = 1 + (beat * 0.05);
                   logoRef.current.style.transform = `scale(${scale})`;
               }
 
@@ -1344,7 +738,7 @@
               return () => cancelAnimationFrame(animationRef.current);
           }, [renderWaves]);
 
-          // ================== AUDIO CONTROLS + DSP FILTERS ==================
+          // ================== AUDIO CONTROLS ==================
           const handlePlayToggle = () => {
             if (!audioCtxRef.current) {
                 try {
@@ -1355,33 +749,9 @@
                     const bufferLength = analyserRef.current.frequencyBinCount;
                     dataArrayRef.current = new Uint8Array(bufferLength);
                     
-                    bassFilterRef.current = audioCtxRef.current.createBiquadFilter();
-                    bassFilterRef.current.type = 'lowshelf';
-                    bassFilterRef.current.frequency.value = 120;
-                    bassFilterRef.current.gain.value = eqGains.bass;
-
-                    midFilterRef.current = audioCtxRef.current.createBiquadFilter();
-                    midFilterRef.current.type = 'peaking';
-                    midFilterRef.current.frequency.value = 1000;
-                    midFilterRef.current.Q.value = 1;
-                    midFilterRef.current.gain.value = eqGains.mid;
-
-                    trebleFilterRef.current = audioCtxRef.current.createBiquadFilter();
-                    trebleFilterRef.current.type = 'highshelf';
-                    trebleFilterRef.current.frequency.value = 3500;
-                    trebleFilterRef.current.gain.value = eqGains.treble;
-
                     const source = audioCtxRef.current.createMediaElementSource(audioRef.current);
-                    source.connect(bassFilterRef.current);
-                    bassFilterRef.current.connect(midFilterRef.current);
-                    midFilterRef.current.connect(trebleFilterRef.current);
-                    trebleFilterRef.current.connect(analyserRef.current);
+                    source.connect(analyserRef.current);
                     analyserRef.current.connect(audioCtxRef.current.destination);
-
-                    if (audioCtxRef.current.createMediaStreamDestination) {
-                        streamDestRef.current = audioCtxRef.current.createMediaStreamDestination();
-                        analyserRef.current.connect(streamDestRef.current);
-                    }
                 } catch (e) {}
             }
 
@@ -1406,7 +776,7 @@
                     setIsConnecting(false); 
                     setStatus('Al Aire');
               }).catch(() => {
-                    setStatus('Reconectando...'); 
+                    setStatus('Error de Conexión'); 
                     setIsPlaying(false);
                     isPlayingRef.current = false; 
                     setIsConnecting(false);
@@ -1427,151 +797,16 @@
             if (audioRef.current) audioRef.current.muted = newMutedState;
           };
 
-          const displayedTitle = globalConfig.forcedSongTitle && globalConfig.forcedSongTitle.trim() !== "" 
-              ? globalConfig.forcedSongTitle 
-              : songInfo.title;
-          const displayedArtist = globalConfig.forcedSongArtist && globalConfig.forcedSongArtist.trim() !== "" 
-              ? globalConfig.forcedSongArtist 
-              : (songInfo.artist || DEFAULT_STATION_ARTIST);
-
           return (
-            <div className="flex flex-col h-[100dvh] w-full bg-black font-sans selection:bg-red-500/30 relative">
+            <div className="flex flex-col h-[100dvh] w-full bg-zinc-950 font-sans selection:bg-red-500/30 relative">
               
-              {/* FONDO NEGRO PURO + MALLA/GRID + RESPLANDOR DINÁMICO OSCURO (CERO TONOS BLANCOS) */}
-              <div className="fixed inset-0 z-0 pointer-events-none bg-black overflow-hidden">
-                  <div 
-                      className={`absolute inset-0 transition-all duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-25'}`} 
-                      style={{ 
-                          background: `radial-gradient(circle at 50% 34%, rgba(${ambientRgb}, 0.28) 0%, rgba(${ambientRgb}, 0.08) 38%, rgba(0, 0, 0, 0.98) 70%, #000000 100%)` 
-                      }}
-                  ></div>
-                  <div 
-                      className="absolute inset-0 opacity-25" 
-                      style={{ 
-                          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px)', 
-                          backgroundSize: '30px 30px' 
-                      }}
-                  ></div>
+              {/* FONDO LIMPIO Y LIGERO */}
+              <div className="fixed inset-0 z-0 pointer-events-none bg-black">
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+                  <div className={`absolute inset-0 transition-opacity duration-1000 ${isPlaying && !isConnecting ? 'opacity-100' : 'opacity-0'}`} style={{ background: 'radial-gradient(circle at 50% 30%, rgba(220, 38, 38, 0.15) 0%, transparent 60%)' }}></div>
               </div>
 
-              {/* LLUVIA DE REACCIONES EN VIVO (SINCRONIZADA ENTRE TODOS LOS USUARIOS) */}
-              {globalConfig.enableReactions && (
-                  <div className="fixed inset-0 pointer-events-none z-40 overflow-hidden">
-                      {floatingReactions.map(r => (
-                          <div key={r.id} className="absolute bottom-24 text-2xl sm:text-3xl animate-floatUp select-none drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" style={{ left: `${r.left}%` }}>
-                              {r.emoji}
-                          </div>
-                      ))}
-                  </div>
-              )}
-
-              {/* MODAL DE SUPERUSUARIO / ADMINISTRADOR GLOBAL */}
-              {showAdminModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-[fadeIn_0.25s_ease-out]">
-                      <div className="w-full max-w-md bg-zinc-900 border border-red-500/30 rounded-[32px] p-6 shadow-2xl relative max-h-[88vh] flex flex-col">
-                          <div className="flex justify-between items-center mb-4 shrink-0">
-                              <h3 className="text-lg font-black text-white flex items-center gap-2">
-                                  <ShieldIcon className="text-red-500" /> Panel Superusuario
-                              </h3>
-                              <button onClick={() => setShowAdminModal(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full"><XIcon size={20}/></button>
-                          </div>
-
-                          {!isAdminUnlocked ? (
-                              <form onSubmit={handleUnlockAdmin} className="flex flex-col gap-3 py-4">
-                                  <p className="text-xs text-white/60 text-center mb-1">Ingresa tu clave maestra para controlar las funciones de la aplicación para todos los oyentes en vivo:</p>
-                                  {adminPassError && <p className="text-xs text-red-400 bg-red-500/10 py-2 rounded-xl text-center font-bold">{adminPassError}</p>}
-                                  <input 
-                                      type="password" 
-                                      value={adminPassInput} 
-                                      onChange={e => setAdminPassInput(e.target.value)} 
-                                      placeholder="Clave de superusuario..." 
-                                      className="bg-black/60 border border-white/15 rounded-2xl px-4 py-3 text-sm text-white text-center focus:outline-none focus:border-red-500"
-                                      autoFocus
-                                  />
-                                  <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-2xl text-sm shadow-lg transition-all">
-                                      Desbloquear Configuración Global
-                                  </button>
-                              </form>
-                          ) : (
-                              <div className="overflow-y-auto custom-scrollbar pr-1 flex flex-col gap-4">
-                                  <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 text-[11px] text-red-300 font-medium">
-                                      ⚡ Cualquier cambio que hagas aquí se aplica en tiempo real en los teléfonos y pantallas de todos los usuarios conectados.
-                                  </div>
-
-                                  {/* INTERRUPTORES DE FUNCIONES Y PESTAÑAS */}
-                                  <div className="flex flex-col gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
-                                      <h4 className="text-xs font-black uppercase tracking-wider text-white/60 mb-1">Activar / Desactivar Módulos</h4>
-                                      {[
-                                          { key: 'enableTV', label: 'Pestaña de TV en Vivo' },
-                                          { key: 'enableSports', label: 'Pestaña de Deportes y Goles' },
-                                          { key: 'enableLocation', label: 'Pestaña de Ubicación Satelital' },
-                                          { key: 'enableChat', label: 'Botón Flotante de Chat en Vivo' },
-                                          { key: 'enableReactions', label: 'Barra de Emojis / Reacciones' },
-                                          { key: 'enableShazamButton', label: 'Botón IA Identificar Canción' },
-                                          { key: 'enableWhatsappButton', label: 'Botón Cabina WhatsApp' }
-                                      ].map(item => (
-                                          <div key={item.key} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
-                                              <span className="text-xs font-bold text-white/90">{item.label}</span>
-                                              <button 
-                                                  type="button"
-                                                  onClick={() => updateGlobalSetting(item.key, !globalConfig[item.key])}
-                                                  className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 flex items-center ${globalConfig[item.key] ? 'bg-green-600 justify-end' : 'bg-zinc-700 justify-start'}`}
-                                              >
-                                                  <span className="w-4 h-4 rounded-full bg-white shadow"></span>
-                                              </button>
-                                          </div>
-                                      ))}
-                                  </div>
-
-                                  {/* FIJAR NOMBRE DE PROGRAMA O LOCUTOR EN VIVO */}
-                                  <div className="flex flex-col gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
-                                      <h4 className="text-xs font-black uppercase tracking-wider text-white/60">Fijar Texto en Vivo (Opcional)</h4>
-                                      <p className="text-[10px] text-white/40">Si los dejas vacíos, funciona automático con Zeno o la IA.</p>
-                                      <input 
-                                          type="text" 
-                                          value={globalConfig.forcedSongTitle || ""} 
-                                          onChange={e => updateGlobalSetting('forcedSongTitle', e.target.value)} 
-                                          placeholder="Título fijo (ej: Noticiero Pregón)" 
-                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
-                                      />
-                                      <input 
-                                          type="text" 
-                                          value={globalConfig.forcedSongArtist || ""} 
-                                          onChange={e => updateGlobalSetting('forcedSongArtist', e.target.value)} 
-                                          placeholder="Subtítulo rojo fijo (ej: Prégon 95.7 Fm)" 
-                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white"
-                                      />
-                                  </div>
-
-                                  {/* ENLACES DE VIDEO Y AUDIO ESPN */}
-                                  <div className="flex flex-col gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
-                                      <h4 className="text-xs font-black uppercase tracking-wider text-white/60">Enlaces de ESPN (Video + Audio)</h4>
-                                      <label className="text-[10px] text-white/50">Link de Video (.m3u8):</label>
-                                      <input 
-                                          type="text" 
-                                          value={globalConfig.customEspnVideo || ""} 
-                                          onChange={e => updateGlobalSetting('customEspnVideo', e.target.value)} 
-                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-[11px] text-white font-mono"
-                                      />
-                                      <label className="text-[10px] text-white/50">Link de Audio Español (.m3u8):</label>
-                                      <input 
-                                          type="text" 
-                                          value={globalConfig.customEspnAudio || ""} 
-                                          onChange={e => updateGlobalSetting('customEspnAudio', e.target.value)} 
-                                          className="bg-black/60 border border-white/10 rounded-xl px-3 py-2 text-[11px] text-white font-mono"
-                                      />
-                                  </div>
-
-                                  <button onClick={() => setShowAdminModal(false)} className="w-full bg-white text-black font-bold py-2.5 rounded-2xl text-xs">
-                                      Guardar y Cerrar Panel
-                                  </button>
-                              </div>
-                          )}
-                      </div>
-                  </div>
-              )}
-
-              {/* BANNER DE INSTALACIÓN PWA */}
+              {/* MODALES PWA Y AUTH... */}
               {showInstallBanner && installPrompt && (
                   <div className="fixed inset-x-4 bottom-24 z-50 bg-zinc-900/95 backdrop-blur-xl border border-white/10 p-4 rounded-[24px] shadow-[0_10px_40px_rgba(0,0,0,0.8)] flex items-center justify-between animate-[fadeIn_0.5s_ease-out] md:max-w-sm md:mx-auto md:bottom-28">
                       <div className="flex items-center gap-3">
@@ -1580,7 +815,7 @@
                           </div>
                           <div>
                               <h4 className="text-[14px] font-bold text-white leading-tight">Instalar Pregón 95.7</h4>
-                              <p className="text-[11px] text-white/50 mt-0.5 leading-tight">Acceso directo en tu pantalla.</p>
+                              <p className="text-[11px] text-white/50 mt-0.5 leading-tight">Agrega la app a tu inicio.</p>
                           </div>
                       </div>
                       <button onClick={handleInstallApp} className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-full text-xs font-bold transition-transform active:scale-95 shrink-0 ml-2 shadow-[0_0_15px_rgba(220,38,38,0.4)]">Instalar</button>
@@ -1588,152 +823,6 @@
                   </div>
               )}
 
-              {/* MODAL DE HERRAMIENTAS PRO */}
-              {showToolsModal && (
-                  <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/75 backdrop-blur-md sm:p-4 animate-[fadeIn_0.25s_ease-out]">
-                      <div className="w-full max-w-md bg-zinc-900/95 border-t sm:border border-white/15 sm:rounded-[32px] rounded-t-[32px] shadow-2xl p-6 relative flex flex-col max-h-[85vh]">
-                          <div className="flex justify-between items-center mb-4">
-                              <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
-                                  <SlidersIcon className="text-red-500" /> Centro de Control Pro
-                              </h3>
-                              <div className="flex items-center gap-2">
-                                  <button onClick={() => { setShowToolsModal(false); setShowAdminModal(true); }} title="Acceso Superusuario" className="text-white/30 hover:text-red-400 bg-white/5 p-1.5 rounded-full transition-colors">
-                                      <ShieldIcon size={18}/>
-                                  </button>
-                                  <button onClick={() => setShowToolsModal(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full"><XIcon size={20}/></button>
-                              </div>
-                          </div>
-
-                          <div className="grid grid-cols-4 gap-1.5 bg-black/50 p-1.5 rounded-2xl border border-white/10 mb-5 shrink-0">
-                              <button onClick={() => setActiveToolTab('eq')} className={`py-2 rounded-xl text-[11px] font-bold transition-all ${activeToolTab === 'eq' ? 'bg-red-600 text-white shadow' : 'text-white/50 hover:text-white'}`}>Audio EQ</button>
-                              <button onClick={() => setActiveToolTab('timer')} className={`py-2 rounded-xl text-[11px] font-bold transition-all ${activeToolTab === 'timer' ? 'bg-red-600 text-white shadow' : 'text-white/50 hover:text-white'}`}>Timer</button>
-                              <button onClick={() => setActiveToolTab('history')} className={`py-2 rounded-xl text-[11px] font-bold transition-all ${activeToolTab === 'history' ? 'bg-red-600 text-white shadow' : 'text-white/50 hover:text-white'}`}>Historial</button>
-                              <button onClick={() => setActiveToolTab('request')} className={`py-2 rounded-xl text-[11px] font-bold transition-all ${activeToolTab === 'request' ? 'bg-green-600 text-white shadow' : 'text-white/50 hover:text-white'}`}>WhatsApp</button>
-                          </div>
-
-                          <div className="overflow-y-auto custom-scrollbar pr-1">
-                              {activeToolTab === 'eq' && (
-                                  <div className="flex flex-col gap-4">
-                                      <p className="text-xs text-white/50">Ajusta la firma acústica en tiempo real según lo que estés escuchando:</p>
-                                      <div className="grid grid-cols-2 gap-2.5">
-                                          {[
-                                              { id: 'normal', label: 'Estudio Plano', desc: 'Sonido original' },
-                                              { id: 'campesino', label: 'Merengue / Andino', desc: 'Realza cuerdas y bajo' },
-                                              { id: 'voz', label: 'Voz / Noticias', desc: 'Locución ultra clara' },
-                                              { id: 'bajos', label: 'Extra Bass', desc: 'Refuerzo de graves' }
-                                          ].map(p => (
-                                              <button key={p.id} onClick={() => applyEqPreset(p.id)} className={`p-3 rounded-2xl border text-left transition-all ${eqPreset === p.id ? 'bg-red-600/20 border-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'}`}>
-                                                  <div className="text-xs font-bold">{p.label}</div>
-                                                  <div className="text-[10px] text-white/40 mt-0.5">{p.desc}</div>
-                                              </button>
-                                          ))}
-                                      </div>
-
-                                      <div className="bg-black/40 border border-white/10 rounded-2xl p-4 flex flex-col gap-3 mt-1">
-                                          <div className="flex items-center justify-between text-xs">
-                                              <span className="text-white/70 font-bold">Bajos (120Hz)</span>
-                                              <span className="text-red-400 font-mono">{eqGains.bass > 0 ? `+${eqGains.bass}` : eqGains.bass} dB</span>
-                                          </div>
-                                          <input type="range" min="-10" max="10" step="1" value={eqGains.bass} onChange={(e) => handleManualEqChange('bass', e.target.value)} className="w-full accent-red-500 cursor-pointer" />
-
-                                          <div className="flex items-center justify-between text-xs mt-1">
-                                              <span className="text-white/70 font-bold">Medios / Voz (1kHz)</span>
-                                              <span className="text-red-400 font-mono">{eqGains.mid > 0 ? `+${eqGains.mid}` : eqGains.mid} dB</span>
-                                          </div>
-                                          <input type="range" min="-10" max="10" step="1" value={eqGains.mid} onChange={(e) => handleManualEqChange('mid', e.target.value)} className="w-full accent-red-500 cursor-pointer" />
-
-                                          <div className="flex items-center justify-between text-xs mt-1">
-                                              <span className="text-white/70 font-bold">Brillo / Requinto (3.5kHz)</span>
-                                              <span className="text-red-400 font-mono">{eqGains.treble > 0 ? `+${eqGains.treble}` : eqGains.treble} dB</span>
-                                          </div>
-                                          <input type="range" min="-10" max="10" step="1" value={eqGains.treble} onChange={(e) => handleManualEqChange('treble', e.target.value)} className="w-full accent-red-500 cursor-pointer" />
-                                      </div>
-                                  </div>
-                              )}
-
-                              {activeToolTab === 'timer' && (
-                                  <div className="flex flex-col gap-4 text-center py-2">
-                                      <div className="w-14 h-14 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mx-auto">
-                                          <MoonIcon size={26} />
-                                      </div>
-                                      <div>
-                                          <h4 className="text-base font-bold text-white">Apagado Automático</h4>
-                                          <p className="text-xs text-white/50 mt-1">Programa la radio para que se detenga sola mientras descansas.</p>
-                                      </div>
-                                      {sleepSecondsLeft > 0 && (
-                                          <div className="bg-indigo-500/10 border border-indigo-500/30 py-3 px-4 rounded-2xl">
-                                              <span className="text-xs text-indigo-300 uppercase tracking-wider font-bold block">Se apagará en</span>
-                                              <span className="text-2xl font-mono font-black text-white">{formatTimer(sleepSecondsLeft)}</span>
-                                          </div>
-                                      )}
-                                      <div className="grid grid-cols-2 gap-2.5">
-                                          {[15, 30, 60, 90].map(mins => (
-                                              <button key={mins} onClick={() => setSleepTimer(mins)} className={`py-3 rounded-2xl font-bold text-xs border transition-all ${sleepTimer === mins ? 'bg-indigo-600 text-white border-indigo-400 shadow-lg' : 'bg-white/5 text-white/80 border-white/10 hover:bg-white/10'}`}>
-                                                  {mins} Minutos
-                                              </button>
-                                          ))}
-                                      </div>
-                                      {sleepTimer && (
-                                          <button onClick={() => setSleepTimer(null)} className="w-full py-2.5 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold">
-                                              Desactivar Temporizador
-                                          </button>
-                                      )}
-                                  </div>
-                              )}
-
-                              {activeToolTab === 'history' && (
-                                  <div className="flex flex-col gap-3">
-                                      <p className="text-xs text-white/50">Últimas canciones detectadas en la emisión:</p>
-                                      {songHistory.length === 0 ? (
-                                          <div className="text-center py-8 bg-white/5 rounded-2xl border border-white/5">
-                                              <HistoryIcon className="mx-auto text-white/20 mb-2" size={32}/>
-                                              <p className="text-xs text-white/40">Aún no se han registrado pistas en el historial.</p>
-                                          </div>
-                                      ) : (
-                                          songHistory.map((item, idx) => (
-                                              <div key={idx} className="flex items-center gap-3 bg-white/5 p-2.5 rounded-2xl border border-white/10">
-                                                  <img src={item.cover} className="w-11 h-11 rounded-xl object-cover shrink-0 border border-white/10" />
-                                                  <div className="flex-1 min-w-0">
-                                                      <h5 className="text-xs font-bold text-white truncate">{item.title}</h5>
-                                                      <p className="text-[11px] text-red-400 truncate">{item.artist}</p>
-                                                  </div>
-                                                  <div className="flex flex-col items-end shrink-0">
-                                                      <span className="text-[10px] text-white/40 font-mono">{item.time}</span>
-                                                      {item.source && <span className="text-[8px] px-1.5 py-0.5 rounded bg-white/10 text-white/60 uppercase mt-1">{item.source}</span>}
-                                                  </div>
-                                              </div>
-                                          ))
-                                      )}
-                                  </div>
-                              )}
-
-                              {activeToolTab === 'request' && (
-                                  <form onSubmit={handleSendCabinRequest} className="flex flex-col gap-3">
-                                      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 p-3 rounded-2xl text-green-400 text-xs font-bold">
-                                          <WhatsAppIcon size={18} /> Línea Directa Cabina: +58 416-5755857
-                                      </div>
-                                      <p className="text-xs text-white/50">Completa tu saludo o complacencia musical para enviarlo directo al WhatsApp de Prégon 95.7 Fm:</p>
-                                      <input type="text" value={reqName} onChange={e => setReqName(e.target.value)} placeholder="Tu nombre o familia" required className="bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-green-500" />
-                                      <select value={reqLocation} onChange={e => setReqLocation(e.target.value)} className="bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-green-500">
-                                          <option value="Mucutuy">📍 Desde Mucutuy</option>
-                                          <option value="Mérida">📍 Desde Mérida Ciudad</option>
-                                          <option value="Mucuchachí">📍 Desde Mucuchachí</option>
-                                          <option value="Canaguá">📍 Desde Canaguá</option>
-                                          <option value="Chacantá">📍 Desde Chacantá</option>
-                                          <option value="El Extranjero">🌎 Desde el Extranjero</option>
-                                      </select>
-                                      <textarea rows="3" value={reqSong} onChange={e => setReqSong(e.target.value)} placeholder="Escribe la canción que quieres pedir o tu saludo especial..." required className="bg-black/50 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-green-500 resize-none"></textarea>
-                                      <button type="submit" className="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-xl text-xs shadow-[0_0_15px_rgba(34,197,94,0.4)] flex items-center justify-center gap-2 transition-all">
-                                          <WhatsAppIcon size={16} /> Enviar al WhatsApp de Cabina
-                                      </button>
-                                  </form>
-                              )}
-                          </div>
-                      </div>
-                  </div>
-              )}
-
-              {/* MODAL AUTENTICACIÓN */}
               {showAuthModal && (
                   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
                       <div className="w-full max-w-sm bg-zinc-900/90 border border-white/10 p-6 rounded-[32px] shadow-2xl relative animate-[fadeIn_0.3s_ease-out]">
@@ -1789,18 +878,18 @@
               )}
 
               {/* MODAL CHAT FLOTANTE */}
-              {showChat && globalConfig.enableChat && (
+              {showChat && (
                   <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 animate-[fadeIn_0.3s_ease-out]">
                       <div className="w-full h-[85vh] sm:h-[600px] max-w-md bg-zinc-900/95 border-t sm:border border-white/10 sm:rounded-[32px] rounded-t-[32px] shadow-2xl relative flex flex-col overflow-hidden">
                           <div className="bg-black/60 px-5 py-4 border-b border-white/10 flex justify-between items-center shrink-0">
                               <div className="flex items-center gap-3">
                                   <MessageIcon className="text-red-500" />
-                                  <h3 className="text-base font-bold text-white tracking-wide">Cabina interactiva</h3>
+                                  <h3 className="text-base font-bold text-white tracking-wide">Chat en Vivo</h3>
                               </div>
                               <div className="flex items-center gap-4">
                                   <div className="flex items-center gap-1.5">
                                       <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>
-                                      <span className="text-[10px] text-white/50 font-bold uppercase">{onlineUsers} Al Aire</span>
+                                      <span className="text-[10px] text-white/50 font-bold uppercase">Conectados</span>
                                   </div>
                                   <button onClick={() => setShowChat(false)} className="text-white/50 hover:text-white bg-white/5 p-1.5 rounded-full transition-colors"><XIcon size={20} /></button>
                               </div>
@@ -1814,12 +903,12 @@
                                           <div className="w-8 h-8 rounded-full bg-white/10 shrink-0 overflow-hidden border border-white/10">
                                               {msg.photo ? <img src={msg.photo} className="w-full h-full object-cover"/> : <UserIcon size={16} className="m-auto mt-1.5 text-white/50"/>}
                                           </div>
-                                          <div className={`p-3 rounded-2xl border max-w-[80%] ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
+                                          <div className={`p-3 rounded-2xl border ${isMe ? 'bg-red-600/20 border-red-500/30 rounded-tr-sm' : 'bg-black/40 border-white/5 rounded-tl-sm shadow-sm'}`}>
                                               <div className={`flex justify-between items-end mb-1 gap-4 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                                                   <span className={`text-[11px] font-bold ${isMe ? 'text-red-400' : 'text-white/60'}`}>{isMe ? 'Tú' : msg.user}</span>
                                                   <span className="text-[9px] text-white/30">{msg.time}</span>
                                               </div>
-                                              <p className={`text-[13px] leading-snug break-words ${isMe ? 'text-white' : 'text-white/90'}`}>{msg.text}</p>
+                                              <p className={`text-[13px] leading-tight ${isMe ? 'text-white' : 'text-white/90'}`}>{msg.text}</p>
                                           </div>
                                       </div>
                                   );
@@ -1827,45 +916,37 @@
                               <div ref={chatEndRef} />
                           </div>
                           <form onSubmit={handleSendMessage} className="p-3 bg-black/60 border-t border-white/10 flex gap-2 pb-safe">
-                              <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Envía tu saludo a Mucutuy..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50 transition-all" />
+                              <input type="text" value={chatMessage} onChange={(e)=>setChatMessage(e.target.value)} onClick={() => !user && setShowAuthModal(true)} placeholder={user ? "Escribe un mensaje..." : "Inicia sesión para chatear"} disabled={!user} className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-red-500 disabled:opacity-50 transition-all" />
                               <button type="submit" disabled={!user || !chatMessage.trim()} className="w-11 h-11 rounded-full bg-red-600 flex items-center justify-center text-white shrink-0 hover:bg-red-500 transition-colors disabled:opacity-50 disabled:hover:bg-red-600 shadow-[0_0_10px_rgba(239,68,68,0.4)]"><SendIcon /></button>
                           </form>
                       </div>
                   </div>
               )}
 
-              {/* HEADER PRINCIPAL (5 TOQUES EN EL LOGO ABRE EL PANEL DE SUPERUSUARIO) */}
-              <header className="flex justify-between items-center py-3.5 px-5 shrink-0 z-20 bg-gradient-to-b from-black/80 to-transparent max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full pt-safe">
+              {/* HEADER PRINCIPAL */}
+              <header className="flex justify-between items-center py-4 px-6 shrink-0 z-20 bg-gradient-to-b from-black/50 to-transparent max-w-md md:max-w-4xl lg:max-w-5xl mx-auto w-full pt-safe">
                   <div className="flex items-center gap-3">
-                      <div onClick={handleSecretLogoTap} className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-white/15 cursor-pointer active:scale-95 transition-transform">
-                          <img src={logoUrl} alt="Logo" className="w-full h-full object-cover select-none" />
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-lg shrink-0 border-2 border-white/10">
+                          <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
                       </div>
                       <div className="flex flex-col">
-                          <h1 className="text-lg font-black tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-red-500">95.7</span></h1>
+                          <h1 className="text-lg font-bold tracking-tight text-white/95 leading-tight drop-shadow-md">PREGÓN <span className="text-red-500">95.7</span></h1>
                           <div className="flex items-center gap-2 mt-0.5">
-                              <div className="flex items-center gap-1.5 bg-black/60 px-2.5 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
+                              <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-md">
                                   <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span></span>
                                   <span className="text-[10px] font-bold tracking-wider text-white/90">{onlineUsers}</span><UsersIcon className="text-white/40" />
                               </div>
-                              {sleepSecondsLeft > 0 && (
-                                  <button onClick={() => { setActiveToolTab('timer'); setShowToolsModal(true); }} className="flex items-center gap-1 bg-indigo-500/20 border border-indigo-400/30 px-2 py-0.5 rounded-full text-[10px] font-mono text-indigo-300">
-                                      <MoonIcon size={11} /> {formatTimer(sleepSecondsLeft)}
-                                  </button>
-                              )}
                           </div>
                       </div>
                   </div>
                   <div className="flex items-center gap-2">
-                      <button onClick={() => { setActiveToolTab('eq'); setShowToolsModal(true); }} title="Ecualizador y Herramientas" className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md active:scale-95 shadow-lg ${eqPreset !== 'normal' || sleepSecondsLeft > 0 ? 'bg-red-600/30 border-red-500 text-red-400' : 'border-white/20 bg-white/10 text-white hover:bg-white/20'}`}>
-                          <SlidersIcon size={16} />
-                      </button>
                       <button onClick={requestNotificationPermission} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                           <Bell size={16} />
                       </button>
                       <button onClick={handleShareApp} className="w-9 h-9 rounded-full flex items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-md active:scale-95 shadow-lg">
                           <ShareIcon size={16} />
                       </button>
-                      <button onClick={() => setShowAuthModal(true)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md overflow-hidden active:scale-95 ${user ? 'border-green-500/40' : 'bg-white/10 text-white hover:bg-white/20 border-white/10'}`}>
+                      <button onClick={() => setShowAuthModal(true)} className={`w-9 h-9 rounded-full flex items-center justify-center border transition-colors backdrop-blur-md overflow-hidden active:scale-95 ${user ? 'border-white/20' : 'bg-white/10 text-white hover:bg-white/20 border-white/10'}`}>
                           {user && user.photo ? <img src={user.photo} className="w-full h-full object-cover"/> : <UserIcon size={18} />}
                       </button>
                   </div>
@@ -1877,131 +958,69 @@
                   <div className="flex-1 w-full relative">
                       
                       {/* --- VISTA RADIO PRINCIPAL --- */}
-                      <div className={`absolute inset-0 w-full h-full px-4 sm:px-6 pb-2 pt-1 transition-all duration-300 flex flex-col md:flex-row md:items-center md:justify-center md:gap-12 ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto overflow-hidden' : 'opacity-0 translate-y-4 pointer-events-none z-0 overflow-hidden'}`}>
+                      <div className={`absolute inset-0 w-full h-full px-4 sm:px-6 pb-2 pt-2 transition-all duration-300 flex flex-col md:flex-row md:items-center md:justify-center md:gap-12 ${viewMode === 'radio' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto overflow-hidden' : 'opacity-0 translate-y-4 pointer-events-none z-0 overflow-hidden'}`}>
                           <audio ref={audioRef} src={streamUrl} crossOrigin="anonymous" preload="none" />
                           
                           <div className="w-full md:w-1/2 flex flex-col items-center justify-between flex-1 min-h-0 md:justify-center">
                               
-                              {/* PÍLDORAS CLIMA (DÍA / NOCHE) Y RELOJ */}
-                              <div className="w-full flex justify-center shrink-0 gap-2.5 mb-2 md:mb-6">
-                                  <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
-                                      {weather && weather.weathercode !== undefined ? getWeatherIcon(weather.weathercode, weather.is_day) : getWeatherIcon(0, undefined)}
-                                      <span className="text-[11px] sm:text-[12px] font-bold text-white/90 tracking-wide">
+                              <div className="w-full flex justify-center shrink-0 gap-3 mb-2 md:mb-8">
+                                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg">
+                                      {weather && weather.weathercode !== undefined ? getWeatherIcon(weather.weathercode) : <CloudSun size={16} className="text-yellow-400 shrink-0" />}
+                                      <span className="text-[12px] font-bold text-white/90 tracking-wide">
                                           Mucutuy {weather ? `${Math.round(weather.temperature)}°C` : '...'}
                                       </span>
                                   </div>
-                                  <div className="bg-black/60 backdrop-blur-md border border-white/10 px-3.5 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
+                                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-1.5 rounded-full flex items-center justify-center gap-2 shadow-lg min-w-[85px]">
                                       <ClockIcon size={16} className="text-white/70 shrink-0" />
-                                      <span className="text-[11px] sm:text-[12px] font-bold text-white/90 tracking-wide font-mono mt-0.5 text-center w-full">
+                                      <span className="text-[12px] font-bold text-white/90 tracking-wide font-mono mt-0.5 text-center w-full">
                                           {timeVE || '--:--:--'}
                                       </span>
                                   </div>
                               </div>
 
-                              {/* DISCO / CARÁTULA DINÁMICA Y ONDAS */}
                               <div className="flex-1 w-full flex items-center justify-center relative min-h-0 perspective-1000">
                                   <canvas ref={canvasRef} className="absolute inset-0 w-[110%] h-[160%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none"></canvas>
-                                  <div 
-                                      ref={logoRef} 
-                                      className="relative z-10 w-full max-w-[190px] sm:max-w-[230px] md:max-w-[270px] aspect-square rounded-full flex items-center justify-center transition-all duration-500" 
-                                      style={{ 
-                                          transform: 'scale(1)',
-                                          boxShadow: isPlaying && !isConnecting ? `0 0 60px rgba(${ambientRgb}, 0.35)` : '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
-                                      }}
-                                  >
-                                      <div 
-                                          className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isScanningAudio ? 'border-cyan-400 animate-pulse' : ''}`}
-                                          style={{ borderColor: !isScanningAudio ? (isPlaying && !isConnecting ? `rgba(${ambientRgb}, 0.55)` : 'rgba(255,255,255,0.1)') : undefined }}
-                                      ></div>
-                                      <img src={coverArt} onError={(e) => { e.target.onerror = null; e.target.src = logoUrl; }} alt="Carátula" className="w-[95%] h-[95%] object-cover rounded-full transition-all duration-700" />
+                                  <div ref={logoRef} className={`relative z-10 w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${isPlaying && !isConnecting ? 'shadow-[0_0_60px_rgba(239,68,68,0.3)]' : 'shadow-2xl'}`} style={{ transform: 'scale(1)' }}>
+                                      <div className={`absolute inset-0 rounded-full border-[4px] transition-colors duration-700 ${isPlaying && !isConnecting ? 'border-red-500/40' : 'border-white/5'}`}></div>
+                                      <img src={logoUrl} alt="Logo" className="w-[96%] h-[96%] object-cover rounded-full" />
                                   </div>
                               </div>
                           </div>
 
-                          {/* PANEL DERECHO / CONTROLES DE REPRODUCCIÓN */}
-                          <div className="w-full md:w-1/2 flex flex-col items-center justify-end md:justify-center shrink-0 z-10 mt-1 mb-3 md:my-0">
-                              <div className="flex flex-col items-center text-center w-full px-2">
-                                  <div className="flex items-center gap-2 mb-1 flex-wrap justify-center">
-                                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${isOfflineMode ? 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' : 'bg-red-500/15 text-red-400 border-red-500/30'}`}>
-                                          <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isOfflineMode ? 'bg-yellow-400' : 'bg-red-500'}`}></span>
-                                          {isOfflineMode ? 'AutoDJ Musical' : 'Señal En Vivo'}
-                                      </span>
-                                      {globalConfig.enableShazamButton && (
-                                          <button 
-                                              onClick={identifyAudioByFingerprint} 
-                                              disabled={!isPlaying || isScanningAudio}
-                                              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-all ${isScanningAudio ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40 animate-pulse' : 'bg-white/10 text-white/80 border-white/15 hover:bg-white/20 active:scale-95 disabled:opacity-40'}`}
-                                              title="Presiona para identificar la canción que está sonando"
-                                          >
-                                              <SparklesIcon size={11} className="text-cyan-400" />
-                                              {scanFeedback || (isScanningAudio ? 'Detectando...' : 'Identificar Canción')}
-                                          </button>
-                                      )}
-                                  </div>
-                                  <h2 className={`text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>
-                                      {isConnecting ? 'Conectando señal...' : displayedTitle}
-                                  </h2>
-                                  <p className="text-sm sm:text-base md:text-lg text-red-400 font-semibold tracking-tight truncate w-full mt-0.5 drop-shadow-md">
-                                      {isConnecting ? DEFAULT_STATION_ARTIST : displayedArtist}
-                                  </p>
+                          <div className="w-full md:w-1/2 flex flex-col items-center justify-end md:justify-center shrink-0 z-10 mt-2 mb-4 md:my-0">
+                              <div className="flex flex-col items-center text-center w-full">
+                                  <h2 className={`text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white w-full truncate ${isConnecting ? 'opacity-50' : 'opacity-100'} drop-shadow-lg`}>{isConnecting ? 'Conectando...' : songInfo.title}</h2>
+                                  <p className="text-sm sm:text-base md:text-lg text-red-400 font-medium tracking-tight truncate w-full mt-1 drop-shadow-md">{isConnecting ? 'Iniciando transmisión' : songInfo.artist}</p>
                               </div>
                               
-                              {/* BARRA PRINCIPAL PLAY + VOLUMEN */}
-                              <div className="w-full max-w-[330px] flex items-center justify-between gap-4 mt-3.5 bg-white/5 p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-full backdrop-blur-md border border-white/10 shadow-xl">
-                                  <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full shrink-0 transition-all duration-300 ${isPlaying || isConnecting ? 'w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] bg-red-600 text-white border border-red-400 shadow-[0_0_20px_rgba(239,68,68,0.5)]' : 'w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
+                              <div className={`transition-all duration-500 overflow-hidden ${isOfflineMode ? 'max-h-[50px] opacity-100 mt-3' : 'max-h-0 opacity-0 mt-0'}`}>
+                                  <div className="px-4 py-1.5 bg-yellow-500/10 border border-yellow-500/30 rounded-full flex items-center justify-center gap-2 shadow-inner">
+                                      <div className="relative flex h-2 w-2">
+                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                                          <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                                      </div>
+                                      <span className="text-[10px] md:text-[11px] font-black text-yellow-500 uppercase tracking-widest mt-0.5">Pregón Offline (Auto DJ)</span>
+                                  </div>
+                              </div>
+                              
+                              <div className="w-full max-w-[320px] flex items-center justify-between gap-4 mt-4 bg-white/5 p-2.5 sm:p-3 pr-4 sm:pr-5 rounded-full backdrop-blur-md border border-white/10 shadow-lg">
+                                  <button onClick={handlePlayToggle} disabled={isConnecting} className={`relative flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying || isConnecting ? 'w-[50px] h-[50px] sm:w-[56px] sm:h-[56px] bg-red-600/20 text-red-500 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.3)]' : 'w-[50px] h-[50px] sm:w-[56px] sm:h-[56px] bg-white text-black hover:scale-105'} ${isConnecting ? 'opacity-50 cursor-wait scale-90' : 'active:scale-95'}`}>
                                       {isPlaying || isConnecting ? <Pause size={24} /> : <Play size={24} className="ml-1" />}
                                   </button>
                                   <div className="flex items-center gap-3 w-full">
-                                      <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors">
-                                          {isMuted || volume === 0 ? <VolumeX size={18} className="text-red-400" /> : <Volume2 size={18} />}
-                                      </button>
+                                      <button onClick={toggleMute} className="text-white/70 hover:text-white transition-colors"><Volume2 size={18} /></button>
                                       <div className="relative w-full h-2 flex items-center bg-black/60 rounded-full overflow-hidden border border-white/5">
                                           <div className="absolute left-0 h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]" style={{ width: `${(isMuted ? 0 : volume) * 100}%` }}></div>
                                           <input type="range" min="0" max="1" step="0.01" value={isMuted ? 0 : volume} onChange={handleVolumeChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                                       </div>
                                   </div>
                               </div>
-
-                              {/* BARRA DE ACCIONES RÁPIDAS (WHATSAPP CABINA Y REACCIONES MULTI-USUARIO) */}
-                              {(globalConfig.enableWhatsappButton || globalConfig.enableReactions) && (
-                                  <div className="w-full max-w-[330px] flex items-center justify-between gap-2 mt-3">
-                                      {globalConfig.enableWhatsappButton && (
-                                          <button onClick={() => { setActiveToolTab('request'); setShowToolsModal(true); }} className="flex-1 bg-green-600/20 hover:bg-green-600/30 border border-green-500/40 rounded-full py-2 px-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-green-300 active:scale-95 transition-all shadow-[0_0_12px_rgba(34,197,94,0.2)]">
-                                              <WhatsAppIcon size={14} className="text-green-400" /> Cabina WhatsApp
-                                          </button>
-                                      )}
-                                      {globalConfig.enableReactions && (
-                                          <div className={`flex items-center justify-center gap-1 bg-white/5 border border-white/10 rounded-full p-1 px-2 ${!globalConfig.enableWhatsappButton ? 'w-full' : ''}`}>
-                                              {['❤️', '🔥', '👏', '🇻🇪'].map(emoji => (
-                                                  <button key={emoji} onClick={() => triggerReaction(emoji)} className="w-7 h-7 rounded-full hover:bg-white/10 flex items-center justify-center text-sm active:scale-125 transition-transform" title="Enviar reacción en vivo a todos">
-                                                      {emoji}
-                                                  </button>
-                                              ))}
-                                          </div>
-                                      )}
-                                  </div>
-                              )}
                           </div>
                       </div>
 
                       {/* --- VISTA TV --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 pt-2 transition-all duration-300 flex flex-col gap-5 ${viewMode === 'tv' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
                           
-                          {activeTvChannel === 'espn' && (
-                              <div className="w-full max-w-4xl mx-auto flex items-center justify-between bg-white/5 border border-white/10 px-4 py-2 rounded-2xl shrink-0">
-                                  <span className="text-xs font-bold text-white/80 flex items-center gap-2">
-                                      <span className="w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
-                                      ESPN ({espnUseBackup ? 'Señal 2 Respaldo' : 'Señal 1 HD + Audio Español'})
-                                  </span>
-                                  <button 
-                                      onClick={() => { setTvError(false); setEspnUseBackup(prev => !prev); }}
-                                      className="flex items-center gap-1.5 bg-red-600/30 hover:bg-red-600 border border-red-500/40 text-white px-3 py-1 rounded-full text-[11px] font-bold transition-all active:scale-95"
-                                  >
-                                      <RefreshIcon /> Cambiar Señal ESPN
-                                  </button>
-                              </div>
-                          )}
-
                           <div className="w-full max-w-4xl mx-auto bg-black rounded-[20px] overflow-hidden shadow-xl border border-white/10 shrink-0 z-10 relative">
                               {tvError && (
                                 <div className="absolute inset-0 bg-zinc-950/95 z-20 flex flex-col items-center justify-center p-6 text-center">
@@ -2015,12 +1034,12 @@
                           <div className="flex flex-col gap-3 shrink-0 z-10 w-full max-w-4xl mx-auto">
                               <h3 className="text-[13px] font-bold text-white/50 uppercase tracking-wider ml-1">Canales Disponibles</h3>
                               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8">
-                                  {DEFAULT_TV_CHANNELS.map(channel => {
+                                  {TV_CHANNELS.map(channel => {
                                       const isActive = activeTvChannel === channel.id;
                                       return (
                                           <button
                                               key={channel.id}
-                                              onClick={() => { setActiveTvChannel(channel.id); setEspnUseBackup(false); }}
+                                              onClick={() => setActiveTvChannel(channel.id)}
                                               className={`relative flex flex-col items-center justify-center gap-1.5 p-3 rounded-[24px] transition-all duration-500 overflow-hidden group backdrop-blur-2xl ${
                                                   isActive
                                                       ? 'border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] scale-[1.02]'
@@ -2062,84 +1081,54 @@
                           </a>
                       </div>
 
-                      {/* --- VISTA DEPORTES CON GOLEADORES Y MINUTO EXACTO --- */}
+                      {/* --- VISTA DEPORTES --- */}
                       <div className={`absolute inset-0 w-full h-full overflow-y-auto custom-scrollbar px-6 pb-6 transition-all duration-300 flex flex-col gap-4 ${viewMode === 'sports' ? 'opacity-100 translate-y-0 z-10 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none z-0'}`}>
-                          <div className="flex items-center justify-between pb-2 pt-2 shrink-0 z-10 mt-2 mb-1 bg-white/5 backdrop-blur-md rounded-full px-5 border border-white/10 max-w-md mx-auto w-full">
-                              <h2 className="text-white font-bold text-[14px] tracking-wide flex items-center gap-2 py-1.5"><Activity size={18} className="text-red-500" /> Marcadores y Goles</h2>
-                              <button onClick={() => fetchSportsData(true)} className="text-xs text-white/60 hover:text-white flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-full active:scale-95">
-                                  <RefreshIcon /> Actualizar
-                              </button>
+                          <div className="flex items-center justify-center pb-2 pt-2 shrink-0 z-10 mt-2 mb-2 bg-white/5 backdrop-blur-md rounded-full mx-auto px-6 border border-white/10">
+                              <h2 className="text-white font-bold text-[15px] tracking-wide flex items-center gap-2 py-2"><Activity size={18} className="text-red-500" /> Partidos de Hoy</h2>
                           </div>
                           {loadingSports ? (
                               <div className="flex flex-col items-center justify-center py-16 shrink-0 z-10">
                                   <div className="animate-spin rounded-full h-10 w-10 border-4 border-transparent border-t-red-500 mb-4"></div>
-                                  <p className="text-sm font-medium text-white/50">Sincronizando marcadores y goleadores...</p>
+                                  <p className="text-sm font-medium text-white/50">Sincronizando marcador...</p>
                               </div>
                           ) : matches.length > 0 ? (
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                                  {matches.map((match, i) => {
-                                      const hasGoals = (match.home.goals && match.home.goals.length > 0) || (match.away.goals && match.away.goals.length > 0);
-                                      return (
-                                          <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-[28px] p-5 flex flex-col gap-3.5 shadow-xl relative overflow-hidden z-10">
-                                              {match.status === 'in' && <div className="absolute top-0 left-0 w-2 h-full bg-red-600 shadow-[0_0_10px_red]"></div>}
-                                              <div className="flex justify-between items-center border-b border-white/10 pb-2.5">
-                                                  <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest truncate flex items-center gap-1">{match.phase}</p>
-                                                  <p className="text-[11px] text-white/40 font-bold bg-white/10 px-2 py-0.5 rounded-md">{new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}</p>
-                                              </div>
-                                              <div className="flex justify-between items-center">
-                                                  <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                                      <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center p-2 border border-white/10"><img src={match.home.logo} alt={match.home.name} className="w-full h-full object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} /></div>
-                                                      <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.home.name}</span>
-                                                  </div>
-                                                  <div className="flex flex-col items-center justify-center w-[30%] text-center">
-                                                      {match.status === 'pre' ? (
-                                                          <span className="text-[13px] font-bold text-white bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 shadow-inner">{new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
-                                                      ) : (
-                                                          <div className="flex flex-col items-center">
-                                                              <div className="flex items-center justify-center gap-2 bg-black/40 px-3 py-1.5 rounded-2xl border border-white/10">
-                                                                  <span className="text-2xl font-black text-white tracking-tighter">{match.home.score !== undefined ? match.home.score : 0}</span><span className="text-sm font-bold text-white/30">-</span><span className="text-2xl font-black text-white tracking-tighter">{match.away.score !== undefined ? match.away.score : 0}</span>
-                                                              </div>
-                                                              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full mt-2 uppercase tracking-wider ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'bg-white/10 text-white/50'}`}>{match.detail}</span>
-                                                          </div>
-                                                      )}
-                                                  </div>
-                                                  <div className="flex flex-col items-center w-[35%] text-center gap-2">
-                                                      <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center p-2 border border-white/10"><img src={match.away.logo} alt={match.away.name} className="w-full h-full object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} /></div>
-                                                      <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.away.name}</span>
-                                                  </div>
-                                              </div>
-
-                                              {/* SECCIÓN DE GOLEADORES Y MINUTOS */}
-                                              {hasGoals && (
-                                                  <div className="border-t border-white/10 pt-2.5 mt-0.5 grid grid-cols-2 gap-2 text-[10px]">
-                                                      <div className="flex flex-col gap-1 pr-1 border-r border-white/5">
-                                                          {match.home.goals.map((g, idx) => (
-                                                              <div key={idx} className="flex items-start gap-1 text-white/80 leading-tight">
-                                                                  <span className="shrink-0">⚽</span>
-                                                                  <span className="truncate font-semibold">{g.player}</span>
-                                                                  <span className="text-red-400 font-mono font-bold shrink-0 ml-auto">{g.minute}{g.tag}</span>
-                                                              </div>
-                                                          ))}
-                                                      </div>
-                                                      <div className="flex flex-col gap-1 pl-1">
-                                                          {match.away.goals.map((g, idx) => (
-                                                              <div key={idx} className="flex items-start gap-1 text-white/80 leading-tight">
-                                                                  <span className="shrink-0">⚽</span>
-                                                                  <span className="truncate font-semibold">{g.player}</span>
-                                                                  <span className="text-red-400 font-mono font-bold shrink-0 ml-auto">{g.minute}{g.tag}</span>
-                                                              </div>
-                                                          ))}
-                                                      </div>
-                                                  </div>
-                                              )}
+                                  {matches.map((match, i) => (
+                                      <div key={i} className="bg-white/10 backdrop-blur-xl border border-white/10 rounded-[28px] p-5 flex flex-col gap-4 shadow-xl relative overflow-hidden z-10">
+                                          {match.status === 'in' && <div className="absolute top-0 left-0 w-2 h-full bg-red-600 shadow-[0_0_10px_red]"></div>}
+                                          <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                                              <p className="text-[10px] text-white/80 font-bold uppercase tracking-widest truncate flex items-center gap-1">{match.phase}</p>
+                                              <p className="text-[11px] text-white/40 font-bold bg-white/10 px-2 py-1 rounded-md">{new Date(match.date).toLocaleDateString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' })}</p>
                                           </div>
-                                      );
-                                  })}
+                                          <div className="flex justify-between items-center">
+                                              <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                                                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center p-2 border border-white/10"><img src={match.home.logo} alt={match.home.name} className="w-full h-full object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} /></div>
+                                                  <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.home.name}</span>
+                                              </div>
+                                              <div className="flex flex-col items-center justify-center w-[30%] text-center">
+                                                  {match.status === 'pre' ? (
+                                                      <span className="text-[13px] font-bold text-white bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 shadow-inner">{new Date(match.date).toLocaleTimeString('es-VE', { timeZone: 'America/Caracas', hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+                                                  ) : (
+                                                      <div className="flex flex-col items-center">
+                                                          <div className="flex items-center justify-center gap-2 bg-black/40 px-3 py-1.5 rounded-2xl border border-white/10">
+                                                              <span className="text-2xl font-black text-white tracking-tighter">{match.home.score !== undefined ? match.home.score : 0}</span><span className="text-sm font-bold text-white/30">-</span><span className="text-2xl font-black text-white tracking-tighter">{match.away.score !== undefined ? match.away.score : 0}</span>
+                                                          </div>
+                                                          <span className={`text-[9px] font-bold px-2 py-1 rounded-full mt-2 uppercase tracking-wider ${match.status === 'in' ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' : 'bg-white/10 text-white/50'}`}>{match.detail}</span>
+                                                      </div>
+                                                  )}
+                                              </div>
+                                              <div className="flex flex-col items-center w-[35%] text-center gap-2">
+                                                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center p-2 border border-white/10"><img src={match.away.logo} alt={match.away.name} className="w-full h-full object-contain drop-shadow-md" onError={(e) => {e.target.src = 'https://a.espncdn.com/i/teamlogos/soccer/500/default-team-logo-500.png'}} /></div>
+                                                  <span className="text-[11px] font-bold text-white/95 leading-tight line-clamp-2">{match.away.name}</span>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  ))}
                               </div>
                               ) : (
                                   <div className="text-center py-16 flex flex-col items-center shrink-0 z-10 bg-white/5 rounded-[32px] border border-white/5 mx-2 md:max-w-md md:mx-auto w-full">
                                       <Trophy size={56} className="text-white/20 mb-4" />
-                                      <p className="text-[15px] font-medium text-white/50">No hay partidos destacados en este momento.</p>
+                                      <p className="text-[15px] font-medium text-white/50">No hay partidos destacados hoy.</p>
                                   </div>
                               )
                           }
@@ -2151,9 +1140,9 @@
                           <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[28px] p-5 flex flex-col shrink-0 z-10 shadow-lg mt-2">
                               <div className="flex items-center gap-3 mb-1">
                                   <div className="p-2 bg-blue-500/20 rounded-full text-blue-400"><Globe size={20}/></div>
-                                  <span className="text-[15px] font-bold text-white tracking-wide">Satélite Mucutuy - Pueblos del Sur</span>
+                                  <span className="text-[15px] font-bold text-white tracking-wide">Satélite Mucutuy</span>
                               </div>
-                              <p className="text-[12px] font-medium text-white/50 mt-1 ml-[44px]">Mérida, Venezuela • 8.2456° N, -71.2864° W</p>
+                              <p className="text-[12px] font-medium text-white/50 mt-1 ml-[44px]">8.2456° N, -71.2864° W</p>
                           </div>
                           <div className="flex-1 w-full bg-zinc-900 rounded-[28px] border-2 border-white/10 overflow-hidden relative min-h-[350px] shadow-2xl shrink-0 z-10 p-1 mb-8">
                               <div className="w-full h-full rounded-[24px] overflow-hidden relative">
@@ -2170,41 +1159,35 @@
               </main>
 
               {/* BOTÓN FLOTANTE DEL CHAT */}
-              {globalConfig.enableChat && (
-                  <button 
-                      onClick={() => setShowChat(true)} 
-                      className="fixed bottom-[82px] md:bottom-6 right-5 md:right-8 w-14 h-14 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center text-white z-40 hover:bg-red-500 transition-transform active:scale-95 border border-white/20"
-                  >
-                      <MessageIcon size={24} />
-                      {unreadCount > 0 && (
-                          <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-red-600 shadow-md animate-bounce">
-                              {unreadCount > 9 ? '+9' : unreadCount}
-                          </span>
-                      )}
-                  </button>
-              )}
+              <button 
+                  onClick={() => setShowChat(true)} 
+                  className="fixed bottom-[80px] md:bottom-6 right-5 md:right-8 w-14 h-14 bg-red-600 rounded-full shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center justify-center text-white z-40 hover:bg-red-500 transition-transform active:scale-95 border border-white/20"
+              >
+                  <MessageIcon size={24} />
+                  {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-white text-red-600 text-[11px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-red-600 shadow-md animate-bounce">
+                          {unreadCount > 9 ? '+9' : unreadCount}
+                      </span>
+                  )}
+              </button>
 
-              {/* === BARRA DE NAVEGACIÓN INFERIOR DINÁMICA === */}
-              <nav className="w-full bg-zinc-950/90 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
-                  <div className="flex justify-around items-center max-w-md md:max-w-2xl lg:max-w-3xl mx-auto h-[62px] relative">
-                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+              {/* === BARRA DE NAVEGACIÓN INFERIOR === */}
+              <nav className="w-full bg-zinc-950/80 backdrop-blur-[50px] border-t border-white/10 pb-safe pt-2 px-4 shrink-0 relative z-30">
+                  <div className="flex justify-between items-center max-w-md md:max-w-2xl lg:max-w-3xl mx-auto h-[64px] relative">
+                      <div className="absolute top-0 h-1 bg-red-500 rounded-b-full transition-all duration-300 shadow-[0_0_10px_red]" style={{ width: '30px', left: viewMode === 'radio' ? 'calc(12.5% - 15px)' : viewMode === 'tv' ? 'calc(37.5% - 15px)' : viewMode === 'sports' ? 'calc(62.5% - 15px)' : 'calc(87.5% - 15px)' }}></div>
+                      
+                      <button onClick={() => handleViewModeChange('radio')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'radio' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
                           <RadioIcon size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Radio</span>
                       </button>
-                      {globalConfig.enableTV && (
-                          <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'tv' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                              <Tv size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">TV</span>
-                          </button>
-                      )}
-                      {globalConfig.enableSports && (
-                          <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                              <Trophy size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Deportes</span>
-                          </button>
-                      )}
-                      {globalConfig.enableLocation && (
-                          <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all duration-300 ${viewMode === 'nasa' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
-                              <MapPin size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Ubicación</span>
-                          </button>
-                      )}
+                      <button onClick={() => handleViewModeChange('tv')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'tv' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <Tv size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">TV</span>
+                      </button>
+                      <button onClick={() => handleViewModeChange('sports')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'sports' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <Trophy size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Deportes</span>
+                      </button>
+                      <button onClick={() => handleViewModeChange('nasa')} className={`flex flex-col items-center justify-center w-1/4 gap-1.5 transition-all duration-300 ${viewMode === 'nasa' ? 'text-red-400 scale-110' : 'text-white/40 hover:text-white/70'}`}>
+                          <MapPin size={22} /><span className="text-[9px] md:text-[11px] font-bold tracking-wide">Ubicación</span>
+                      </button>
                   </div>
                   <div className="w-full text-center text-[10px] text-white/30 font-medium uppercase tracking-widest mt-1 mb-0.5">
                       Derechos reservados Pregón 95.7 FM © 2026
@@ -2218,12 +1201,6 @@
                 .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
                 .perspective-1000 { perspective: 1000px; }
                 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-                @keyframes floatUp {
-                  0% { transform: translateY(0) scale(0.7); opacity: 1; }
-                  50% { transform: translateY(-140px) translateX(10px) scale(1.15); opacity: 0.9; }
-                  100% { transform: translateY(-280px) translateX(-10px) scale(0.9); opacity: 0; }
-                }
-                .animate-floatUp { animation: floatUp 2.7s cubic-bezier(0.2, 0.8, 0.4, 1) forwards; }
               `}} />
             </div>
           );
